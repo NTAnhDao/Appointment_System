@@ -1,111 +1,285 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+html, body, #root {
+  height: 100%;
 }
 
 body {
   margin: 0;
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+.logo {
+  color: var(--primary);
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
+/* navbar */
+.navbar-nav .nav-link {
+  position: relative;
+  font-size: 19px;
   font-weight: 500;
-  color: var(--text-h);
+  color: #6b7280;
+  padding-bottom: 5px;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+.navbar-nav .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  height: 2px;
+  background: #004070;
+  transition: 0.3s;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #004070;
+}
+
+.navbar-nav .nav-link:hover::after {
+  width: 100%;
+}
+
+.navbar-nav .nav-link.active {
+  color: #004070;
+}
+
+.navbar-nav .nav-link.active::after {
+  width: 100%;
+}
+
+
+.btn-accent-custom{
+  background: var(--accent);
+  color: white;
+  border: none;
+}
+
+.btn-primary-custom {
+  background: var(--primary);
+  color: white;
+  border: none;
+}
+
+.text-primary-customer{
+  color: var(--primary);
+}
+
+.text-footer{
+  color: var(--blue-500)
+}
+
+.hero-title {
+  font-size: 48px;
+}
+
+.hero-title span {
+  color: var(--accent);
+}
+
+.badge-custom {
+  background: #e0f7f6;
+  color: var(--accent);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.stats {
+  background: #f1f5f9;
+}
+
+.cta-box {
+  background: var(--primary);
+  color: white;
+  padding: 50px;
+  border-radius: 20px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 32px;
+  }
+
+  .search-box {
+    flex-direction: column;
+  }
+
+  .search-box button {
+    width: 100%;
   }
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+
+/* Chuyen khoa mui nhon */
+/* SECTION */
+.specialties {
+  background: #f8fafc;
+}
+
+/* HEADER */
+.specialties-header h2 {
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+}
+
+.specialties-header h2::after {
+  content: "";
+  width: 40px;
+  height: 3px;
+  background: var(--accent);
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  border-radius: 10px;
+}
+
+/* CARD */
+.specialty-card {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 20px;
+  transition: 0.3s;
+  border: 1px solid #f1f5f9;
+}
+
+.specialty-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* ICON */
+.icon-box {
+  width: 50px;
+  height: 50px;
+  background: #e6f0f6;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.icon-box span {
+  font-size: 26px;
+  color: var(--primary);
+}
+
+/* TEXT */
+.specialty-card h4 {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--primary)
+}
+
+.specialty-card p {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .specialty-card {
+    text-align: center;
+  }
+
+  .icon-box {
+    margin: 0 auto 15px;
   }
 }
-p {
-  margin: 0;
+
+/* đội ngũ bác sĩ */
+.doctor-section{
+  background:#f6f8fb;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+.doctor-card{
+  border:none;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 10px 25px rgba(0,0,0,0.05);
+  transition:0.3s;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+.doctor-card:hover{
+  transform:translateY(-5px);
+}
+
+.doctor-img{
+  position:relative;
+  height:260px;
+  overflow:hidden;
+}
+
+.doctor-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.doctor-badge{
+  position:absolute;
+  left:15px;
+  bottom:15px;
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:500;
+}
+
+.badge-success{
+  background:var(--teal-400);
+  color:var(--accent);
+}
+
+.badge-ready{
+  background:var(--teal-400);
+  color:var(--accent);
+}
+
+.badge-full{
+  background:var(--gray-50);
+  color:var(--gray);
+}
+
+.doctor-info{
+  padding:20px;
+}
+
+.doctor-title{
+  font-size:13px;
+  color:var(--accent);
+  margin-bottom:5px;
+}
+
+.doctor-name{
+  font-weight:700;
+  color:var(--primary);
+}
+
+.doctor-specialty{
+  color:#6b7280;
+  font-size:14px;
+}
+
+.doctor-btn{
+  border-radius:12px;
+  border:1px solid var(--primary);
+  color:var(--primary);
+  font-weight:500;
+}
+
+.doctor-btn:hover{
+  background:var(--primary);
+  color:white;
+}
+
+.view-all{
+  text-decoration:none;
+  font-weight:500;
+  color:var(--primary);
+}
+
+
+.icon-circle{
+  color: var(--primary)
 }

@@ -1,0 +1,31 @@
+:root {
+  --black: #000000;
+  --blue-900: #001C38;  /* Navy Deep */
+  --blue-800: #00315B;  /* Midnight Blue */
+  --primary: #004070;  /* Primary */
+  --blue-600: #1B60A2;  /* Strong Blue */
+  --blue-500: #3C79BD;  /* Main UI Blue */
+  --blue-400: #5993D8;  /* Soft Blue */
+  --blue-300: #75AEF5;  /* Sky Blue */
+  --blue-200: #A2C9FF;  /* Pale Blue */
+  
+  --accent: #006B66;
+  --teal-400: #5ADAD0;  
+
+  --brown-700: #874001;  /* Nâu đậm */
+
+  --orange-600: #d97707; /* Cam đậm */
+  --orange-400: #F39454; /* Cam nhạt  */
+  
+  --red-700: #ad1818;    /* Đỏ đậm  */
+
+  --red-50: #fff1f0;     /* Nền đỏ nhạt*/
+
+  --gray-50: #e5e7eb;  /*xám nhat */
+  --gray: #6b7280;    /*xám đậm*/
+  --white: #FFFFFF;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+}
