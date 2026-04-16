@@ -1,0 +1,73 @@
+.pagination-btn {
+    min-width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+/* hover cho page thường */
+.pagination-btn:hover:not(.active):not(:disabled) {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* trang hiện tại */
+.pagination-btn.active {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+}
+
+/* disabled */
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.text-sub {
+    color: var(--accent);
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.doctor-card {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 20px;
+    transition: 0.3s;
+    border: 1px solid #f1f5f9;
+}
+
+.doctor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* BUTTON */
+.btn-book {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+}
+
+.btn-seen {
+    color: var(--primary);
+    border: 1px solid;
+    padding: 10px 20px;
+    font-weight: bold;
+
+}
+
+.form-check-input:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}

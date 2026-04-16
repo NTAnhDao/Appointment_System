@@ -24,6 +24,9 @@
   --gray-50: #e5e7eb;  /*xám nhat */
   --gray: #6b7280;    /*xám đậm*/
   --white: #FFFFFF;
+  --surface: #f8f9fa;
+  --surface-low: #f3f4f5;
+  --surface-high: #e7e8e9;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
