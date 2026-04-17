@@ -1,0 +1,85 @@
+.stepper-pro {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 0 auto 40px;
+  width: 80%;
+}
+
+/* Step item */
+.step-item {
+  flex: 1;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
+
+/* Circle */
+.step-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  z-index: 2;
+  position: relative;
+}
+
+/* Active animation */
+.step-circle.active {
+  background: var(--blue-600);
+  color: white;
+  transform: scale(1.15);
+  box-shadow: 0 0 0 6px rgba(13, 110, 253, 0.2);
+}
+
+/* Done animation */
+.step-circle.done {
+  background: #6ddf97;
+  color: var(--primary);
+}
+
+/* Label */
+.step-label {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #999;
+  transition: all 0.3s ease;
+}
+
+.step-label.active {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Line wrapper */
+.step-line-wrapper {
+  position: absolute;
+  top: 21px;
+  left: 50%;
+  width: 100%;
+  height: 4px;
+  z-index: 1;
+}
+
+/* Background line */
+.step-line-bg {
+  width: 100%;
+  height: 4px;
+  background: #e5e7eb;
+  position: absolute;
+}
+
+/* Fill line (animation) */
+.step-line-fill {
+  height: 4px;
+  background: var(--primary);
+  position: absolute;
+  transition: width 0.4s ease;
+}
