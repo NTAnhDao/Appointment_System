@@ -1,0 +1,137 @@
+.auth-container {
+  display: flex;
+}
+
+/* LEFT */
+.auth-left {
+  width: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--blue-600));
+  padding: 60px;
+  background-size: cover;
+  background-position: center;
+}
+
+.auth-left.login-bg {
+  background: linear-gradient(to bottom right, rgba(0,49,91, 0.85), rgba(27,96,162, 0.9)), 
+              url('https://i.pinimg.com/736x/a7/cf/63/a7cf630cc52e880cab915102d2f81a41.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Đăng ký */
+.auth-left.register-bg {
+  background: linear-gradient(to bottom right, rgba(0,49,91, 0.85), rgba(27,96,162, 0.9)), 
+              url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=2053&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+}
+
+.auth-title {
+  font-size: 48px;
+  font-weight: 800;
+}
+
+.auth-desc {
+  opacity: 0.8;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* RIGHT */
+.auth-right {
+ background: var(--white); 
+  padding: 40px 40px 40px 10%; 
+  display: flex;
+  align-items: center;
+}
+
+.auth-box {
+  max-width: 420px;
+}
+
+/* Tabs */
+.auth-tabs {
+  display: flex;
+  gap: 30px;
+  border-bottom: 1px solid #ddd;
+}
+
+.auth-tabs a {
+  padding-bottom: 10px;
+  text-decoration: none;
+  color: #888;
+}
+
+.auth-tabs a.active {
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary);
+  font-weight: bold;
+}
+
+
+/* form login/register */
+.form-label-custom {
+  font-size: 12px;
+  font-weight: 700;
+  color: #444;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.custom-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.custom-input-group .prefix-icon {
+  position: absolute;
+  left: 16px;
+  color: #888;
+  font-size: 20px;
+  pointer-events: none;
+}
+
+/* Ô input chính */
+.custom-input-group .form-control {
+  background-color: #f5f7f9; 
+  border: 1px solid transparent;
+  border-radius: 10px; /* Bo góc mềm */
+  padding: 14px 16px;
+  padding-left: 45px; 
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: none;
+}
+
+
+.custom-input-group.no-prefix .form-control {
+  padding-left: 16px;
+}
+
+.custom-input-group .form-control:focus {
+  background-color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(10, 64, 115, 0.1);
+}
+
+/* Icon con mắt nằm bên phải */
+.custom-input-group .eye-icon {
+  position: absolute;
+  right: 16px;
+  color: #888;
+  font-size: 20px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Nút Submit */
+.btn-login {
+  background: linear-gradient(to right, rgba(0,49,91, 0.85), rgba(27,96,162, 0.9));
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-weight: 600;
+}

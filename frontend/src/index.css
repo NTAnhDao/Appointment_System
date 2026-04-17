@@ -58,6 +58,8 @@ body {
   background: var(--primary);
   color: white;
   border: none;
+  border-radius: 8px;
+  
 }
 
 .text-primary-customer{

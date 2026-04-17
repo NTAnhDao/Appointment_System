@@ -1,0 +1,4 @@
+INSERT INTO app.USERS (FULL_NAME, PHONE, EMAIL, PASSWORD_HASH)
+VALUES ('Nguyen Van A', '0987654321', 'user1@gmail.com', 'User123@');
+
+COMMIT;

@@ -5,6 +5,13 @@ services:
       dockerfile: docker/backend.Dockerfile
     ports:
       - "5000:5000"
+    depends_on:
+      - oracle
+    environment:
+      DB_USER: app
+      DB_PASSWORD: 123456
+      DB_CONNECT_STRING: oracle:1521/XEPDB1
+      JWT_SECRET: abc123
 
   frontend:
     build:
@@ -13,6 +20,7 @@ services:
     ports:
       - "5173:5173"
     command: npm run dev -- --host
+<<<<<<< HEAD
     volumes:
       - ./frontend:/app        # bind source code
       - /app/node_modules      # tránh ghi đè node_modules
@@ -23,8 +31,18 @@ services:
     image: mongo
     ports:
       - "27017:27017"
+=======
+>>>>>>> cd978db (xong login and register)
 
   oracle:
     image: gvenzl/oracle-xe
     ports:
-      - "1521:1521"
+      - "1522:1521"
+    environment:
+      - ORACLE_PASSWORD=123456
+    volumes:
+      - ./database/oracle:/docker-entrypoint-initdb.d  
+      - oracle-data:/opt/oracle/oradata 
+
+volumes:
+  oracle-data:

@@ -1,0 +1,58 @@
+/* Notification dialog */
+.notification-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.35);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 999;
+}
+
+.notification-box {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 350px;
+  text-align: center;
+  animation: popup 0.25s ease;
+}
+
+.notification-box h3 {
+  margin-bottom: 10px;
+  color: #ce2239;
+}
+
+.notification-box p {
+  margin-bottom: 20px;
+  color: #334155;
+}
+
+.notification-box button {
+  background: #4aa3a1;
+  border: none;
+  color: white;
+  padding: 10px 22px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.notification-box button:hover {
+  background: #3a8c8b;
+}
+
+@keyframes popup {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
