@@ -64,6 +64,7 @@ body {
   color: var(--primary);
 }
 
+
 .text-footer{
   color: var(--blue-500)
 }
@@ -282,5 +283,16 @@ body {
 
 
 .icon-circle{
-  color: var(--primary)
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  background: var(--primary);
 }
+
+.bg-surface { background: var(--surface); }
+.bg-card { background: var(--white); }
+.bg-soft { background: var(--surface-low); }
