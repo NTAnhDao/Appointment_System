@@ -8,7 +8,8 @@ export default function Header() {
     return (
         <nav className="navbar navbar-expand-lg bg-white border-bottom py-3 custom-navbar fixed-top">
             <div className="container-fluid px-4">
-                <a className="navbar-brand fw-bold logo">
+                <a className="navbar-brand fw-bold logo d-flex align-items-center gap-2">
+                    <span className="material-symbols-outlined">medical_services</span>
                     Superior Health Clinic
                 </a>
 
@@ -18,7 +19,7 @@ export default function Header() {
 
                 <div className="collapse navbar-collapse" id="nav">
                     <ul className="navbar-nav mx-auto text-center">
-                        <li className="nav-item"><a className="nav-link active">Trang chủ</a></li>
+                        <li className="nav-item"><a className="nav-link" onClick={() => nav("/")}>Trang chủ</a></li>
                         <li className="nav-item"><a className="nav-link">Chuyên khoa</a></li>
                         <li className="nav-item"><a className="nav-link">Bác sĩ</a></li>
                         <li className="nav-item"><a className="nav-link"
@@ -30,7 +31,7 @@ export default function Header() {
                     </ul>
 
                     <div className="d-flex gap-2 mt-3 mt-lg-0">
-                        <button className="btn btn-accent-custom">Đăng nhập</button>
+                        <button className="btn btn-accent-custom" onClick={() => nav("/login")} >Đăng nhập</button>
                         <button className="btn btn-primary-custom"
                         onClick={() => nav("/booking") }
                         >Đặt lịch ngay</button>

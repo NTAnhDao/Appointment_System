@@ -32,7 +32,14 @@ class AuthService {
             throw new Error('Số điện thoại hoặc mật khẩu không chính xác.');
         }
 
-        const isValidPassword = password === user.PASSWORD_HASH;
+        let isValidPassword = false;
+
+        if (user.PASSWORD_HASH.startsWith("$2b$")) {
+            isValidPassword = await bcrypt.compare(password, user.PASSWORD_HASH);
+        } 
+        else {
+            isValidPassword = password === user.PASSWORD_HASH;
+        }
         if (!isValidPassword) {
             throw new Error('Số điện thoại hoặc mật khẩu không chính xác.');
         }

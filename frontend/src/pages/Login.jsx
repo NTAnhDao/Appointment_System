@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 import Authentication from "../components/auth/Authentication.jsx";
 import Dialog from "../components/ui/dialog.jsx";
 import validateForm from "../utils/validate.js";
@@ -7,6 +8,7 @@ import '../styles/auth.css'
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const nav = useNavigate();
   const [dialog, setDialog] = useState({
     open: false,
     title: "",
@@ -53,6 +55,10 @@ export default function Login() {
         message: "Đăng nhập thành công",
         type: "success"
       });
+
+      setTimeout(() => {
+        nav("/");
+      }, 1000);
 
     } catch (err) {
       setDialog({

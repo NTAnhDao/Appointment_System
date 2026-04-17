@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Authentication from "../components/auth/Authentication.jsx";
 import Dialog from "../components/ui/dialog.jsx";
 import validateForm from "../utils/validate.js";
@@ -6,7 +7,7 @@ import '../styles/auth.css'
 
 export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
-
+    const nav = useNavigate();
     const [dialog, setDialog] = useState({
         open: false,
         title: "",
@@ -53,6 +54,10 @@ export default function Register() {
                 message: "Đăng ký thành công",
                 type: "success"
             });
+
+            setTimeout(() => {
+                nav("/login");
+            }, 1000);
 
         } catch (err) {
             setDialog({

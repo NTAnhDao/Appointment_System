@@ -20,7 +20,7 @@ services:
     ports:
       - "5173:5173"
     command: npm run dev -- --host
-<<<<<<< HEAD
+
     volumes:
       - ./frontend:/app        # bind source code
       - /app/node_modules      # tránh ghi đè node_modules
@@ -31,9 +31,7 @@ services:
     image: mongo
     ports:
       - "27017:27017"
-=======
->>>>>>> cd978db (xong login and register)
-
+      
   oracle:
     image: gvenzl/oracle-xe
     ports:
