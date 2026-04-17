@@ -2,8 +2,8 @@
   display: flex;
   justify-content: space-between;
   position: relative;
-  margin: 0 auto 40px;
-  width: 80%;
+  margin: 5px auto 20px;
+  width: 65%;
 }
 
 /* Step item */
@@ -82,4 +82,16 @@
   background: var(--primary);
   position: absolute;
   transition: width 0.4s ease;
+}
+
+@media screen and (max-width: 768px) {
+  .stepper-pro {
+    width: 90%;
+
+  }
+  .step-circle {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
 }
