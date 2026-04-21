@@ -6,6 +6,8 @@ import ProfilesPage from "../pages/ProfilesPage.jsx";
 import Doctor from "../pages/Doctor.jsx";``
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import PaymentSuccessPage from "../pages/PaymentSuccessPage.jsx";
+
 
 
 export default function AppRoutes() {
@@ -19,6 +21,7 @@ export default function AppRoutes() {
       <Route path="/doctors" element={< Doctor />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/success" element={<PaymentSuccessPage />} />
 
     </Routes>
   );
