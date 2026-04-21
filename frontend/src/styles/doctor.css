@@ -71,3 +71,45 @@
     background-color: var(--primary);
     border-color: var(--primary);
 }
+
+.list-history-edu {
+    list-style: none;
+}
+
+.list-history-edu li {
+    padding-left: 20px;
+    position: relative;
+}
+
+.list-history-edu li::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    /* bắt đầu từ chấm tròn */
+    width: 2px;
+    height: calc(100% - 10px);
+    background: var(--primary);
+}
+
+.list-history-edu li::before {
+    content: "";
+    position: absolute;
+    left: -4px;
+    top: 5px;
+    width: 10px;
+    height: 10px;
+    background: var(--primary);
+    border-radius: 50%;
+}
+
+
+
+.btn-back {
+    background: none;
+    border: none;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 18px;
+    padding: 0px;
+}

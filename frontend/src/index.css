@@ -298,3 +298,9 @@ body {
 .bg-surface { background: var(--surface); }
 .bg-card { background: var(--white); }
 .bg-soft { background: var(--surface-low); }
+.bg-blue-200 { background: var(--blue-200); }
+
+.card {
+  border: none;
+  border-radius: 12px;
+}

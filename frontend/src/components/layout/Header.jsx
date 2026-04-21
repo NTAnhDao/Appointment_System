@@ -20,8 +20,8 @@ export default function Header() {
                 <div className="collapse navbar-collapse" id="nav">
                     <ul className="navbar-nav mx-auto text-center">
                         <li className="nav-item"><a className="nav-link" onClick={() => nav("/")}>Trang chủ</a></li>
-                        <li className="nav-item"><a className="nav-link">Chuyên khoa</a></li>
-                        <li className="nav-item"><a className="nav-link">Bác sĩ</a></li>
+                        <li className="nav-item"><a className="nav-link" >Chuyên khoa</a></li>
+                        <li className="nav-item"><a className="nav-link" onClick={() => nav("/doctors")}>Bác sĩ</a></li>
                         <li className="nav-item"><a className="nav-link"
                         onClick={() => nav("/appointments") }
                         >Lịch đặt </a></li>
