@@ -1,0 +1,6 @@
+.container-profiles{
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    max-width: 100%;
+    padding: 30px;
+}

@@ -104,7 +104,7 @@ export default function Step3_PatientInfo() {
       </div>
 
       {/* Actions */}
-        <div className="d-flex justify-content-between align-items-center mt-5 action-bar">
+        <div className="d-flex justify-content-between align-items-center mt-3 action-bar">
             <button className="btn btn-back" onClick={prevStep}>
                 <span className="material-symbols-outlined me-1">arrow_back</span>
                 Quay lại

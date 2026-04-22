@@ -7,6 +7,7 @@ services:
       - "5000:5000"
     depends_on:
       - oracle
+      - redis
     environment:
       DB_USER: app
       DB_PASSWORD: 123456
@@ -42,5 +43,9 @@ services:
       - ./database/oracle:/docker-entrypoint-initdb.d  
       - oracle-data:/opt/oracle/oradata 
 
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
 volumes:
   oracle-data:

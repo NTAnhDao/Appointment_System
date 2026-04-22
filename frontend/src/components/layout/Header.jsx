@@ -6,7 +6,7 @@ export default function Header() {
     const isActive = (path) => location.pathname.includes(path);
 
     return (
-        <nav className="navbar navbar-expand-lg bg-white border-bottom py-3 custom-navbar fixed-top">
+        <nav className="navbar navbar-expand-lg bg-white border-bottom py-2 custom-navbar fixed-top">
             <div className="container-fluid px-4">
                 <a className="navbar-brand fw-bold logo d-flex align-items-center gap-2">
                     <span className="material-symbols-outlined">medical_services</span>

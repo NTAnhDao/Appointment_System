@@ -142,7 +142,7 @@ export default function Step4_Payment() {
       </div>
 
       {/* ACTION */}
-      <div className="d-flex justify-content-between align-items-center mt-4 action-bar">
+      <div className="d-flex justify-content-between align-items-center mt-3 action-bar">
         <button className="btn btn-back" onClick={prevStep}>
             <span className="material-symbols-outlined me-1">arrow_back</span>
                 Quay lại

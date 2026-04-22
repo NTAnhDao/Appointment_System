@@ -170,7 +170,7 @@ export default function Step2_SelectDate() {
       </div>
 
     {/* Actions */}
-        <div className="d-flex justify-content-between align-items-center mt-5 action-bar">
+        <div className="d-flex justify-content-between align-items-center mt-2 action-bar">
             <button className="btn btn-back" onClick={prevStep}>
                 <span className="material-symbols-outlined me-1">arrow_back</span>
                 Quay lại

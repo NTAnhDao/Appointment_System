@@ -1,7 +1,7 @@
 .booking-container {
   max-width: 80%;
   margin: 0 auto;
-  padding: 50px;
+  padding: 30px 50px;
 }
 
 
@@ -11,7 +11,7 @@
 .schedule-header {
   background: linear-gradient(135deg, var(--blue-800), var(--blue-600));
   color: white;
-  padding: 26px;
+  padding: 20px 26px;
   border-radius: 12px 12px 0 0;
 }
 
@@ -359,7 +359,7 @@
 
 .action-bar {
   border-top: 1px solid #eee;
-  padding-top: 20px;
+  padding-top: 10px;
 }
 
 /* Back button */

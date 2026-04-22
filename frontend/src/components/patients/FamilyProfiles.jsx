@@ -1,4 +1,4 @@
-import "./profiles.css";
+import "./FamilyProfiles.css";
 export default function FamilyProfiles() {
   const profiles = [
     {
@@ -26,17 +26,7 @@ export default function FamilyProfiles() {
   ];
 
   return (
-    <div className="container py-4">
-
-      {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h5 className="profile-header">Hồ sơ gia đình</h5>
-
-        <button className="btn btn-add-profile">
-          <span className="material-symbols-outlined">add</span>
-          Thêm hồ sơ
-        </button>
-      </div>
+    <div className="container-profiles py-4">
 
       {/* List */}
       <div className="d-flex gap-3 overflow-auto">

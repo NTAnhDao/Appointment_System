@@ -4,7 +4,6 @@ const steps = [
   "Chọn bác sĩ",
   "Chọn lịch khám",
   "Hồ sơ bệnh nhân",
-  "Xem lại",
   "Thanh toán"
 ];  
 export default function StepIndicator() {
