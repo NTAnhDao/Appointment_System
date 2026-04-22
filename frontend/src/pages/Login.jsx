@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import Authentication from "../components/auth/Authentication.jsx";
 import Dialog from "../components/ui/dialog.jsx";
 import validateForm from "../utils/validate.js";
@@ -144,7 +143,5 @@ export default function Login() {
         />
       </div>
     </>
-
-
   );
 }

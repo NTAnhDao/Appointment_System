@@ -1,4 +1,8 @@
+import { useNavigate, useLocation } from "react-router-dom";
+
 export default function DoctorCard({ doctor }) {
+    const nav = useNavigate();
+    
     return (
         <div className="doctor-card p-4">
             <div className="row g-4">
@@ -52,7 +56,7 @@ export default function DoctorCard({ doctor }) {
                             Đặt lịch ngay
                         </button>
 
-                        <button className="btn btn-seen">
+                        <button className="btn btn-seen" onClick={() => nav(`/doctors/1`)}>
                             Xem hồ sơ
                         </button>
                     </div>

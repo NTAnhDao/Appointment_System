@@ -26,7 +26,7 @@ export default function Doctor() {
 
     return (
         <MainLayout>
-            <div class="specialties py-5 px-4">
+            <div class="container py-5 px-4">
                 <div class="max-w-2xl">
                     <h2 class="fw-bold text-primary-customer mb-4">Đội ngũ Chuyên gia</h2>
                     <p class="text-lg">Kết nối với những bác sĩ hàng đầu tại Việt Nam, mang đến sự an tâm và tận tâm trong từng lượt khám.</p>

@@ -27,7 +27,7 @@ export default function Footer() {
                     {/* COL 2 */}
                     <div className="col-6 col-md-3">
                         <h6 className="fw-bold mb-3 text-footer">Dịch vụ</h6>
-                        <ul className="list-unstyled footer-link">
+                        <ul className="list-unstyled text-muted small">
                             <li>Khám sức khỏe tổng quát</li>
                             <li>Xét nghiệm tại nhà</li>
                             <li>Tư vấn sức khỏe từ xa</li>
@@ -38,7 +38,7 @@ export default function Footer() {
                     {/* COL 3 */}
                     <div className="col-6 col-md-3">
                         <h6 className="fw-bold mb-3 text-footer">Liên kết</h6>
-                        <ul className="list-unstyled footer-link">
+                        <ul className="list-unstyled text-muted small">
                             <li>Về chúng tôi</li>
                             <li>Liên hệ</li>
                             <li>Chính sách bảo mật</li>
