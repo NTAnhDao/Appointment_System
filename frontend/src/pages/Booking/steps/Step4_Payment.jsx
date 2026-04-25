@@ -13,6 +13,8 @@ export default function Step4_Payment() {
     { id: "cash", title: "Thanh toán tại viện", desc: "Trả tiền khi đến khám" },
   ];
 
+  
+
   const handlePayment = () => {
     console.log("PAY:", bookingData, method);
     nextStep();
