@@ -1,13 +1,13 @@
 import express from "express";
 import * as controller from "./controller.js";
 import { validatePatient } from "./validator.js";
-
+import { authMiddleware } from "../../shared/middleware/AuthMiddleware.js";
 const router = express.Router();
 
-router.post("/patients", validatePatient, controller.create);
-router.get("/patients", controller.getAll);
-router.get("/patients/:id", controller.getById);
-router.put("/patients/:id", validatePatient, controller.update);
-router.delete("/patients/:id", controller.remove);
+router.post("/", authMiddleware, validatePatient, controller.create);
+router.get("/", authMiddleware, controller.getAll);
+router.get("/:id", authMiddleware, controller.getById);
+router.put("/:id", authMiddleware, validatePatient, controller.update);
+router.delete("/:id", authMiddleware, controller.remove);
 
 export default router;

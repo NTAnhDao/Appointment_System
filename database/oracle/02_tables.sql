@@ -8,7 +8,7 @@ CREATE TABLE app.USERS (
 );
 
 -- Người giám hộ
-CREATE TABLE guardian (
+CREATE TABLE app.guardian (
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 
     full_name VARCHAR2(255) NOT NULL,
@@ -16,15 +16,12 @@ CREATE TABLE guardian (
     phone VARCHAR2(15) NOT NULL,
     email VARCHAR2(255),
 
-    created_at DATE DEFAULT SYSDATE,
-
-    CONSTRAINT uq_guardian_identity UNIQUE (identity_number),
-    CONSTRAINT uq_guardian_phone UNIQUE (phone)
+    created_at DATE DEFAULT SYSDATE
 );
 
 
 -- Hồ sơ bệnh nhân --
-CREATE TABLE patient (
+CREATE TABLE app.patient (
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 
     full_name VARCHAR2(255) NOT NULL,
@@ -46,20 +43,27 @@ CREATE TABLE patient (
     relation VARCHAR2(50),
 
     guardian_id NUMBER,
+    user_id NUMBER NOT NULL, -- 🔥 thêm user_id
 
     is_deleted NUMBER(1) DEFAULT 0 CHECK (is_deleted IN (0,1)),
 
     created_at DATE DEFAULT SYSDATE,
 
     -- 🔥 constraints
-    CONSTRAINT uq_patient_identity UNIQUE (identity_number),
     CONSTRAINT fk_patient_guardian 
         FOREIGN KEY (guardian_id) 
-        REFERENCES guardian(id)
+        REFERENCES guardian(id),
+
+    CONSTRAINT fk_patient_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
 );
 
 CREATE INDEX idx_patient_phone ON app.patient(phone);
 CREATE INDEX idx_patient_guardian ON app.patient(guardian_id);
+CREATE INDEX idx_patient_user ON app.patient(user_id);
+
+DROP TABLE app.patient CASCADE CONSTRAINTS;
 
 CREATE TABLE app.PAYMENTS (
     PAYMENT_ID      NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

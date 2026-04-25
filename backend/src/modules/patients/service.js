@@ -42,6 +42,9 @@ export const createPatient = async (rawData, userId) => {
     const age = getAge(data.dob);
 
     if (age < 18) {
+      if (!data.guardian) {
+        throw new Error("Guardian required");
+      }
       const guardian = await repo.findGuardianByCCCD(
         data.guardian.identity_number
       );
@@ -72,8 +75,32 @@ export const updatePatient = async (id, rawData, userId) => {
 
   const data = mapPatientDTO(rawData);
 
-  await repo.updatePatient(id, data);
+  let guardianId = null;
+  const age = getAge(data.dob);
 
+  // 🔥 xử lý guardian giống create
+  if (age < 18) {
+    if (!data.guardian) {
+      throw new Error("Guardian required");
+    }
+
+    const guardian = await repo.findGuardianByCCCD(
+      data.guardian.identity_number
+    );
+
+    if (guardian) {
+      guardianId = guardian.ID;
+    } else {
+      guardianId = await repo.createGuardian(null, data.guardian);
+    }
+  }
+
+  await repo.updatePatient(id, {
+    ...data,
+    guardian_id: guardianId,
+  });
+
+  // 🔥 invalidate cache
   await redis.del(`patient:${userId}:${id}`);
 };
 

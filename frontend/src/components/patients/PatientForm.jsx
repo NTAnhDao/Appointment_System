@@ -1,33 +1,89 @@
 import { useState, useEffect } from "react";
 import "./patientsForm.css";
+import Select from "react-select"
+import ethnicities from "./ethnicities.json"
+import {createPatientAPI, updatePatientAPI } from "../../services/patientService.js"  
+import { toast } from "react-toastify"
 
-export default function PatientForm({ mode = "create", initialData = {}, onSubmit }) {
+
+export default function PatientForm({ selectedPatient, onSuccess }) {
+  const isEdit = !!selectedPatient
   const [form, setForm] = useState({
-    relation: "",
-    full_name: "",
-    gender: "male",
-    dob: "",
-    identity_number: "",
-    phone: "",
-    email: "",
-    job: "",
-    ethnicity: "",
-    province: "",
-    ward: "",
-    address_detail: "",
-    guardian: {
+      relation: "self",
       full_name: "",
+      gender: "male",
+      dob: "",
       identity_number: "",
       phone: "",
       email: "",
-    },
-  });
-
+      job: "",
+      ethnicity: "",
+      province: "",
+      ward: "",
+      address_detail: "",
+      guardian: {
+        full_name: "",
+        identity_number: "",
+        phone: "",
+        email: "",
+      },
+    })
   useEffect(() => {
-    if (mode === "edit" && initialData) {
-      setForm(initialData);
+    if (selectedPatient) {
+      setForm({
+        relation: selectedPatient.RELATION || "self",
+        full_name: selectedPatient.FULL_NAME || "",
+        gender: selectedPatient.GENDER || "male",
+        dob: selectedPatient.DOB?.split("T")[0] || "",
+        identity_number: selectedPatient.IDENTITY_NUMBER || "",
+        phone: selectedPatient.PHONE || "",
+        email: selectedPatient.EMAIL || "",
+        job: selectedPatient.JOB || "",
+        ethnicity: selectedPatient.ETHNICITY || "",
+        province: selectedPatient.PROVINCE || "",
+        ward: selectedPatient.WARD || "",
+        address_detail: selectedPatient.ADDRESS_DETAIL || "",
+        guardian: {
+          full_name: "",
+          identity_number: "",
+          phone: "",
+          email: "",
+        }
+      })
+
+      // nếu là người thân thì bật dropdown
+      if (selectedPatient.RELATION !== "self") {
+        setShowRelative(true)
+      }else{
+        setShowRelative(false)
+      }
+
+    } else {
+      // CREATE MODE (reset form)
+      setForm({
+        relation: "self",
+        full_name: "",
+        gender: "male",
+        dob: "",
+        identity_number: "",
+        phone: "",
+        email: "",
+        job: "",
+        ethnicity: "",
+        province: "",
+        ward: "",
+        address_detail: "",
+        guardian: {
+          full_name: "",
+          identity_number: "",
+          phone: "",
+          email: "",
+        }
+      })
+
+      setShowRelative(false)
     }
-  }, [initialData, mode]);
+  }, [selectedPatient])
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,10 +99,87 @@ export default function PatientForm({ mode = "create", initialData = {}, onSubmi
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(form);
-  };
+  const [provinces, setProvinces] = useState([])
+  const [communes, setCommunes] = useState([])
+  const [provinceId, setProvinceId] = useState("")
+  const [showRelative, setShowRelative] = useState(false)
+
+  useEffect(() => {
+      fetch("http://localhost:5000/api/locations/provinces")
+      .then(res => res.json())
+      .then(data => {
+        setProvinces(data)
+      })
+  }, [])
+
+  useEffect(() => {
+    if (form.province) {
+      fetch(`http://localhost:5000/api/locations/communes/${form.province}`)
+        .then(res => res.json())
+        .then(setCommunes)
+    }
+  }, [form.province])
+
+  const handleProvinceChange = (id) => {
+    setProvinceId(id)
+    setForm({
+      ...form,
+      province: id,   
+      ward: ""        // reset xã
+    })
+
+    fetch(`http://localhost:5000/api/locations/communes/${id}`)  
+      .then(res => res.json())
+      .then(data => {
+        setCommunes(data)
+      })
+  }
+  const communeOptions = communes.map(c => ({
+    value: c.idCommune,
+    label: c.name
+  }))
+  const relationOptions = [
+    { value: "grandfather", label: "Ông" },
+    { value: "grandmother", label: "Bà" },
+    { value: "father", label: "Cha" },
+    { value: "mother", label: "Mẹ" },
+    { value: "husband", label: "Chồng" },
+    { value: "wife", label: "Vợ" },
+    { value: "brother", label: "Anh/Em trai" },
+    { value: "sister", label: "Chị/Em gái" },
+    { value: "child", label: "Con" },
+    { value: "grandchild", label: "Cháu" },
+    { value: "other", label: "Khác" }
+  ]
+
+  const selectedOption = relationOptions.find(
+    o => o.value === form.relation
+  )
+  const ethnicOptions = ethnicities.map(e => ({
+    value: e,
+    label: e
+  }))
+
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    try {
+      if (isEdit) {
+        await updatePatientAPI(selectedPatient.ID, form)
+        toast.success("Cập nhật thành công!")
+      } else {
+        await createPatientAPI(form)
+        toast.success("Tạo hồ sơ thành công!")
+      }
+
+      onSuccess?.()
+
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Có lỗi xảy ra")
+      console.log(err)
+    }
+  }
 
   const isMinor =
     new Date().getFullYear() - new Date(form.dob).getFullYear() < 18;
@@ -54,7 +187,7 @@ export default function PatientForm({ mode = "create", initialData = {}, onSubmi
   return (
     <form onSubmit={handleSubmit} className="pf-container">
       <h3 className="pf-title">
-        {mode === "create" ? "Tạo hồ sơ" : "Chỉnh sửa hồ sơ"}
+        {isEdit ? "Chỉnh sửa hồ sơ" : "Tạo hồ sơ"}
       </h3>
 
       {/* Quan hệ */}
@@ -63,20 +196,43 @@ export default function PatientForm({ mode = "create", initialData = {}, onSubmi
             <span className="material-symbols-outlined">family_restroom</span>
              Quan hệ hồ sơ</h5>
         <div className="pf-grid-2">
-          <select
-            name="relation"
-            value={form.relation}
-            onChange={handleChange}
-            className="pf-input"
-          >
-            <option value="">Chọn</option>
-            <option value="self">Bản thân</option>
-            <option value="child">Con</option>
-          </select>
 
-          <select className="pf-input">
-            <option>Con</option>
-          </select>
+          <div className="relation-group">
+            <button
+              type="button"
+              className={!showRelative ? "active" : ""}
+              onClick={() => {
+                setForm({ ...form, relation: "self" })
+                setShowRelative(false)
+              }}
+            >
+              Bản thân
+            </button>
+
+            <button
+              type="button"
+              className={showRelative ? "active" : ""}
+              onClick={() => setShowRelative(true)}
+            >
+              Người thân
+            </button>
+          </div>
+
+          {/* DROPDOWN */}
+          {showRelative && (
+            <Select
+              classNamePrefix="custom-select"
+              options={relationOptions}
+              value={relationOptions.find(o => o.value === form.relation)}
+              onChange={(selected) =>
+                setForm({
+                  ...form,
+                  relation: selected.value  
+                })
+              }
+              placeholder="Chọn quan hệ..."
+            />
+          )}
         </div>
       </div>
 
@@ -157,12 +313,38 @@ export default function PatientForm({ mode = "create", initialData = {}, onSubmi
 
             {/* Email */}
             <div className="field">
-            <label>Email</label>
+            <label className="required">Email</label>
             <input
                 name="email"
                 value={form.email}
                 onChange={handleChange}
                 className="pf-input"
+            />
+            </div>
+
+            {/* Nghề nghiệp */}
+            <div className="field">
+            <label className="required">Nghề nghiệp </label>
+            <input
+                name="job"
+                value={form.job}
+                onChange={handleChange}
+                className="pf-input"
+            />
+            </div>
+
+            {/* Dân tộc */}
+            <div className="field">
+            <label className="required">Dân tộc</label>
+            <Select 
+              classNamePrefix="custom-select"
+              options={ethnicOptions}
+              value={ethnicOptions.find(o => o.value === form.ethnicity)}
+              onChange={(selected) =>
+                setForm({ ...form, ethnicity: selected?.value || "" })
+              }
+              placeholder="Chọn dân tộc..."
+              isSearchable
             />
             </div>
 
@@ -174,29 +356,39 @@ export default function PatientForm({ mode = "create", initialData = {}, onSubmi
             <span className="material-symbols-outlined">location_on</span>
              Địa chỉ thường trú</h5>
 
-        <div className="pf-grid-2">
-            <div className="field">
-                <label className="required">Tỉnh/TP </label>
-                <input
-                name="province"
-                value={form.province}
-                onChange={handleChange}
-                placeholder="Tỉnh/TP"
-                className="pf-input"
-                />
-            </div>
-           <div className="field">
-                <label className="required">Tỉnh/TP </label>
-
-            <input
-                name="ward"
-                value={form.ward}
-                onChange={handleChange}
-                placeholder="Xã/Phường"
-                className="pf-input "
-            />
-            </div>
+       <div className="pf-grid-2">
+        {/* PROVINCE */}
+        <div className="field">
+          <label className="required">Tỉnh/TP</label>
+          <Select
+            classNamePrefix="custom-select"
+            options={provinces.map(p => ({
+              value: p.idProvince,
+              label: p.name
+            }))}
+            value={provinces
+              .map(p => ({ value: p.idProvince, label: p.name }))
+              .find(p => p.value === form.province)}
+            onChange={(selected) => handleProvinceChange(selected.value)}
+            placeholder="Chọn tỉnh/TP..."
+          />
         </div>
+
+        {/* COMMUNE */}
+        <div className="field">
+          <label className="required">Xã/Phường</label>
+          <Select
+            classNamePrefix="custom-select"
+            options={communeOptions}
+            value={communeOptions.find(c => c.value === form.ward) || null}
+            onChange={(selected) =>
+              setForm({ ...form, ward: selected.value })
+            }
+            placeholder="Chọn xã/phường..."
+            isDisabled={!form.province}
+          />
+        </div>
+      </div>
 
         <div className="field full-width">
             <label className="required mt-3">Địa chỉ chi tiết </label>
@@ -228,7 +420,7 @@ export default function PatientForm({ mode = "create", initialData = {}, onSubmi
 
           <div className="guardian-grid">
             <div className="field">
-              <label>Họ tên *</label>
+              <label className="required">Họ tên </label>
               <input
                 name="guardian.full_name"
                 value={form.guardian.full_name}
@@ -238,7 +430,7 @@ export default function PatientForm({ mode = "create", initialData = {}, onSubmi
             </div>
 
             <div className="field">
-              <label>CCCD *</label>
+              <label className="required">CCCD </label>
               <input
                 name="guardian.identity_number"
                 value={form.guardian.identity_number}
@@ -248,7 +440,7 @@ export default function PatientForm({ mode = "create", initialData = {}, onSubmi
             </div>
 
             <div className="field">
-              <label>SĐT *</label>
+              <label className="required">SĐT </label>
               <input
                 name="guardian.phone"
                 value={form.guardian.phone}
@@ -258,7 +450,7 @@ export default function PatientForm({ mode = "create", initialData = {}, onSubmi
             </div>
 
             <div className="field">
-              <label>Email</label>
+              <label className="required">Email</label>
               <input
                 name="guardian.email"
                 value={form.guardian.email}
@@ -276,8 +468,8 @@ export default function PatientForm({ mode = "create", initialData = {}, onSubmi
           Hủy
         </button>
 
-        <button type="submit" className="btn primary">
-          {mode === "create" ? "Tạo hồ sơ" : "Lưu thay đổi"}
+        <button type="submit" className="btn btn-primary">
+          {isEdit ? "Cập nhật hồ sơ" : "Tạo hồ sơ"}
         </button>
       </div>
     </form>

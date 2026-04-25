@@ -23,7 +23,7 @@ export default function Step4_Payment() {
 
         {/* LEFT */}
         <div className="col-md-8">
-          <div className="payment-container p-4 mb-4">
+          <div className="paymentmethod-container p-4 mb-4">
             <h4 className="payment-title mb-1">Phương thức thanh toán</h4>
             <p className="text-muted mb-4">
               Chọn cách thanh toán phù hợp cho lịch khám

@@ -1,4 +1,5 @@
 import { execute } from "../../config/db.oracle.js";
+import oracledb from "oracledb";
 
 export const getPatientsByUser = async (userId) => {
   const result = await execute(
@@ -27,23 +28,79 @@ export const findPatientById = async (id, userId) => {
 };
 
 export const insertPatient = async (conn, data) => {
-  await conn.execute(
+  const { guardian, ...cleanData } = data; // remove object
+
+  const result = await conn.execute(
     `INSERT INTO patient (
-      full_name, gender, dob, identity_number, phone,
-      province, ward, address_detail, guardian_id, created_at
+      full_name,
+      gender,
+      dob,
+      identity_number,
+      bhyt,
+      phone,
+      email,
+      province,
+      ward,
+      address_detail,
+      job,
+      ethnicity,
+      relation,
+      guardian_id,
+      user_id
     )
     VALUES (
-      :full_name, :gender, :dob, :identity_number, :phone,
-      :province, :ward, :address_detail, :guardian_id, SYSDATE
-    )`,
-    data
+      :full_name,
+      :gender,
+      :dob,
+      :identity_number,
+      :bhyt,
+      :phone,
+      :email,
+      :province,
+      :ward,
+      :address_detail,
+      :job,
+      :ethnicity,
+      :relation,
+      :guardian_id,
+      :user_id
+    )
+    RETURNING id INTO :id`,
+    {
+      ...cleanData,
+      guardian_id: data.guardian_id || null,
+      user_id: data.user_id || null,
+      id: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER }
+    }
   );
+
+  return result.outBinds.id[0];
 };
 
 export const updatePatient = async (id, data) => {
+  const { guardian, ...cleanData } = data;
   await execute(
-    `UPDATE patient SET full_name=:full_name WHERE id=:id`,
-    { ...data, id },
+    `UPDATE patient SET
+      full_name = :full_name,
+      gender = :gender,
+      dob = :dob,
+      identity_number = :identity_number,
+      bhyt = :bhyt,
+      phone = :phone,
+      email = :email,
+      province = :province,
+      ward = :ward,
+      address_detail = :address_detail,
+      job = :job,
+      ethnicity = :ethnicity,
+      relation = :relation,
+      guardian_id = :guardian_id
+    WHERE id = :id`,
+    {
+      ...cleanData, 
+      guardian_id: data.guardian_id || null,
+      id
+    },
     { autoCommit: true }
   );
 };

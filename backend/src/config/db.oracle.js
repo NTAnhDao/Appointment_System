@@ -12,6 +12,8 @@ export async function initialize() {
   const maxRetries = 5;
   let attempt = 0;
 
+  // console.log("ENV:", process.env.DB_CONNECT_STRING);
+
   while (attempt < maxRetries) {
     try {
       pool = await oracledb.createPool({
