@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 
-export default function DoctorCard({ doctor }) {
+export default function DoctorCard({ doctor, onSelectDoctor }) {
     const nav = useNavigate();
     
     return (
@@ -15,7 +15,7 @@ export default function DoctorCard({ doctor }) {
 
                     <div>
                         <h5 className="fw-bold text-primary-customer">
-                            {doctor.name}
+                            {doctor.title}. {doctor.name}
                         </h5>
 
                         <p className="text-sub">{doctor.specialty}</p>
@@ -52,11 +52,11 @@ export default function DoctorCard({ doctor }) {
                     </div>
 
                     <div className="d-flex gap-2 mt-3">
-                        <button className="btn btn-book">
+                        <button className="btn btn-book" onClick={() => onSelectDoctor(doctor)}>
                             Đặt lịch ngay
                         </button>
 
-                        <button className="btn btn-seen" onClick={() => nav(`/doctors/1`)}>
+                        <button className="btn btn-seen" onClick={() => nav(`/doctors/${doctor.id}`)}>
                             Xem hồ sơ
                         </button>
                     </div>

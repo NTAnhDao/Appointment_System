@@ -5,6 +5,8 @@ import paymentVnpayRoutes from "../modules/payment/vnpay/routes.js";
 import paymentMomoRoutes from "../modules/payment/momo/routes.js";
 import patientRoutes from "../modules/patients/routes.js";
 import locationRoutes from "../modules/location/routes.js";
+import departmentRoutes from "../modules/departments/routes.js";
+import doctorRoutes from "../modules/doctor/routes.js";
 
 const router = express.Router();
 
@@ -18,5 +20,7 @@ router.use("/payments/vnpay", paymentVnpayRoutes);
 router.use("/payments/momo", paymentMomoRoutes )
 router.use("/patients", patientRoutes);
 router.use("/locations", locationRoutes);
+router.use("/departments", departmentRoutes);
+router.use("/doctors", doctorRoutes);
 
 export default router;

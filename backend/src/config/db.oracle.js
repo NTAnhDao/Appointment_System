@@ -17,9 +17,9 @@ export async function initialize() {
   while (attempt < maxRetries) {
     try {
       pool = await oracledb.createPool({
-        user: process.env.DB_USER || "system",
-        password: process.env.DB_PASSWORD || "123456",
-        connectString: process.env.DB_CONNECT_STRING || "oracle:1521/XEPDB1",
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        connectString: process.env.DB_CONNECT_STRING,
 
         poolMin: 2,
         poolMax: 10,

@@ -8,11 +8,13 @@ services:
     depends_on:
       - oracle
       - redis
+      - mongo
     environment:
       DB_USER: app
       DB_PASSWORD: 123456
       DB_CONNECT_STRING: oracle:1521/XEPDB1
       JWT_SECRET: abc123
+      MONGO_URI: mongodb://mongo:27017/hospital_db
 
   frontend:
     build:
@@ -32,6 +34,8 @@ services:
     image: mongo
     ports:
       - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
       
   oracle:
     image: gvenzl/oracle-xe
@@ -47,5 +51,7 @@ services:
     image: redis
     ports:
       - "6379:6379"
+      
 volumes:
   oracle-data:
+  mongo-data:
