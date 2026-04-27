@@ -57,6 +57,30 @@ class PaymentService {
     return status;
   }
 
+  async handleQRUpdate(body) {
+    const order_id = body.orderId;
+    
+    // Mặc định gọi API này là quét thành công
+    const status = "SUCCESS"; 
+
+    await PaymentRepository.updateStatus(order_id, status);
+    console.log(`[Service] Đơn QR ${order_id} đã cập nhật ${status} vào DB!`);
+
+    return status;
+  }
+
+  // 🔹 Kiểm tra trạng thái QR Code (Dành cho Polling của Laptop)
+  async checkQRStatus(orderId) {
+    const result = await PaymentRepository.findByOrderId(orderId);
+    if (result && result.rows && result.rows.length > 0) {
+      return result.rows[0].STATUS || result.rows[0].status; 
+    }
+    
+    return "NOT_FOUND";
+  }
+
 }
+
+
 
 export default new PaymentService();
