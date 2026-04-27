@@ -27,3 +27,31 @@ export async function getDoctorDetail(id) {
     return mapDoctorDetail(doctor, profile);
 }
 
+export async function getScheduleByDoctor(doctorId, fromDate, toDate) {
+  const rows = await sqlRepo.findSchedule(doctorId, fromDate, toDate);
+
+  const grouped = {};
+
+  rows.forEach((row) => {
+    const dateKey = row.WORK_DATE;
+
+    if (!grouped[dateKey]) {
+      grouped[dateKey] = {
+        date: dateKey,
+        day: row.DAY,
+        weekday: row.WEEKDAY,
+        slots: [],
+      };
+    }
+
+    grouped[dateKey].slots.push({
+      schedule_id: row.SCHEDULE_ID,
+      time: row.START_TIME,
+      end_time: row.END_TIME,
+      available: row.BOOKED_COUNT < row.MAX_PATIENTS,
+      status: row.STATUS,
+    });
+  });
+
+  return Object.values(grouped);
+}

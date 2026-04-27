@@ -4,13 +4,20 @@ import MainLayout from "../components/layout/MainLayout";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getDoctorDetailAPI } from "../services/DoctorService";
+import { useBooking } from "../context/BookingContext";
 import "../styles/doctor.css";
 
 export default function DoctorDetail() {
     const navigate = useNavigate();
     const { id } = useParams();
+    const { setStep,setBookingData } = useBooking();
 
     const [doctor, setDoctor] = useState(null);
+    const handleSelectDoctor = (doctor) => {
+        setBookingData(prev => ({ ...prev, doctor }));
+        setStep(2);
+        navigate("/booking");
+    };
 
     useEffect(() => {
         async function fetchDoctor() {
@@ -39,7 +46,7 @@ export default function DoctorDetail() {
                     Quay lại
                 </button>
 
-                <DoctorProfile doctor={doctor} />
+                <DoctorProfile doctor={doctor} onSelectDoctor={handleSelectDoctor} />
 
                 <DoctorInfo doctor={doctor} />
 

@@ -27,3 +27,13 @@ export const getDepartmentsAPI = async () => {
         throw err;
     }
 };
+
+export const getDoctorSchedulesAPI = async (doctorId, from, to) => {
+    try {
+        const res = await api.get(`/doctors/schedules/${doctorId}?from=${from}&to=${to}`);
+        return res.data;
+    } catch (err) {
+        console.error("❌ getDoctorSchedulesAPI error:", err);
+        throw err;
+    }
+};

@@ -1,4 +1,4 @@
-export default function DoctorProfile({ doctor }) {
+export default function DoctorProfile({ doctor, onSelectDoctor }) {
     return (
         <div className="card p-4 mb-4">
             <div className="row g-4">
@@ -34,7 +34,20 @@ export default function DoctorProfile({ doctor }) {
                     <p>
                         {doctor.description}
                     </p>
-                    <button className="btn btn-book">
+
+                    <div className="col-6 d-flex gap-2">
+                        <div className="icon-box">
+                            <span className="material-symbols-outlined">payments</span>
+                        </div>
+
+                        <div>
+                            <p className="mb-0 small">PHÍ KHÁM</p>
+                            <div className="fw-bold text-primary-customer">{Number(doctor.price).toLocaleString()} VNĐ</div>
+                        </div>
+
+                    </div>
+
+                    <button className="btn btn-book" onClick={() => onSelectDoctor(doctor)}>
                         Đặt lịch ngay
                     </button>
                 </div>

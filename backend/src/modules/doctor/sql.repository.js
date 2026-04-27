@@ -76,3 +76,31 @@ export async function findDoctors() {
         throw err;
     }
 }
+
+export async function findSchedule(doctorId, fromDate, toDate) {
+    const sql = `
+            SELECT 
+                schedule_id,
+                work_date,
+                TO_CHAR(work_date, 'DD') AS day,
+                TO_CHAR(work_date, 'DY', 'NLS_DATE_LANGUAGE=VIETNAMESE') AS weekday,
+                TO_CHAR(start_time, 'HH24:MI') AS start_time,
+                TO_CHAR(end_time, 'HH24:MI') AS end_time,
+                max_patients,
+                booked_count,
+                status
+            FROM app.schedule
+            WHERE doctor_id = :doctorId
+            AND work_date BETWEEN TO_DATE(:fromDate, 'YYYY-MM-DD') 
+                                AND TO_DATE(:toDate, 'YYYY-MM-DD')
+            ORDER BY work_date, start_time
+        `;
+
+    const result = await execute(sql, {
+        doctorId,
+        fromDate,
+        toDate,
+    });
+
+    return result.rows;
+}

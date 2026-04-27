@@ -3,7 +3,7 @@ import Home from "../pages/Home";
 import BookingPage from "../pages/Booking/BookingPage";
 import AppointmentPage from "../pages/AppointmentPage.jsx";
 import PatientsPage from "../pages/PatientsPage.jsx";
-import Doctor from "../pages/Doctor.jsx";``
+import Doctor from "../pages/Doctor.jsx";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import PaymentSuccessPage from "../pages/PaymentSuccessPage.jsx";

@@ -47,6 +47,12 @@
   color: white;
 }
 
+.date-item-wrapper.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
 /* Time button */
 .time-btn {
   padding: 8px 14px;

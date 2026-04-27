@@ -43,7 +43,7 @@ export default function DoctorCard({ doctor, onSelectDoctor }) {
                             
                                 <div>
                                     <p className="mb-0 small">PHÍ KHÁM</p>
-                                    <div className="fw-bold text-primary-customer">{doctor.price}</div>
+                                    <div className="fw-bold text-primary-customer">{Number(doctor.price).toLocaleString()} VNĐ</div>
                                 </div>
                                 
                             </div>

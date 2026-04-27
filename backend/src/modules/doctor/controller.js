@@ -20,3 +20,25 @@ export async function getDoctorDetail(req, res) {
     }
 }
 
+export async function getSchedules(req, res) {
+    try {
+        const { doctorId } = req.params;
+        const { from, to } = req.query;
+
+        if (!doctorId || !from || !to) {
+            return res.status(400).json({
+                message: "Missing doctorId or date range",
+            });
+        }
+
+        const data = await doctorService.getScheduleByDoctor(doctorId, from, to);
+
+        res.json(data);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: "Internal server error",
+        });
+    }
+}
+

@@ -4,6 +4,7 @@ import { useBooking } from "../../../context/BookingContext";
 export default function Step4_Payment() {
   const { bookingData, nextStep, prevStep } = useBooking();
   const [method, setMethod] = useState("vnpay");
+  const doctor = bookingData.doctor || {};
 
   const methods = [
     { id: "vnpay", title: "Ví VNPay", desc: "Thanh toán qua VNPay" },
@@ -15,6 +16,13 @@ export default function Step4_Payment() {
   const handlePayment = () => {
     console.log("PAY:", bookingData, method);
     nextStep();
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+
+    return d.toLocaleDateString("vi-VN"); 
   };
 
   return (
@@ -77,11 +85,11 @@ export default function Step4_Payment() {
 
             {/* Doctor */}
             <div className="d-flex align-items-center gap-2 mb-3">
-              <img src="https://i.pravatar.cc/50" className="summary-avatar" />
+              <img src={doctor.image || "https://i.pravatar.cc/50"} className="summary-avatar" />
               <div>
                 <div className="small text-uppercase opacity-75">Bác sĩ</div>
-                <div className="fw-semibold">BS. Nguyễn Văn A</div>
-                <small>Tim mạch</small>
+                <div className="fw-semibold">{doctor.name || ""}</div>
+                <small>{doctor.specialty || ""}</small>
               </div>
             </div>
 
@@ -95,7 +103,7 @@ export default function Step4_Payment() {
                 </div>
                 <span>Ngày</span>
               </div>
-              <strong>24/10/2024</strong>
+              <strong>{formatDate(bookingData.date) || ""}</strong>
             </div>
 
             <div className="summary-row-pro">
@@ -105,7 +113,7 @@ export default function Step4_Payment() {
                 </div>
                 <span>Giờ</span>
               </div>
-              <strong>10:30</strong>
+              <strong>{bookingData.time || "10:30"}</strong>
             </div>
 
             <div className="summary-row-pro">
@@ -115,7 +123,7 @@ export default function Step4_Payment() {
                 </div>
                 <span>Bệnh nhân</span>
               </div>
-              <strong>Nguyễn Văn A</strong>
+              <strong>{bookingData.patient.name || "Nguyễn Văn A"}</strong>
             </div>
 
             <hr className="opacity-25" />
@@ -123,7 +131,7 @@ export default function Step4_Payment() {
             {/* Price */}
             <div className="summary-row-pro">
               <span>Phí khám</span>
-              <span>500.000đ</span>
+              <span>{doctor.price ? doctor.price.toLocaleString() : "0" }đ</span>
             </div>
 
             <div className="summary-row-pro">
