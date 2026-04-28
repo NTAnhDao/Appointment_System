@@ -86,10 +86,8 @@ export default function Step4_Payment() {
       try {
       // 1. Gọi API tạo appointment
       const res = await createAppointmentAPI({
-        doctor_id: bookingData.doctor.doctor_id,
-        schedule_id: bookingData.scheduleId,
-        patient_id: bookingData.patient.patient_id,
-        payment_method: method,
+        schedule_id: bookingData.schedule_id,
+        patient_id: bookingData.patientId
       });
 
       const data = await res.json();
