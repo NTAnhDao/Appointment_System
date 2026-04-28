@@ -4,8 +4,13 @@ import MainLayout from "../components/layout/MainLayout";
 import '../styles/payments.css';
 
 export default function PaymentSuccessPage() {
-  const [searchParams] = useSearchParams();
   const nav = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isVnpay = searchParams.get('vnp_ResponseCode') !== null;
+  const isMomo = searchParams.get('resultCode') !== null;
+  const isQR = searchParams.get('method') === 'qr';
+  const isCash = searchParams.get('method') === 'cash';
+  
 
   const [payment, setPayment] = useState({
     success: false,
@@ -18,8 +23,7 @@ export default function PaymentSuccessPage() {
   });
 
   useEffect(() => {
-    const isVnpay = searchParams.get('vnp_ResponseCode') !== null;
-    const isMomo = searchParams.get('resultCode') !== null;
+    
 
     let data = {
       success: false,
@@ -43,7 +47,7 @@ export default function PaymentSuccessPage() {
 
       const success = responseCode === '00' && transactionStatus === '00';
 
-      fetch("http://localhost:5000/api/v1/payments/vnpay/update", {
+      fetch("http://localhost:5000/api/payments/vnpay/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -77,7 +81,7 @@ export default function PaymentSuccessPage() {
 
       const success = resultCode === '0';
 
-      fetch("http://localhost:5000/api/v1/payments/momo/update", {
+      fetch("http://localhost:5000/api/payments/momo/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -103,11 +107,49 @@ export default function PaymentSuccessPage() {
           : 'Đặt lịch khám thất bại!'
       };
     }
+// ===== QR CODE =====
+    if (isQR) {
+      const orderId = searchParams.get('orderId');
+      const amountStr = searchParams.get('amount');
+      const statusStr = searchParams.get('status');
+      const isLaptop = searchParams.get('isLaptop') === 'true'; // Kiểm tra xem ai đang mở trang này
+      const success = statusStr === 'success' || isLaptop;
+
+      data = {
+        success,
+        amount: parseInt(amountStr || 0),
+        orderInfo: 'Thanh toán quét mã QR',
+        txnRef: orderId || '',
+        bankCode: 'QR_BANK',
+        payDate: new Date().getTime(), 
+        message: success ? 'Đặt lịch thành công!' : 'Đặt lịch thất bại!'
+      };
+    }
+
+    // ===== CASH =====
+
+    if (isCash) {
+      const orderId = searchParams.get('orderId');
+      const amountStr = searchParams.get('amount');
+      const statusStr = searchParams.get('status');
+      const success = statusStr === 'success';
+
+      data = {
+        success,
+        amount: parseInt(amountStr || 0),
+        orderInfo: 'Thanh toán tại quầy',
+        txnRef: orderId || '',
+        bankCode: 'TẠI VIỆN',
+        payDate: new Date().getTime(), 
+        message: success ? 'Đặt lịch thành công!' : 'Đặt lịch thất bại!'
+      };
+    }
 
     setPayment(data);
 
   }, [searchParams]);
 
+  
   const { success, amount, orderInfo, txnRef, bankCode, payDate, message } = payment;
 
   // ===== FORMAT DATE =====
@@ -329,7 +371,10 @@ export default function PaymentSuccessPage() {
 
               <div className="payment-row">
                 <span className="payment-label">Trạng thái thanh toán:</span>
-                <span className="payment-value">{success ? "Thành công" : "Thất bại"}</span>
+                  <span className="payment-value">{isCash 
+                    ? "Chờ thanh toán (Tại quầy)" 
+                    : (success ? "Thành công" : "Thất bại")
+                  }</span>
               </div>
             </div>
 

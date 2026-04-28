@@ -258,15 +258,35 @@
 }
 /* Custom radio */
 .radio-custom {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   border: 2px solid #ccc;
+  position: relative;
 }
 
 .radio-custom.checked {
   border-color: var(--primary);
   background: white ;
+}
+
+.radio-custom::after {
+  content: "";
+  display: none; 
+  width: 11px;  
+  height: 11px;
+  background-color: var(--primary); 
+  border-radius: 50%; 
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Hiển thị chấm tròn khi có class .checked */
+.radio-custom.checked::after {
+  display: block;
 }
 
 /* Secure */
@@ -344,21 +364,39 @@
   border-radius: 12px;
   padding: 10px 22px;
   display: flex;
-  align-items: center;
-  font-weight: 500;
+  
   box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
   transition: all 0.25s ease;
   background: var(--primary);
   color: white;
 }
 
-.btn-pay:hover {
+.btn-pay:hover {align-items: center;
+  font-weight: 500;
   background: var(--blue-800);
     box-shadow: 0 6px 18px rgba(13, 110, 253, 0.4);
     transform: translateY(-1px);
     color:white;
 }
+
+
+.btn-choose-method{
+  align-items: center;
+  font-weight: 500;
+  border-radius: 12px;
+  padding: 10px 22px;
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+}
+.btn-choose-method:hover {
+  background: var(--blue-800);
+  color: white;
+  box-shadow: 0 6px 18px rgba(13, 110, 253, 0.4);
+  transform: translateY(-1px);
+}
 /* Step 5 */
+
 
 
 /* --------------BACK-NEXT BUTTONS--------------- */
