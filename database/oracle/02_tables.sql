@@ -119,7 +119,7 @@ CREATE TABLE app.appointments (
     user_id NUMBER NOT NULL,
 
     status VARCHAR2(20) DEFAULT 'pending',
-    payment_method VARCHAR2(20),
+    fee NUMBER(10,0),
 
     note VARCHAR2(1000),
 

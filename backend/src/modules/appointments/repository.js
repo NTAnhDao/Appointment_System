@@ -28,6 +28,7 @@ export const insertAppointment = async (conn, data) => {
       schedule_id,
       patient_id,
       user_id,
+      fee,
       note,
       expired_at
     )
@@ -35,6 +36,7 @@ export const insertAppointment = async (conn, data) => {
       :schedule_id,
       :patient_id,
       :user_id,
+      :fee,
       :note,
       CURRENT_TIMESTAMP + INTERVAL '15' MINUTE
     )
@@ -93,6 +95,7 @@ export const getAppointmentsByUser = async (userId) => {
         a.appointment_id,
         a.status,
         a.note,
+        a.fee,
         a.created_at,
         a.expired_at,
 

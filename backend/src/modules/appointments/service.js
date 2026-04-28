@@ -101,7 +101,7 @@ export const getMyAppointments = async (userId) => {
 
     note: item.NOTE || null,
     patient_name: item.PATIENT_NAME || null,
-    fee: item.CONSULTATION_FEE || null,
+    fee: item.FEE || null,
     doctor_image: item.IMAGE_URL || null
   }));
 };
