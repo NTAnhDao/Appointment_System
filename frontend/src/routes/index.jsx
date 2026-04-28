@@ -8,6 +8,7 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import PaymentSuccessPage from "../pages/PaymentSuccessPage.jsx";
 import ConfirmPage from "../pages/ConfirmPage.jsx";
+import AppointmentDetail from "../components/appointment/AppointmentDetail.jsx";
 
 import DoctorDetail from "../pages/DoctorDetail.jsx";
 
@@ -25,6 +26,7 @@ export default function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/success" element={<PaymentSuccessPage />} />
        <Route path="/confirm" element={<ConfirmPage />} />
+      <Route path="/appointments/:id" element={<AppointmentDetail />} />
 
     </Routes>
   );

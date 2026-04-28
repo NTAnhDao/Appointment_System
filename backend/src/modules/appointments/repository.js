@@ -111,12 +111,17 @@ export const getAppointmentsByUser = async (userId) => {
         d.title,
         d.image_url,
 
-        -- department (thay cho specialty ❗)
+        -- department 
         dp.name AS department_name,
         dp.consultation_fee,
 
         -- patient
         p.full_name AS patient_name,
+
+        --payment
+        pay.status AS payment_status,
+        pay.payment_method
+
 
      FROM app.appointments a
 
@@ -131,6 +136,13 @@ export const getAppointmentsByUser = async (userId) => {
 
      JOIN app.patient p 
        ON a.patient_id = p.id
+    
+     LEFT JOIN app.payments pay
+       ON a.appointment_id = pay.appointment_id
+     AND (
+        pay.STATUS = 'paid'
+        OR pay.PAYMENT_METHOD = 'cash'
+     )
 
      WHERE a.user_id = :userId
 

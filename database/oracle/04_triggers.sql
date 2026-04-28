@@ -35,7 +35,7 @@ CREATE OR REPLACE TRIGGER trg_cancel_appointment
 AFTER UPDATE OF status ON app.appointments
 FOR EACH ROW
 BEGIN
-    IF :OLD.status != 'CANCELLED' AND :NEW.status = 'CANCELLED' THEN
+    IF :OLD.status != 'CONFIRMED' AND :NEW.status = 'CANCELLED' THEN
         UPDATE app.schedule
         SET booked_count = booked_count - 1
         WHERE schedule_id = :OLD.schedule_id;
@@ -46,7 +46,7 @@ CREATE OR REPLACE TRIGGER trg_reduce_slot_on_expire
 AFTER UPDATE OF status ON app.appointments
 FOR EACH ROW
 BEGIN
-    IF :OLD.status = 'PENDING' AND :NEW.status = 'EXPIRED' THEN
+    IF :OLD.status = 'PENDING' AND :NEW.status = 'CANCELLED' THEN
         UPDATE app.schedule
         SET booked_count = booked_count - 1
         WHERE schedule_id = :OLD.schedule_id;

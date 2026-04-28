@@ -83,25 +83,23 @@ export default function Step4_Payment() {
   const handlePayment = async () => {
     console.log("PAY:", bookingData, method);
 
-      try {
-      // 1. Gọi API tạo appointment
+    try {
       const res = await createAppointmentAPI({
         schedule_id: bookingData.schedule_id,
         patient_id: bookingData.patientId,
         fee: doctor.price || 0,
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Tạo lịch thất bại");
-      }
-
-      console.log("Appointment created:", data);
+      console.log("Appointment created:", res);
 
     } catch (err) {
-      console.error(err);
-      alert("Lỗi khi tạo lịch khám!");
+      console.error("Create appointment error:", err);
+
+      alert(
+        err.response?.data?.message ||
+        err.message ||
+        "Tạo lịch thất bại"
+      );
     }
 
     if (method === "vnpay") {       // VNPAY

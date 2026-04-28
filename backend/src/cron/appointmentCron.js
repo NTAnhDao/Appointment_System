@@ -13,7 +13,7 @@ export const startAppointmentCron = () => {
         WHERE status = 'pending'
         AND expired_at < CURRENT_TIMESTAMP`,
         {},
-        { autoCommit: true } // 👈 BẮT BUỘC
+        { autoCommit: true } 
         );
 
       console.log(`✅ Expired updated: ${result.rowsAffected}`);

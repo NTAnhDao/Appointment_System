@@ -6,32 +6,7 @@ import "./appointment.css";
 export default function AppointmentList() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const formatDate = (date) => {
-    if (!date) return "";
-    const d = new Date(date);
-    return d.toLocaleDateString("vi-VN");
-  };
-
-  const formatTime = (start, end) => {
-    if (!start || !end) return "";
-    const s = new Date(start).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
-    const e = new Date(end).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
-    return `${s} - ${e}`;
-  };
-
-  const mapStatus = (status) => {
-    switch (status) {
-      case "PENDING":
-        return "pending";
-      case "CONFIRMED":
-        return "paid";
-      case "DONE":
-        return "done";
-      default:
-        return "pending";
-    }
-  };
+  const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,6 +24,18 @@ export default function AppointmentList() {
 
     fetchData();
   }, []);
+  const getFilteredData = () => {
+    if (filter === "all") return data;
+
+    return data.filter((item) => {
+      if (filter === "cancelled") {
+        return item.status === "cancelled";
+      }
+
+      return item.status === filter;
+    });
+  };
+  const filteredData = getFilteredData();
 
   return (
     <div className="container py-4">
@@ -56,13 +43,32 @@ export default function AppointmentList() {
       <p className="text-muted">
         Quản lý các cuộc hẹn khám bệnh của bạn
       </p>
+      <div className="filter-tabs mb-3">
+        {[
+          { key: "all", label: "Tất cả" },
+          { key: "pending", label: "Chờ thanh toán" },
+          { key: "confirmed", label: "Đã xác nhận" },
+          { key: "cancelled", label: "Đã huỷ" },
+        ].map((f) => (
+          <button
+            key={f.key}
+            className={`filter-btn ${filter === f.key ? "active" : ""}`}
+            onClick={() => setFilter(f.key)}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
 
       {loading ? (
         <p>Đang tải...</p>
-      ) : data.length > 0 ? (
-        data.map((item, index) => (
-  <AppointmentCard key={`${item.id}-${index}`} data={item} />
-))
+      ) : filteredData.length > 0 ? (
+        filteredData.map((item) => (
+          <AppointmentCard
+            key={item.id}
+            data={item}
+          />
+        ))
       ) : (
         <p className="text-muted">Không có lịch hẹn</p>
       )}

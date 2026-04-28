@@ -1,9 +1,11 @@
 import StatusBadge from "./StatusBadge";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function AppointmentCard({ data }) {
   const [remaining, setRemaining] = useState("");
   const [isExpired, setIsExpired] = useState(false);
+  const navigate = useNavigate();
 
   const parseExpired = (str) => {
     if (!str) return null;
@@ -44,13 +46,33 @@ export default function AppointmentCard({ data }) {
 
   const displayStatus =
     data.status === "pending" && isExpired
-      ? "expired"
+      ? "cancelled"
       : data.status;
+
+    //  map payment hiển thị
+    const setPayment = (() => {
+      if (data.payment_status === "SUCCESS") {
+        displayStatus = "success";
+      }
+
+      if (data.payment_method === "cash") {
+        displayStatus = "cash"; 
+      }
+
+    })();
 
   return (
     <div
       className={`appointment-card-pro d-flex justify-content-between align-items-center 
-      ${displayStatus === "expired" ? "card-expired" : ""}`}
+      ${
+        displayStatus === "cancelled"
+          ? "card-disabled"
+          : displayStatus === "pending"
+          ? "card-pending"
+          : displayStatus === "confirmed"
+          ? "card-confirmed"
+          : ""
+      }`}
     >
       {/* LEFT */}
       <div className="d-flex align-items-center gap-3">
@@ -106,11 +128,22 @@ export default function AppointmentCard({ data }) {
             </>
           )}
 
-
           {/* DONE */}
-          {displayStatus === "paylater" && (
-            <div className="action-link text-secondary">
-              Chi tiết lịch hẹn 
+          {displayStatus === "confirmed" && (
+            <div
+              className="action-link text-secondary"
+              onClick={() => {
+                sessionStorage.setItem(
+                  `appointment_${data.id}`,
+                  JSON.stringify(data)
+                );
+
+                navigate(`/appointments/${data.id}`, {
+                  state: data,
+                });
+              }}
+            >
+              Chi tiết lịch hẹn →
             </div>
           )}
         </div>

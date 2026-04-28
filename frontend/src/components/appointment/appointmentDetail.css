@@ -1,0 +1,186 @@
+.appointment-detail .back-link {
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 14px;
+}
+.title-detail{
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--primary);
+    margin: 12px 0;
+}
+
+.code {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.info-card {
+  border-radius: 12px;
+  border-left: 4px solid var(--primary);
+  padding: 30px 10px 30px 30px;
+}
+
+.label {
+  font-size: 12px;
+  color: #6c757d;
+  font-weight: 600;
+  margin: 0;
+}
+
+.payment-guide {
+  background: #f1f6fb;
+  border-radius: 12px;
+}
+
+.icon-box {
+  font-size: 24px;
+}
+
+.badge-hospital {
+  background: #d1f2eb;
+  color: #0f766e;
+  padding: 6px 12px;
+  border-radius: 999px;
+  display: inline-block;
+  font-size: 13px;
+}
+
+.qr-box img {
+  width: 140px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.title-guide{
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.payment-icon{
+    color: var(--primary);
+    size: 20px;
+    align-items: center;
+}
+
+.title-qr{
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--primary);
+    text-align: center;
+    margin: 12px 0;
+}
+.fee-box {
+  margin-top: 12px;
+}
+
+.fee-amount {
+  font-size: 18px;
+  font-weight: 600;
+  color: #64c77b;
+}
+
+.qr-card {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+}
+
+/* title */
+.qr-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+/* QR box */
+.qr-wrapper {
+  padding: 15px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+.qr-inner {
+  background: #1e3a4c;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.qr-inner img {
+  width: 120px;
+}
+
+/* note */
+.qr-note {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 12px 0 20px;
+    text-align: center;
+    padding: 0 42px;
+}
+/* button chung */
+.btn-primary-custom,
+.btn-secondary-custom {
+  display: flex;
+  align-items: center;   /* 🔥 canh giữa icon + text */
+  justify-content: center;
+  gap: 8px;              /* 🔥 khoảng cách icon */
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+/* primary */
+.btn-primary-custom {
+  background: #0f4c81;
+  color: white;
+  border: none;
+}
+
+/* secondary */
+.btn-secondary-custom {
+  background: #e5e7eb;
+  color: #374151;
+  border: none;
+}
+
+/* cancel */
+.cancel-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  gap: 6px;
+  color: #dc2626;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* icon */
+.btn-icon {
+  font-size: 18px;
+}
+
+.date-time-box {
+  display: flex;
+  align-items: center;   
+  gap: 8px;
+  min-height: 32px;     
+  font-size: 14px;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.icon-detail {
+  font-size: 18px;
+  color: var(--primary);
+  flex-shrink: 0;       
+}

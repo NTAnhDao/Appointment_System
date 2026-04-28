@@ -85,14 +85,14 @@ export const getMyAppointments = async (userId) => {
 
     // doctor
     doctor: item.TITLE + " " + item.DOCTOR_NAME,
-    specialty: item.DEPARTMENT_NAME, // ✅ FIX
+    specialty: item.DEPARTMENT_NAME, 
 
     // time
     date: formatDate(item.WORK_DATE),
     time: formatTime(item.START_TIME, item.END_TIME),
 
     // meta
-    status: mapStatus(item.STATUS),
+    status: item.STATUS,
 
     // extra
     expired_at: item.EXPIRED_AT
@@ -102,7 +102,10 @@ export const getMyAppointments = async (userId) => {
     note: item.NOTE || null,
     patient_name: item.PATIENT_NAME || null,
     fee: item.FEE || null,
-    doctor_image: item.IMAGE_URL || null
+    doctor_image: item.IMAGE_URL || null,
+
+    payment_status: item.PAYMENT_STATUS || null,
+    payment_method: item.PAYMENT_METHOD || null
   }));
 };
 
@@ -132,15 +135,3 @@ const formatTime = (start, end) => {
   return `${s} - ${e}`;
 };
 
-const mapStatus = (status) => {
-  switch (status) {
-    case "CONFIRMED":
-      return "paid";
-    case "PENDING":
-      return "pending";
-    case "EXPIRED":
-      return "done";
-    default:
-      return "pending";
-  }
-};

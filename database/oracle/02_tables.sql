@@ -19,7 +19,6 @@ CREATE TABLE app.guardian (
     created_at DATE DEFAULT SYSDATE
 );
 
-
 -- Hồ sơ bệnh nhân --
 CREATE TABLE app.patient (
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -43,13 +42,12 @@ CREATE TABLE app.patient (
     relation VARCHAR2(50),
 
     guardian_id NUMBER,
-    user_id NUMBER NOT NULL, -- 🔥 thêm user_id
+    user_id NUMBER NOT NULL,
 
     is_deleted NUMBER(1) DEFAULT 0 CHECK (is_deleted IN (0,1)),
 
     created_at DATE DEFAULT SYSDATE,
 
-    -- 🔥 constraints
     -- constraints
     CONSTRAINT uq_patient_identity UNIQUE (identity_number),
     CONSTRAINT fk_patient_guardian 
@@ -64,9 +62,6 @@ CREATE TABLE app.patient (
 CREATE INDEX idx_patient_phone ON app.patient(phone);
 CREATE INDEX idx_patient_guardian ON app.patient(guardian_id);
 CREATE INDEX idx_patient_user ON app.patient(user_id);
-
-DROP TABLE app.patient CASCADE CONSTRAINTS;
-
 
 -- Chuyên khoa --
 CREATE TABLE app.department (
@@ -155,3 +150,10 @@ CREATE TABLE app.PAYMENTS (
     FOREIGN KEY (APPOINTMENT_ID)
     REFERENCES app.appointments(appointment_id)
 );
+
+DROP TABLE app.patient CASCADE CONSTRAINTS;
+DROP TABLE app.doctor CASCADE CONSTRAINTS;
+DROP TABLE app.department CASCADE CONSTRAINTS;
+DROP TABLE app.schedule CASCADE CONSTRAINTS;
+DROP TABLE app.appointments CASCADE CONSTRAINTS;
+DROP TABLE app.PAYMENTS CASCADE CONSTRAINTS;

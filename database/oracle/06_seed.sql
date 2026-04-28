@@ -4,15 +4,15 @@ VALUES ('Nguyen Van A', '0987654321', 'user1@gmail.com', 'User123@');
 COMMIT;
 
 INSERT INTO app.guardian (full_name, identity_number, phone, email)
-VALUES ('Nguyễn Văn B', '123456789012', '0988888888', 'guardian1@gmail.com');
+VALUES ('Nguyễn Văn B', '223456789012', '0988888888', 'guardian1@gmail.com');
 
 INSERT INTO app.guardian (full_name, identity_number, phone, email)
-VALUES ('Trần Thị C', '123456789013', '0977777777', 'guardian2@gmail.com');
+VALUES ('Trần Thị C', '223456789013', '0977777777', 'guardian2@gmail.com');
 
 INSERT INTO app.patient (
     full_name, gender, dob, identity_number,
     phone, email, province, ward, address_detail,
-    job, ethnicity, relation, guardian_id
+    job, ethnicity, relation, guardian_id, user_id
 ) VALUES (
     'Nguyễn Minh Khôi',
     'male',
@@ -26,6 +26,7 @@ INSERT INTO app.patient (
     'Học sinh',
     'Kinh',
     'Con',
+    1,
     1
 );
 COMMIT;
@@ -153,3 +154,60 @@ BEGIN
     COMMIT;
 END;
 /
+
+INSERT INTO app.appointments (
+    schedule_id,
+    patient_id,
+    user_id,
+    status,
+    fee,
+    note,
+    expired_at
+) VALUES (
+    91,
+    1,
+    1,
+    'pending',
+    200000,
+    'Đặt lịch khám tổng quát',
+    SYSTIMESTAMP + INTERVAL '15' MINUTE-- hết hạn sau 15 phút
+);
+INSERT INTO app.appointments (
+    schedule_id,
+    patient_id,
+    user_id,
+    status,
+    fee,
+    note,
+    expired_at
+) VALUES (
+    2,
+    1,
+    1,
+    'cancelled',
+    150000,
+    'Khách huỷ do bận việc',
+    SYSTIMESTAMP - INTERVAL '1' DAY -- đã hết hạn trước đó
+);
+
+INSERT INTO app.appointments (
+    schedule_id,
+    patient_id,
+    user_id,
+    status,
+    fee,
+    note,
+    expired_at
+) VALUES (
+    3,
+    1,
+    1,
+    'confirmed',
+    300000,
+    'Khám chuyên khoa tim mạch',
+    NULL -- không cần expired vì đã hoàn thành
+);
+
+DELETE FROM app.appointments;
+COMMIT;
+

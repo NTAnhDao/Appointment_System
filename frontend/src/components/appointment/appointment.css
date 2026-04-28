@@ -101,10 +101,10 @@
   color: #d90606;
 }
 
-/* ✔ done */
-.badge-done {
-  background: #e5e7eb;
-  color: #374151;
+/* hospital payment */
+.badge-cash {
+  background-color: #e8f0fe;
+  color: #1a73e8;
 }
 
 /* icon */
@@ -155,20 +155,7 @@
   font-weight: 500;
 }
 
-/* pending */
-.expire-box {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
 
-  background: #fff7ed;
-  color: #ea580c;
-
-  padding: 6px 10px;
-  border-radius: 8px;
-
-  margin-bottom: 8px;
-}
 
 /* button */
 .btn-pay {
@@ -185,9 +172,42 @@
 
 
 
-.card-expired {
+/* trạng thái bị disable (expired + cancelled) */
+.card-disabled {
   opacity: 0.6;
-  filter: grayscale(40%);
-  pointer-events: none; /* ❗ chặn click */
-  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+  pointer-events: none; /* disable click */
+  border-left: 4px solid #9aa0a6;
+}
+
+/* pending (chờ thanh toán) */
+.card-pending {
+  border-left: 4px solid #fbbc04;
+  background-color: #fff8e1;
+}
+
+/* confirmed (đã xác nhận) */
+.card-confirmed {
+  border-left: 4px solid #34a853;
+  background-color: #e6f4ea;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  border: none;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: #f1f3f4;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.filter-btn.active {
+  background: var(--primary);
+  color: white;
 }
