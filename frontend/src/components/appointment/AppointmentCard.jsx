@@ -1,40 +1,77 @@
 import StatusBadge from "./StatusBadge";
+import { useEffect, useState } from "react";
 
 export default function AppointmentCard({ data }) {
-  return (
-    <div className="appointment-card-pro d-flex justify-content-between align-items-center">
+  const [remaining, setRemaining] = useState("");
+  const [isExpired, setIsExpired] = useState(false);
 
+  const parseExpired = (str) => {
+    if (!str) return null;
+
+    const [time, date] = str.split(" ");
+    const [hour, minute] = time.split(":");
+    const [day, month] = date.split("-");
+
+    const year = new Date().getFullYear();
+    return new Date(year, month - 1, day, hour, minute);
+  };
+
+  useEffect(() => {
+    if (!data.expired_at) return;
+
+    const expiredTime = parseExpired(data.expired_at);
+
+    const interval = setInterval(() => {
+      const diff = expiredTime - new Date();
+
+      if (diff <= 0) {
+        setRemaining("00:00");
+        setIsExpired(true);
+        clearInterval(interval);
+        return;
+      }
+
+      const m = Math.floor(diff / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+
+      setRemaining(
+        `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`
+      );
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [data.expired_at]);
+
+  const displayStatus =
+    data.status === "pending" && isExpired
+      ? "expired"
+      : data.status;
+
+  return (
+    <div
+      className={`appointment-card-pro d-flex justify-content-between align-items-center 
+      ${displayStatus === "expired" ? "card-expired" : ""}`}
+    >
       {/* LEFT */}
       <div className="d-flex align-items-center gap-3">
 
-        {/* Date circle */}
         <div className="date-circle-pro">
           {data.date.split("/")[0]}
         </div>
 
-        {/* Info */}
         <div>
           <div className="d-flex align-items-center gap-2">
             <span className="doctor-name">{data.doctor}</span>
-
-            {data.status === "paid" && (
-              <span className="badge badge-upcoming">Sắp tới</span>
-            )}
           </div>
 
-          <div className="text-muted small">{data.specialty}</div>
+          <div className="text-muted small">Khoa {data.specialty}</div>
 
-          {/* Meta */}
           <div className="meta-row mt-1">
-
             <span className="material-symbols-outlined">calendar_month</span>
             {data.date}
 
             <span className="material-symbols-outlined">schedule</span>
             {data.time}
-
-            <span className="material-symbols-outlined">confirmation_number</span>
-            STT: {data.stt}
 
           </div>
         </div>
@@ -43,31 +80,37 @@ export default function AppointmentCard({ data }) {
       {/* RIGHT */}
       <div className="text-end right-box">
 
-        <StatusBadge status={data.status} />
+        <StatusBadge status={displayStatus} />
 
         <div className="mt-2">
 
-          {data.status === "paid" && (
+          {/* PAID */}
+          {displayStatus === "paid" && (
             <div className="action-link">
               Xem hóa đơn →
             </div>
           )}
 
-          {data.status === "pending" && (
+          {/* PENDING */}
+          {displayStatus === "pending" && (
             <>
-              <div className="text-warning small mb-1">
-                ⏳ Hết hạn sau: 14:59
+              <div className="expire-box">
+                <span className="material-symbols-outlined">timer</span>
+                <span>Hết hạn sau</span>
+                <span className="time">{remaining}</span>
               </div>
 
-              <button className="btn btn-primary btn-sm">
+              <button className="btn-pay">
                 Thanh toán ngay
               </button>
             </>
           )}
 
-          {data.status === "done" && (
+
+          {/* DONE */}
+          {displayStatus === "paylater" && (
             <div className="action-link text-secondary">
-              Xem hồ sơ bệnh án →
+              Chi tiết lịch hẹn 
             </div>
           )}
         </div>

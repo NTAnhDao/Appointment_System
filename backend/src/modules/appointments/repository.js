@@ -1,0 +1,139 @@
+import oracledb from "oracledb";
+import { execute } from "../../config/db.oracle.js";
+
+// 🔥 lấy schedule
+export const getScheduleById = async (id) => {
+  const result = await execute(
+    `SELECT * FROM app.schedule WHERE schedule_id = :id`,
+    { id }
+  );
+  return result.rows[0];
+};
+
+// 🔥 check duplicate
+export const checkDuplicate = async (patientId, scheduleId) => {
+  const result = await execute(
+    `SELECT 1 FROM app.appointments
+     WHERE patient_id = :p
+       AND schedule_id = :s
+       AND status IN ('PENDING','CONFIRMED')`,
+    { p: patientId, s: scheduleId }
+  );
+  return result.rows.length > 0;
+};
+
+export const insertAppointment = async (conn, data) => {
+  const result = await conn.execute(
+    `INSERT INTO app.appointments (
+      schedule_id,
+      patient_id,
+      user_id,
+      note,
+      expired_at
+    )
+    VALUES (
+      :schedule_id,
+      :patient_id,
+      :user_id,
+      :note,
+      CURRENT_TIMESTAMP + INTERVAL '15' MINUTE
+    )
+    RETURNING appointment_id INTO :id`,
+    {
+      ...data,
+      id: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER }
+    }
+  );
+
+  return result.outBinds.id[0];
+};
+
+// 🔥 tăng slot
+export const increaseSlot = async (conn, scheduleId) => {
+  await conn.execute(
+    `UPDATE app.schedule
+     SET booked_count = booked_count + 1
+     WHERE schedule_id = :id`,
+    { id: scheduleId }
+  );
+};
+
+// 🔥 giảm slot
+export const decreaseSlot = async (conn, scheduleId) => {
+  await conn.execute(
+    `UPDATE app.schedule
+     SET booked_count = booked_count - 1
+     WHERE schedule_id = :id`,
+    { id: scheduleId }
+  );
+};
+
+// 🔥 find appointment
+export const findById = async (id) => {
+  const result = await execute(
+    `SELECT * FROM app.appointments WHERE appointment_id = :id`,
+    { id }
+  );
+  return result.rows[0];
+};
+
+// 🔥 update status
+export const updateStatus = async (conn, id, status) => {
+  await conn.execute(
+    `UPDATE app.appointments
+     SET status = :status
+     WHERE appointment_id = :id`,
+    { id, status }
+  );
+};
+
+export const getAppointmentsByUser = async (userId) => {
+  const result = await execute(
+    `SELECT 
+        a.appointment_id,
+        a.status,
+        a.note,
+        a.created_at,
+        a.expired_at,
+
+        -- schedule
+        s.schedule_id,
+        s.work_date,
+        s.start_time,
+        s.end_time,
+
+        -- doctor
+        d.doctor_id,
+        d.name AS doctor_name,
+        d.title,
+        d.image_url,
+
+        -- department (thay cho specialty ❗)
+        dp.name AS department_name,
+        dp.consultation_fee,
+
+        -- patient
+        p.full_name AS patient_name,
+
+     FROM app.appointments a
+
+     JOIN app.schedule s 
+       ON a.schedule_id = s.schedule_id
+
+     JOIN app.doctor d 
+       ON s.doctor_id = d.doctor_id
+
+     JOIN app.department dp 
+       ON d.department_id = dp.department_id
+
+     JOIN app.patient p 
+       ON a.patient_id = p.id
+
+     WHERE a.user_id = :userId
+
+     ORDER BY a.created_at DESC`,
+    { userId }
+  );
+
+  return result.rows;
+};

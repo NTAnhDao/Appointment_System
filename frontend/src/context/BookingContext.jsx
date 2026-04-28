@@ -10,6 +10,8 @@ export const BookingProvider = ({ children }) => {
     doctor: null,
     date: null,
     time: null,
+    schedule_id: null,
+    patientId: null,
     patient: {},
   });
 

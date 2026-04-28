@@ -8,20 +8,33 @@ export default function Page() {
   const [selected, setSelected] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedId, setSelectedId] = useState(null);
-  const [isCreating, setIsCreating] = useState(false); // 👈 thêm
+  const [isCreating, setIsCreating] = useState(false);
 
   const refresh = () => {
     setRefreshKey((prev) => prev + 1);
     setSelected(null);
     setSelectedId(null);
-    setIsCreating(false); // 👈 quay lại list
+    setIsCreating(false);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"  
+    })
   };
 
   const handleSelect = (p) => {
     setSelected(p);
     setSelectedId(p.ID);
-    setIsCreating(false); // 👈 nếu click card thì hiện lại list
+    setIsCreating(false); 
   };
+
+  const handleCancel = () => {
+    setIsCreating(false)
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"  
+    })
+  }
 
   return (
     <MainLayout>
@@ -29,7 +42,7 @@ export default function Page() {
         {/* Header */}
         {!isCreating && (
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <h5 className="profile-header">Hồ sơ gia đình</h5>
+            <h2 className="profile-header">Hồ sơ gia đình</h2>
 
             <button
               className="btn btn-add-profile"
@@ -59,6 +72,7 @@ export default function Page() {
         <PatientForm
           selectedPatient={selected}
           onSuccess={refresh}
+          onCancel={handleCancel} 
         />
       </div>
     </MainLayout>

@@ -1,10 +1,15 @@
 import api from "./axiosClient";
 
-// 🔥 GET list
-export const getPatientsAPI = () => api.get("/patients");
+export const getPatientsAPI = async () => {
+  const res = await api.get("/patients");
+  return res.data.data; // 👈 chỉ trả array
+};
 
 // 🔥 GET by id
-export const getPatientByIdAPI = (id) => api.get(`/patients/${id}`);
+export const getPatientByIdAPI = async (id) => {
+  const res = await api.get(`/patients/${id}`);
+  return res.data.data;
+};
 
 // 🔥 CREATE
 export const createPatientAPI = (data) => api.post("/patients", data);

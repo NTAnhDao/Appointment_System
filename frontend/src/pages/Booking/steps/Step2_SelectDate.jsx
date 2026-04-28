@@ -7,6 +7,7 @@ export default function Step2_SelectDate() {
 
   const [selectedDate, setSelectedDate] = useState(bookingData.date || "");
   const [selectedTime, setSelectedTime] = useState(bookingData.time || "");
+  const [selectedScheduleId, setSelectedScheduleId] = useState(bookingData.schedule_id || null);
   const [schedule, setSchedule] = useState([]);
   const doctor = bookingData.doctor || {};
 
@@ -15,6 +16,7 @@ export default function Step2_SelectDate() {
       ...bookingData,
       date: selectedDate,
       time: selectedTime,
+      schedule_id: selectedScheduleId,
     };
 
     setBookingData(newData);
@@ -239,7 +241,10 @@ export default function Step2_SelectDate() {
                         disabled={!t.available}
                         className={`time-btn ${selectedTime === t.timeRange ? "active" : ""
                           } ${!t.available ? "disabled" : ""}`}
-                        onClick={() => setSelectedTime(t.timeRange)}
+                        onClick={() => {
+                          setSelectedTime(t.timeRange);
+                          setSelectedScheduleId(t.schedule_id);
+                        }}
                       >
                         {t.timeRange}
                       </button>
@@ -263,7 +268,10 @@ export default function Step2_SelectDate() {
                         disabled={!t.available}
                         className={`time-btn ${selectedTime === t.timeRange ? "active" : ""
                           } ${!t.available ? "disabled" : ""}`}
-                        onClick={() => setSelectedTime(t.timeRange)}
+                        onClick={() => {
+                          setSelectedTime(t.timeRange);
+                          setSelectedScheduleId(t.schedule_id);
+                        }}
                       >
                         {t.timeRange}
                       </button>
@@ -287,7 +295,11 @@ export default function Step2_SelectDate() {
           Quay lại
         </button>
 
-        <button className="btn btn-next" onClick={handleContinue}>
+        <button 
+          className="btn btn-next" 
+          onClick={handleContinue}
+          disabled={!selectedDate || !selectedTime}
+        >
           Xác nhận và tiếp tục
           <span className="material-symbols-outlined ms-1">arrow_forward</span>
         </button>

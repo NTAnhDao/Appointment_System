@@ -2,8 +2,7 @@ INSERT INTO app.USERS (FULL_NAME, PHONE, EMAIL, PASSWORD_HASH)
 VALUES ('Nguyen Van A', '0987654321', 'user1@gmail.com', 'User123@');
 
 COMMIT;
-SELECT * FROM app.users 
-WHERE phone = '0987654321';
+
 INSERT INTO app.guardian (full_name, identity_number, phone, email)
 VALUES ('Nguyễn Văn B', '123456789012', '0988888888', 'guardian1@gmail.com');
 

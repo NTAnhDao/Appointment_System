@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import "./patientsForm.css";
 import Select from "react-select"
 import ethnicities from "./ethnicities.json"
-import {createPatientAPI, updatePatientAPI } from "../../services/patientService.js"  
+import {createPatientAPI, updatePatientAPI, deletePatientAPI} from "../../services/patientService.js"  
 import { toast } from "react-toastify"
 
 
-export default function PatientForm({ selectedPatient, onSuccess }) {
+export default function PatientForm({ selectedPatient, onSuccess, onCancel }) {
   const isEdit = !!selectedPatient
   const [form, setForm] = useState({
       relation: "self",
@@ -160,9 +160,79 @@ export default function PatientForm({ selectedPatient, onSuccess }) {
     label: e
   }))
 
-  
+  const handleDelete = async () => {
+    if (!window.confirm("Bạn có chắc muốn xóa hồ sơ này?")) return
+
+    try {
+      await deletePatientAPI(selectedPatient.ID)
+      toast.success("Đã xóa hồ sơ")
+
+      onSuccess?.()
+    } catch (err) {
+      toast.error("Xóa thất bại")
+      console.log("DELETE ERROR:", err.response?.data)
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // Validation
+    if (!form.full_name) {
+      toast.error("Vui lòng nhập họ tên")
+      return
+    }
+    if (!form.phone) {
+      toast.error("Vui lòng nhập số điện thoại")
+      return
+    }
+    if (!form.identity_number) {
+      toast.error("Vui lòng nhập CCCD/CMND")
+      return
+    }
+    if (!form.dob) {
+      toast.error("Vui lòng nhập ngày sinh")
+      return
+    }
+
+    // Check phone format
+    const phoneRegex = /^(0|\+84)(3|5|7|8|9)[0-9]{8}$/
+    if (!phoneRegex.test(form.phone)) {
+      toast.error("Số điện thoại không hợp lệ (vd: 0912345678)")
+      return
+    }
+
+    // Check identity number format (12 số)
+    const cccdRegex = /^[0-9]{12}$/
+    if (!cccdRegex.test(form.identity_number)) {
+      toast.error("CCCD/CMND phải là 12 số")
+      return
+    }
+
+    // Check if minor and guardian info
+    const age = new Date().getFullYear() - new Date(form.dob).getFullYear()
+    if (age < 18) {
+      if (!form.guardian?.full_name) {
+        toast.error("Vui lòng nhập tên người đại diện")
+        return
+      }
+      if (!form.guardian?.identity_number) {
+        toast.error("Vui lòng nhập CCCD/CMND người đại diện")
+        return
+      }
+      if (!form.guardian?.phone) {
+        toast.error("Vui lòng nhập số điện thoại người đại diện")
+        return
+      }
+      if (!cccdRegex.test(form.guardian.identity_number)) {
+        toast.error("CCCD/CMND người đại diện phải là 12 số")
+        return
+      }
+      if (!phoneRegex.test(form.guardian.phone)) {
+        toast.error("Số điện thoại người đại diện không hợp lệ")
+        return
+      }
+    }
 
     try {
       if (isEdit) {
@@ -176,8 +246,9 @@ export default function PatientForm({ selectedPatient, onSuccess }) {
       onSuccess?.()
 
     } catch (err) {
-      toast.error(err.response?.data?.error || "Có lỗi xảy ra")
-      console.log(err)
+      const errorMsg = err.response?.data?.message || err.response?.data?.error || "Có lỗi xảy ra"
+      toast.error(errorMsg)
+      console.log("API ERROR:", err.response?.data || err.message)
     }
   }
 
@@ -186,9 +257,21 @@ export default function PatientForm({ selectedPatient, onSuccess }) {
 
   return (
     <form onSubmit={handleSubmit} className="pf-container">
-      <h3 className="pf-title">
-        {isEdit ? "Chỉnh sửa hồ sơ" : "Tạo hồ sơ"}
-      </h3>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h4 className="pf-title">
+          {isEdit ? "Chỉnh sửa hồ sơ" : "Tạo hồ sơ"}
+        </h4>
+        {isEdit && (
+        <button
+          type="button"
+          className="btn-delete"
+          onClick={handleDelete}
+        >
+          <span className="material-symbols-outlined">delete</span>
+          Xóa hồ sơ
+        </button>
+        )}
+      </div>
 
       {/* Quan hệ */}
       <div className="pf-card">
@@ -291,24 +374,44 @@ export default function PatientForm({ selectedPatient, onSuccess }) {
 
             {/* CCCD */}
             <div className="field">
-            <label className="required">Số định danh (CCCD) </label>
-            <input
+              <label className="required">Số định danh (CCCD)</label>
+              <input
                 name="identity_number"
                 value={form.identity_number}
-                onChange={handleChange}
-                className="pf-input"
-            />
-            </div>
+                onChange={(e) => {
+                  // chỉ giữ số + tối đa 12 ký tự
+                  const value = e.target.value.replace(/\D/g, "").slice(0, 12);
 
+                  setForm((prev) => ({
+                    ...prev,
+                    identity_number: value
+                  }));
+                }}
+                maxLength={12}   
+                inputMode="numeric" // mobile hiện bàn phím số
+                className="pf-input"
+              />
+            </div>
             {/* SĐT */}
             <div className="field">
-            <label className="required">Số điện thoại </label>
-            <input
+              <label className="required">Số điện thoại</label>
+              <input
                 name="phone"
                 value={form.phone}
-                onChange={handleChange}
+                onChange={(e) => {
+                  const value = e.target.value
+                    .replace(/\D/g, "")   // chỉ giữ số
+                    .slice(0, 10);       // tối đa 10 số
+
+                  setForm((prev) => ({
+                    ...prev,
+                    phone: value
+                  }));
+                }}
+                maxLength={10}
+                inputMode="numeric"
                 className="pf-input"
-            />
+              />
             </div>
 
             {/* Email */}
@@ -464,10 +567,13 @@ export default function PatientForm({ selectedPatient, onSuccess }) {
 
       {/* Actions */}
       <div className="pf-actions">
-        <button type="button" className="btn cancel">
-          Hủy
-        </button>
+        {!isEdit && (
+          <button type="button" className="btn cancel" onClick={onCancel}>
+            Quay lại
+          </button>
+        )}
 
+          
         <button type="submit" className="btn btn-primary">
           {isEdit ? "Cập nhật hồ sơ" : "Tạo hồ sơ"}
         </button>

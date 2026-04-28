@@ -11,7 +11,7 @@ export default function FamilyProfiles({ refreshKey, onSelect, selectedId }) {
       try {
         const res = await getPatientsAPI()
 
-        const mapped = res.data.data.map((p) => ({
+        const mapped = res.map((p) => ({
           id: p.ID,
           name: p.FULL_NAME,
           code: `UMC-${p.ID}`,

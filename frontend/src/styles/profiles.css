@@ -4,9 +4,8 @@
   padding: 30px 50px;
 }
 .profile-header {
-  font-size: 22px;
-  font-weight: 600;
   color: var(--primary);
+  font-weight:700;
 }
 /* Add button */
 .btn-add-profile {

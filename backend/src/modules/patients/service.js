@@ -111,13 +111,13 @@ export const deletePatient = async (id, userId) => {
 
   if (!patient) throw new Error("Forbidden");
 
-  const count = await repo.countAppointmentsByPatient(id);
+  // const count = await repo.countAppointmentsByPatient(id);
 
-  if (count > 0) {
-    throw new Error("Patient has appointment");
-  }
+  // if (count > 0) {
+  //   throw new Error("Patient has appointment");
+  // }
 
-  await repo.softDeletePatient(id);
+  await repo.deletePatient(id);
 
   await redis.del(`patient:${userId}:${id}`);
 };

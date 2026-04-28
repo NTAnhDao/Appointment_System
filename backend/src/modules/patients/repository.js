@@ -30,6 +30,14 @@ export const findPatientById = async (id, userId) => {
 export const insertPatient = async (conn, data) => {
   const { guardian, ...cleanData } = data; // remove object
 
+console.log("DATA INSERT:", cleanData); 
+
+Object.values(cleanData).forEach((v, i) => {
+  if (typeof v === "object" && v !== null && !(v instanceof Date)) {
+    console.log("❌ PARAM", i + 1, "IS OBJECT:", v);
+  }
+});
+
   const result = await conn.execute(
     `INSERT INTO patient (
       full_name,
@@ -112,6 +120,13 @@ export const softDeletePatient = async (id) => {
     { autoCommit: true }
   );
 };
+export const deletePatient = async (id) => {
+  await execute(
+     `DELETE FROM APP.PATIENT WHERE ID = :id`,
+    { id },
+    { autoCommit: true }
+  );
+};
 
 export const countAppointmentsByPatient = async (id) => {
   const result = await execute(
@@ -129,16 +144,32 @@ export const findGuardianByCCCD = async (cccd) => {
   return result.rows[0];
 };
 
+
 export const createGuardian = async (conn, data) => {
+  console.log("GUARDIAN INSERT:", data);
+
   const result = await conn.execute(
     `INSERT INTO guardian (
-      full_name, identity_number, phone, email, created_at
+      full_name,
+      identity_number,
+      phone,
+      email,
+      created_at
     )
-    VALUES (:full_name, :identity_number, :phone, :email, SYSDATE)
+    VALUES (
+      :full_name,
+      :identity_number,
+      :phone,
+      :email,
+      SYSDATE
+    )
     RETURNING id INTO :id`,
     {
-      ...data,
-      id: { dir: 3003, type: 2002 }, // NUMBER
+      full_name: data.full_name,
+      identity_number: data.identity_number,
+      phone: data.phone,
+      email: data.email || null,   // 🔥 fix undefined
+      id: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER }
     }
   );
 

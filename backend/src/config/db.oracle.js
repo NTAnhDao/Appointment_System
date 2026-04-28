@@ -52,6 +52,10 @@ export async function execute(sql, binds = {}, opts = {}) {
 
   try {
     connection = await getConnection();
+     await connection.execute(
+      `ALTER SESSION SET TIME_ZONE = 'Asia/Ho_Chi_Minh'`
+    );
+
 
     const result = await connection.execute(sql, binds, {
       autoCommit: false, // ❗ không commit tự động
@@ -82,6 +86,10 @@ export async function execute(sql, binds = {}, opts = {}) {
 export async function withTransaction(callback) {
   const connection = await getConnection();
 
+  await connection.execute(
+      `ALTER SESSION SET TIME_ZONE = 'Asia/Ho_Chi_Minh'`
+    );
+    
   try {
     const result = await callback(connection);
     await connection.commit();
@@ -93,3 +101,4 @@ export async function withTransaction(callback) {
     await connection.close();
   }
 }
+

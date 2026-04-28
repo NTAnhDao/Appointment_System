@@ -402,6 +402,33 @@
   box-shadow: 0 6px 16px rgba(1, 10, 23, 0.3);
 }
 
+/* Card thêm hồ sơ */
+.add-card {
+  border: 2px dashed #d1d5db;
+  background: #fff;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-card:hover {
+  border-color: #2563eb;
+  background: #f8fafc;
+}
+
+.add-content {
+  display: flex;
+  align-items: center;   /* 👈 căn giữa dọc */
+  gap: 12px;             /* 👈 khoảng cách icon - text */
+  justify-content: center;
+}
+
+/* icon bên trái */
+.add-icon {
+  font-size: 24px;
+  color: var(--blue-600);
+}
 
 @media screen and (max-width: 768px) {
     .booking-container {

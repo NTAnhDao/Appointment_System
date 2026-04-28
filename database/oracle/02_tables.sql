@@ -116,12 +116,15 @@ CREATE TABLE app.appointments (
 
     schedule_id NUMBER NOT NULL,
     patient_id NUMBER NOT NULL,
+    user_id NUMBER NOT NULL,
 
-    status VARCHAR2(20) DEFAULT 'PENDING',
+    status VARCHAR2(20) DEFAULT 'pending',
+    payment_method VARCHAR2(20),
 
     note VARCHAR2(1000),
 
     created_at DATE DEFAULT SYSDATE,
+    expired_at DATE,
 
     CONSTRAINT fk_appointment_schedule
         FOREIGN KEY (schedule_id)
@@ -129,9 +132,14 @@ CREATE TABLE app.appointments (
 
     CONSTRAINT fk_appointment_patient
         FOREIGN KEY (patient_id)
-        REFERENCES app.patient(id)
+        REFERENCES app.patient(id),
+
+    CONSTRAINT fk_appointment_user
+        FOREIGN KEY (user_id)
+        REFERENCES app.users(id)
 );
 
+CREATE INDEX idx_app_user ON app.appointments(user_id);
 
 CREATE TABLE app.PAYMENTS (
     PAYMENT_ID      NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

@@ -1,0 +1,5 @@
+export const mapAppointmentDTO = (data) => ({
+  schedule_id: data.schedule_id,
+  patient_id: data.patient_id,
+  note: data.note || null
+});

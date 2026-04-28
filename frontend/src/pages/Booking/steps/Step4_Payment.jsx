@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useBooking } from "../../../context/BookingContext";
+import { createAppointmentAPI } from "../../../services/BookingService";
 
 export default function Step4_Payment() {
   const { bookingData, nextStep, prevStep } = useBooking();
@@ -13,9 +14,30 @@ export default function Step4_Payment() {
     { id: "cash", title: "Thanh toán tại viện", desc: "Trả tiền khi đến khám" },
   ];
 
-  const handlePayment = () => {
-    console.log("PAY:", bookingData, method);
-    nextStep();
+  const handlePayment = async () => {
+    try {
+      // 1. Gọi API tạo appointment
+      const res = await createAppointmentAPI({
+        doctor_id: bookingData.doctor.doctor_id,
+        schedule_id: bookingData.scheduleId,
+        patient_id: bookingData.patient.patient_id,
+        payment_method: method,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Tạo lịch thất bại");
+      }
+
+      console.log("Appointment created:", data);
+
+      // 2. Tùy theo method mà xử lý tiếp (ví dụ redirect sang cổng thanh toán)
+
+    } catch (err) {
+      console.error(err);
+      alert("Lỗi khi tạo lịch khám!");
+    }
   };
 
   const formatDate = (dateStr) => {
@@ -129,21 +151,9 @@ export default function Step4_Payment() {
             <hr className="opacity-25" />
 
             {/* Price */}
-            <div className="summary-row-pro">
+            <div className="summary-total">
               <span>Phí khám</span>
               <span>{doctor.price ? doctor.price.toLocaleString() : "0" }đ</span>
-            </div>
-
-            <div className="summary-row-pro">
-              <span>Dịch vụ</span>
-              <span>20.000đ</span>
-            </div>
-
-            <hr className="opacity-25" />
-
-            <div className="summary-total">
-              <span>Tổng</span>
-              <span>520.000đ</span>
             </div>
           </div>
         </div>
