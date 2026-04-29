@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react'; 
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import MainLayout from "../components/layout/MainLayout";
+import { confirmAppointmentAPI } from "../services/BookingService";
+import { getAppointmentDetailAPI } from '../services/BookingService';
 import '../styles/payments.css';
 
 export default function PaymentSuccessPage() {
   const nav = useNavigate();
+  const isConfirmed = useRef(false);
   const [searchParams] = useSearchParams();
+  const [invoiceDetail, setInvoiceDetail] = useState(null);
   const isVnpay = searchParams.get('vnp_ResponseCode') !== null;
   const isMomo = searchParams.get('resultCode') !== null;
   const isQR = searchParams.get('method') === 'qr';
@@ -146,6 +150,40 @@ export default function PaymentSuccessPage() {
     }
 
     setPayment(data);
+    const currentTxnRef = data.txnRef;
+    if (data.success && currentTxnRef && !isConfirmed.current) {
+      
+      let targetAppId = searchParams.get('invoiceId');
+      console.log("=== KIỂM TRA DỮ LIỆU ĐẦU VÀO ===");
+    console.log("1. Mã giao dịch (txnRef):", currentTxnRef);
+    console.log("2. invoiceId trên URL:", searchParams.get('invoiceId'));
+      console.log("Target Invoice ID:", targetAppId); 
+
+
+      if (!targetAppId && currentTxnRef.toString().startsWith("ORDER_")) {
+        const parts = currentTxnRef.split("_"); 
+        targetAppId = parts[1]; 
+      } else if (!targetAppId) {
+        targetAppId = currentTxnRef; 
+      }
+
+      if (targetAppId) {
+        isConfirmed.current = true; 
+        
+        // Gọi API để cập nhật trạng thái lịch hẹn 
+        // confirmAppointmentAPI(targetAppId)
+        //   .then(res => console.log(`Đã cập nhật Invoice ID [${targetAppId}] thành CONFIRMED`, res))
+        //   .catch(err => console.error("Lỗi khi confirm Invoice:", err));
+
+          // Sau khi confirm thành công, lấy chi tiết lịch hẹn để hiển thị lên UI
+          getInvoiceDetailAPI(targetAppId)
+          .then(res => {
+            console.log("Lấy dữ liệu chi tiết thành công:", res);
+            setAppointmentDetail(res.data); // Lưu vào state để hiển thị lên UI
+          })
+          .catch(err => console.error("Lỗi khi lấy chi tiết lịch hẹn:", err));
+      }
+    }
 
   }, [searchParams]);
 
@@ -279,22 +317,44 @@ export default function PaymentSuccessPage() {
 
                 <div>
                   <span className="info-label">Họ tên:</span>
+                     <span className="info-value">{invoiceDetail?.patientName}</span>
+                </div>
+
+                <div>
+                  <span className="info-label">CCCD:</span>
+                  <span className="info-value">{invoiceDetail?.identityNumber}</span>
+                </div>
+
+                 <div>
+                  <span className="info-label">BHYT:</span>
+                  <span className="info-value">
+                  {invoiceDetail?.bhyt || "Không"}
+                </span>
+                </div>
+
+                 <div>
+                  <span className="info-label">SĐT:</span>
+                  <span className="info-value">{invoiceDetail?.phone}</span>
                 </div>
 
                 <div>
                   <span className="info-label">Giới tính:</span>
+                  <span className="info-value">{invoiceDetail?.gender}</span>
                 </div>
 
                 <div>
                   <span className="info-label">Ngày sinh:</span>
+                  <span className="info-value">{formatPayDate(invoiceDetail?.birthday)}</span>
                 </div>
 
                 <div>
                   <span className="info-label">Chuyên khoa:</span>
+                  <span className="info-value">{invoiceDetail?.specialty}</span>
                 </div>
 
                 <div>
                   <span className="info-label">Bác sĩ:</span>
+                   <span className="info-value">{invoiceDetail?.doctor}</span>
                 </div>
 
                 <div>
@@ -306,17 +366,15 @@ export default function PaymentSuccessPage() {
 
                 <div>
                   <span className="info-label">Thời gian:</span>
-                </div>
-
-                <div>
-                  <span className="info-label">Phòng:</span>
+                  <span className="info-value">{invoiceDetail?.displayTime}</span>
                 </div>
 
                 <div>
                   <span className="info-label">Địa chỉ:</span>
+                   <span className="info-value">{invoiceDetail?.address}</span>
                 </div>
               </div>
-            </div>
+            </div> 
 
             {/* HƯỚNG DẪN */}
             <div className="card">
@@ -344,7 +402,7 @@ export default function PaymentSuccessPage() {
 
               <div className="payment-row">
                 <span className="payment-label">Mã giao dịch:</span>
-                <span className="payment-value"> {txnRef.replace("ORDER_", "")}</span>
+                <span className="payment-value">{txnRef ? txnRef.split('_').pop() : ""}</span>
               </div>
 
               <div className="payment-row">

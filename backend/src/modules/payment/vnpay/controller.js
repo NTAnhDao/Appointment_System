@@ -25,7 +25,7 @@ function sortObject(obj) {
 
 const createPaymentUrl = async (req, res) => {
     try {
-        const { amount, bankCode = '', appointment_id} = req.body;
+        const { amount, bankCode = '', invoice_id} = req.body;
         if (!amount || amount <= 0) {
             return res.status(400).json({
                 code: '01',
@@ -34,7 +34,7 @@ const createPaymentUrl = async (req, res) => {
         }
         // tạo payment
         const { order_id } = await PaymentService.createPayment({
-            appointment_id,
+            invoice_id,
             amount,
             payment_method: "VNPAY"
         });

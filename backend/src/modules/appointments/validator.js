@@ -45,7 +45,7 @@ export const validateCreateAppointment = async (req, res, next) => {
     // 🔥 check lịch quá khứ
     const now = new Date();
 
-    if (new Date(s.WORK_DATE) < now) {
+    if (new Date(s.START_TIME) < now) {
       return res.status(400).json({
         message: "Cannot book past schedule"
       });

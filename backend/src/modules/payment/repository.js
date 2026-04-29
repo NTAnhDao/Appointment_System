@@ -5,8 +5,8 @@ class PaymentRepository {
   async createPayment(data) {
     const sql = `
       INSERT INTO app.PAYMENTS
-      (APPOINTMENT_ID, AMOUNT, PAYMENT_METHOD, STATUS, ORDER_ID)
-      VALUES (:appointment_id, :amount, :payment_method, :status, :order_id)
+      (INVOICE_ID, AMOUNT, PAYMENT_METHOD, STATUS, ORDER_ID)
+      VALUES (:invoice_id, :amount, :payment_method, :status, :order_id)
     `;
 
     return await execute(sql, data, { autoCommit: true });

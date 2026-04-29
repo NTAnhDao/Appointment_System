@@ -24,6 +24,7 @@ export const createAppointment = async (data, userId) => {
   });
 };
 
+
 // 🔥 CONFIRM PAYMENT
 export const confirmAppointment = async (appointmentId) => {
   return await withTransaction(async (conn) => {
@@ -31,16 +32,23 @@ export const confirmAppointment = async (appointmentId) => {
 
     if (!app) throw new Error("Appointment not found");
 
-    if (app.STATUS !== "PENDING") {
+    // Đưa status về chữ thường để so sánh không bị trật (pending / PENDING)
+    const currentStatus = app.STATUS ? app.STATUS.toLowerCase() : "";
+
+    // 1. FIX LỖI GỌI 2 LẦN: Nếu đã là 'confirmed' rồi thì thoát luôn, báo thành công!
+    if (currentStatus === "confirmed") {
+      return; 
+    }
+
+    if (currentStatus !== "pending") {
       throw new Error("Invalid state");
     }
 
-    // ❗ check expire
-    if (new Date() > new Date(app.EXPIRED_AT)) {
+     if (new Date() > new Date(app.EXPIRED_AT)) {
       throw new Error("Appointment expired");
     }
-
-    await repo.updateStatus(conn, appointmentId, "CONFIRMED");
+    // Vì trong DB bạn đang lưu chữ thường "confirmed", nên update cũng truyền chữ thường
+    await repo.updateStatus(conn, appointmentId, "confirmed");
   });
 };
 
@@ -50,12 +58,12 @@ export const expireAppointments = async () => {
     const result = await conn.execute(
       `SELECT appointment_id, schedule_id
        FROM app.appointments
-       WHERE status = 'PENDING'
+       WHERE status = 'pending'
          AND expired_at < SYSDATE`
     );
 
     for (const row of result.rows) {
-      await repo.updateStatus(conn, row.APPOINTMENT_ID, "EXPIRED");
+      await repo.updateStatus(conn, row.APPOINTMENT_ID, "expired");
       await repo.decreaseSlot(conn, row.SCHEDULE_ID);
     }
   });
@@ -68,9 +76,9 @@ export const cancelAppointment = async (id) => {
 
     if (!app) throw new Error("Not found");
 
-    if (app.STATUS === "CANCELLED") return;
+    if (app.STATUS === "cancelled") return;
 
-    await repo.updateStatus(conn, id, "CANCELLED");
+    await repo.updateStatus(conn, id, "cancelled");
 
     await repo.decreaseSlot(conn, app.SCHEDULE_ID);
   });

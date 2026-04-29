@@ -8,9 +8,10 @@ export default function Step4_Payment() {
   const nav = useNavigate()
   const { bookingData, nextStep, prevStep } = useBooking();
   const [method, setMethod] = useState("vnpay");
-
   const doctor = bookingData.doctor || {};
   const [currentOrderId, setCurrentOrderId] = useState(null);
+  const [currentAppointmentId, setCurrentAppointmentId] = useState(null);
+  const [currentInvoiceId, setCurrentInvoiceId] = useState(null);
   const [qrValue, setQrValue] = useState("");
   const [showQR, setShowQR] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300);
@@ -69,7 +70,7 @@ export default function Step4_Payment() {
             clearInterval(timer);
             // Chuyển trang sau 1.5 giây
             setTimeout(() => {
-              nav(`/success?method=qr&orderId=${currentOrderId}&amount=${amount}&status=success&isLaptop=true`);
+              nav(`/success?method=qr&orderId=${currentOrderId}&invoiceId=${currentInvoiceId}&amount=${amount}&status=success&isLaptop=true`);
             }, 15000);
           }
         } catch (error) {
@@ -84,7 +85,7 @@ export default function Step4_Payment() {
   const handlePayment = async () => {
     console.log("PAY:", bookingData, method);
     let appointmentId;
-
+    let invoiceId;;
     try {
       const res = await createAppointmentAPI({
         schedule_id: bookingData.schedule_id,
@@ -94,8 +95,11 @@ export default function Step4_Payment() {
 
 
       appointmentId = res.id;
-      console.log()
-      console.log("Appointment created:", data);
+      invoiceId = res.id;
+      setCurrentAppointmentId(res.id);
+      setCurrentInvoiceId(res.id);
+      console.log("amount", amount);
+      console.log("Appointment created:", res);
 
 
     } catch (err) {
@@ -115,7 +119,7 @@ export default function Step4_Payment() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             amount: amount,
-            appointment_id: appointmentId,
+            invoice_id: invoice_id,
             payment_method: "VNPAY"
           })
         });
@@ -141,7 +145,7 @@ export default function Step4_Payment() {
           },
           body: JSON.stringify({
             amount: amount,
-            appointment_id: appointmentId,
+            invoice_id: invoice_id,
             payment_method: "MOMO"
           }),
         });
@@ -170,7 +174,7 @@ export default function Step4_Payment() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             amount: amount,
-            appointment_id: appointmentId,
+            invoice_id: invoice_id,
             payment_method: "QR_CODE" 
           })
         });
@@ -180,7 +184,7 @@ export default function Step4_Payment() {
         if (data.success) {
           const newOrderId = data.order_id; 
           setCurrentOrderId(newOrderId);   
-          const newQrValue = `http://${myIP}:${frontendPort}/confirm?orderId=${newOrderId}&amount=${amount}`;
+          const newQrValue = `http://${myIP}:${frontendPort}/confirm?orderId=${newOrderId}&invoiceId=${invoiceId}&amount=${amount}`;
           setQrValue(newQrValue); 
           setShowQR(true);
         } else {
@@ -202,7 +206,7 @@ export default function Step4_Payment() {
           },
           body: JSON.stringify({
             amount: amount,
-            appointment_id: appointmentId,
+            invoice_id: invoice_id,
             payment_method: "CASH" 
           }),
         });
@@ -211,7 +215,7 @@ export default function Step4_Payment() {
         const data = await res.json();
         console.log("CASH RESPONSE:", data);
         if (data.success) {
-          nav(`/success?method=cash&orderId=${data.order_id}&amount=${amount}&status=success`);
+          nav(`/success?method=cash&orderId=${data.order_id}&invoiceId=${invoice_id}&amount=${amount}&status=success`);
         } else {
           alert("Không thể tạo đơn hàng thanh toán tại viện: " + (data.message || "Lỗi không xác định"));
         }

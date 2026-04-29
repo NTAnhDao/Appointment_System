@@ -17,5 +17,4 @@ router.post("/:id/confirm", authMiddleware, controller.confirm);
 router.post("/:id/cancel", authMiddleware, controller.cancel);
 
 router.get("/my", authMiddleware, controller.getMy);
-
 export default router;

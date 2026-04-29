@@ -2,10 +2,10 @@ import PaymentService from "../service.js";
 
 const createCashPayment = async (req, res) => {
   try {
-    const { amount, appointment_id } = req.body;
+    const { amount, invoice_id } = req.body;
     
     const paymentInfo = await PaymentService.createPayment({
-      appointment_id: appointment_id,
+      invoice_id: invoice_id,
       amount: amount,
       payment_method: "CASH" 
     });

@@ -6,10 +6,10 @@ import PaymentService from "../service.js";
 
 const createMomoPayment = async (req, res) => {
   try {
-    const { amount = 10000, appointment_id } = req.body;
+    const { amount = 10000, invoice_id } = req.body;
     
     const { order_id } = await PaymentService.createPayment({
-      appointment_id,
+      invoice_id,
       amount,
       payment_method: "MOMO"
     });

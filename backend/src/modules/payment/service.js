@@ -5,12 +5,12 @@ import PaymentRepository from "./repository.js";
 class PaymentService {
 
   // 🔹 Tạo payment
-  async createPayment({ appointment_id, amount, payment_method }) {
+  async createPayment({ invoice_id, amount, payment_method }) {
 
-    const order_id = "ORDER_" + Date.now();
+    const order_id = `ORDER_${invoice_id}_${Date.now()}`;
 
     await PaymentRepository.createPayment({
-      appointment_id,
+      invoice_id,
       amount,
       payment_method,
       status: "PENDING",

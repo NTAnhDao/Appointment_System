@@ -23,3 +23,5 @@ export const getMyAppointmentsAPI = async () => {
   const res = await api.get("/appointments/my");
   return res.data;
 };
+
+
