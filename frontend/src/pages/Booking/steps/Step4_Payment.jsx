@@ -97,6 +97,7 @@ export default function Step4_Payment() {
       console.log()
       console.log("Appointment created:", data);
 
+
     } catch (err) {
       console.error("Create appointment error:", err);
 
