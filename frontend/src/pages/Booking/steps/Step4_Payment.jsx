@@ -17,9 +17,9 @@ export default function Step4_Payment() {
   const myIP = "192.168.1.131";
   const frontendPort = "5173";
   const backendPort = "5000";
-  const amount = bookingData.totalPrice || 520000;
-  const appointmentId = bookingData.appointmentId || 1;
-  
+  const amount = doctor.price || 150000;
+
+
   // 2. Logic chạy bộ đếm
   useEffect(() => {
     let timer;
@@ -57,6 +57,7 @@ export default function Step4_Payment() {
   // ===== LOGIC POLLING (KIỂM TRA TRẠNG THÁI QR) =====
   useEffect(() => {
     let timer;
+   
     // Chỉ polling nếu đang mở mã QR và đã có currentOrderId
     if (showQR && currentOrderId) {
       timer = setInterval(async () => {
@@ -82,15 +83,19 @@ export default function Step4_Payment() {
 
   const handlePayment = async () => {
     console.log("PAY:", bookingData, method);
+    let appointmentId;
 
     try {
       const res = await createAppointmentAPI({
         schedule_id: bookingData.schedule_id,
         patient_id: bookingData.patientId,
-        fee: doctor.price || 0,
+        fee: amount,
       });
 
-      console.log("Appointment created:", res);
+
+      appointmentId = res.id;
+      console.log()
+      console.log("Appointment created:", data);
 
     } catch (err) {
       console.error("Create appointment error:", err);
