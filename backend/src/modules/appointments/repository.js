@@ -137,12 +137,9 @@ export const getAppointmentsByUser = async (userId) => {
      JOIN app.patient p 
        ON a.patient_id = p.id
     
-     LEFT JOIN app.payments pay
-       ON a.appointment_id = pay.appointment_id
-     AND (
-        pay.STATUS = 'paid'
-        OR pay.PAYMENT_METHOD = 'cash'
-     )
+     LEFT JOIN app.INVOICES inv
+       ON a.appointment_id = inv.appointment_id
+     AND inv.STATUS = 'UNPAID'
 
      WHERE a.user_id = :userId
 
