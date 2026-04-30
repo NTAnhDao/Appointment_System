@@ -24,11 +24,22 @@ export default function Home() {
               </p>
 
                <button
-                  className="btn btn-primary-custom px-4 py-2 d-inline-flex align-items-center gap-2 mt-3"
-                  onClick={() => nav("/login")}>
-                  Đặt lịch ngay
-                  <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
-                </button>
+                className="btn btn-primary-custom px-4 py-2 d-inline-flex align-items-center gap-2 mt-3"
+                onClick={() => {
+                  const token = localStorage.getItem("token");
+
+                  if (token) {
+                    nav("/booking"); // đã đăng nhập
+                  } else {
+                    nav("/login"); // chưa đăng nhập
+                  }
+                }}
+              >
+                Đặt lịch ngay
+                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+                  arrow_forward
+                </span>
+              </button>
             </div>
 
             <div className="col-lg-6 mt-4 mt-lg-0">

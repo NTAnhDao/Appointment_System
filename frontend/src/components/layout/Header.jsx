@@ -32,7 +32,15 @@ export default function Header() {
                     <div className="d-flex gap-2 mt-3 mt-lg-0">
                         <button className="btn btn-accent-custom" onClick={() => nav("/login")} >Đăng nhập</button>
                         <button className="btn btn-primary-custom"
-                        onClick={() => nav("/booking") }
+                        onClick={() => {
+                            const token = localStorage.getItem("token");
+
+                            if (token) {
+                                nav("/booking"); // đã đăng nhập
+                            } else {
+                                nav("/login"); // chưa đăng nhập
+                            }
+                            }}
                         >Đặt lịch ngay</button>
                     </div>
                 </div>
