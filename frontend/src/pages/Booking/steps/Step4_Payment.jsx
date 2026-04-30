@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useBooking } from "../../../context/BookingContext";
 import { createAppointmentAPI } from "../../../services/BookingService";
+import { createInvoiceAPI } from "../../../services/InvoiceService";
 import { QRCodeSVG } from "qrcode.react";
 import { useNavigate } from "react-router-dom";
 
@@ -87,19 +88,28 @@ export default function Step4_Payment() {
     let appointmentId;
     let invoiceId;;
     try {
+      // tạo Appointment
       const res = await createAppointmentAPI({
         schedule_id: bookingData.schedule_id,
         patient_id: bookingData.patientId,
         fee: amount,
       });
 
-
-      appointmentId = res.appointmentId;
-      invoiceId = res.invoiceId;
-      setCurrentAppointmentId(res.appointmentId);
-      setCurrentInvoiceId(res.invoiceId);
+      appointmentId = res.appointmentId || res.data?.appointmentId;
+      setCurrentAppointmentId(appointmentId);
       console.log("amount", amount);
       console.log("Appointment created:", res);
+      // Tạo Invoice
+
+      const invoiceRes = await createInvoiceAPI({
+        appointment_id: appointmentId,
+        fee: amount, // Truyền đúng số tiền
+      });
+
+      invoiceId = res.invoiceId || res.data?.invoiceId;
+      setCurrentInvoiceId(invoiceId);
+      console.log("amount", amount);
+      console.log("Invoice created:", invoiceRes);
 
 
     } catch (err) {
@@ -119,7 +129,7 @@ export default function Step4_Payment() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             amount: amount,
-            invoice_id: invoice_id,
+            invoice_id: invoiceId,
             payment_method: "VNPAY"
           })
         });
@@ -145,7 +155,7 @@ export default function Step4_Payment() {
           },
           body: JSON.stringify({
             amount: amount,
-            invoice_id: invoice_id,
+            invoice_id: invoiceId,
             payment_method: "MOMO"
           }),
         });
@@ -174,7 +184,7 @@ export default function Step4_Payment() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             amount: amount,
-            invoice_id: invoice_id,
+            invoice_id: invoiceId,
             payment_method: "QR_CODE" 
           })
         });
@@ -206,7 +216,7 @@ export default function Step4_Payment() {
           },
           body: JSON.stringify({
             amount: amount,
-            invoice_id: invoice_id,
+            invoice_id: invoiceId,
             payment_method: "CASH" 
           }),
         });
@@ -215,7 +225,7 @@ export default function Step4_Payment() {
         const data = await res.json();
         console.log("CASH RESPONSE:", data);
         if (data.success) {
-          nav(`/success?method=cash&orderId=${data.order_id}&invoiceId=${invoice_id}&amount=${amount}&status=success`);
+          nav(`/success?method=cash&orderId=${data.order_id}&invoiceId=${invoiceId}&amount=${amount}&status=success`);
         } else {
           alert("Không thể tạo đơn hàng thanh toán tại viện: " + (data.message || "Lỗi không xác định"));
         }

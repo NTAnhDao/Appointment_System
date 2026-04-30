@@ -47,19 +47,45 @@ body {
   width: 100%;
 }
 
+.btn-logout,
+.btn-login,
+.btn-booking {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-.btn-accent-custom{
-  background: var(--accent);
-  color: white;
+  height: 44px;
+  padding: 0 22px;
+
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+
+  border-radius: 8px;
   border: none;
+  outline: none;
+
+  white-space: nowrap;
+  cursor: pointer;
+
+  box-sizing: border-box;
+  font-family: inherit;
 }
 
-.btn-primary-custom {
+/* riêng từng nút */
+.btn-loginnn {
+  background: #006B66 !important;
+  color: white;
+}
+
+.btn-logout {
+  background: #ad1818 !important;
+  color: white;
+}
+
+.btn-booking {
   background: var(--primary);
   color: white;
-  border: none;
-  border-radius: 8px;
-  
 }
 
 .text-primary-customer{

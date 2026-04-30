@@ -1,7 +1,40 @@
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import MainLayout from "../components/layout/MainLayout";
-import { useNavigate} from "react-router-dom";
+
 export default function Home() {
     const nav = useNavigate();
+     const location = useLocation();
+   
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+   
+    useEffect(() => {
+
+        const token = localStorage.getItem("token"); 
+        
+        if (token) {
+            setIsLoggedIn(true);
+        } else {
+            setIsLoggedIn(false);
+        }
+    }, [location.pathname]); 
+
+
+    const handleLogout = () => {
+        localStorage.removeItem("token"); // Xóa token
+        setIsLoggedIn(false);
+        nav("/"); 
+    };
+
+    // Hàm xử lý riêng cho nút "Đặt lịch ngay"
+    const handleBookingClick = () => {
+        if (isLoggedIn) {
+            nav("/booking"); // Nếu đã đăng nhập -> Tới trang đặt lịch
+        } else {
+            nav("/login"); // Nếu chưa đăng nhập -> Ép sang trang đăng nhập
+        }
+    };
   return (
     <MainLayout>
       {/* HERO */}
@@ -22,24 +55,12 @@ export default function Home() {
               <p className="text-muted mt-3">
                 Nhanh chóng, tiết kiệm thời gian. Tiếp cận đội ngũ chuyên gia hàng đầu và dịch vụ y tế chuẩn quốc tế chỉ với vài thao tác.
               </p>
-
                <button
-                className="btn btn-primary-custom px-4 py-2 d-inline-flex align-items-center gap-2 mt-3"
-                onClick={() => {
-                  const token = localStorage.getItem("token");
-
-                  if (token) {
-                    nav("/booking"); // đã đăng nhập
-                  } else {
-                    nav("/login"); // chưa đăng nhập
-                  }
-                }}
-              >
-                Đặt lịch ngay
-                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
-                  arrow_forward
-                </span>
-              </button>
+                  className="btn btn-primary-custom px-4 py-2 d-inline-flex align-items-center gap-2 mt-3"
+                  onClick={handleBookingClick}>
+                  Đặt lịch ngay
+                  <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
+                </button>
             </div>
 
             <div className="col-lg-6 mt-4 mt-lg-0">

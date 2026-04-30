@@ -148,16 +148,6 @@
 }
 
 /* ===== BUTTON ===== */
-.button {
-  display: block;
-  width: 100%;
-  padding: 14px;
-  border-radius: 14px;
-  text-align: center;
-  font-weight: 600;
-  transition: 0.25s;
-  font-size: 15px;
-}
 
 /* Primary */
 .btn-primary {

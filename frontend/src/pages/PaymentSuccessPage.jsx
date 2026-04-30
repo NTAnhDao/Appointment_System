@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'; 
+import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import MainLayout from "../components/layout/MainLayout";
 import { confirmAppointmentAPI } from "../services/BookingService";
@@ -14,7 +14,7 @@ export default function PaymentSuccessPage() {
   const isMomo = searchParams.get('resultCode') !== null;
   const isQR = searchParams.get('method') === 'qr';
   const isCash = searchParams.get('method') === 'cash';
-  
+
 
   const [payment, setPayment] = useState({
     success: false,
@@ -27,7 +27,7 @@ export default function PaymentSuccessPage() {
   });
 
   useEffect(() => {
-    
+
 
     let data = {
       success: false,
@@ -111,7 +111,7 @@ export default function PaymentSuccessPage() {
           : 'Đặt lịch khám thất bại!'
       };
     }
-// ===== QR CODE =====
+    // ===== QR CODE =====
     if (isQR) {
       const orderId = searchParams.get('orderId');
       const amountStr = searchParams.get('amount');
@@ -125,7 +125,7 @@ export default function PaymentSuccessPage() {
         orderInfo: 'Thanh toán quét mã QR',
         txnRef: orderId || '',
         bankCode: 'QR_BANK',
-        payDate: new Date().getTime(), 
+        payDate: new Date().getTime(),
         message: success ? 'Đặt lịch thành công!' : 'Đặt lịch thất bại!'
       };
     }
@@ -144,7 +144,7 @@ export default function PaymentSuccessPage() {
         orderInfo: 'Thanh toán tại quầy',
         txnRef: orderId || '',
         bankCode: 'TẠI VIỆN',
-        payDate: new Date().getTime(), 
+        payDate: new Date().getTime(),
         message: success ? 'Đặt lịch thành công!' : 'Đặt lịch thất bại!'
       };
     }
@@ -152,42 +152,45 @@ export default function PaymentSuccessPage() {
     setPayment(data);
     const currentTxnRef = data.txnRef;
     if (data.success && currentTxnRef && !isConfirmed.current) {
-      
+
       let targetAppId = searchParams.get('invoiceId');
       console.log("=== KIỂM TRA DỮ LIỆU ĐẦU VÀO ===");
-    console.log("1. Mã giao dịch (txnRef):", currentTxnRef);
-    console.log("2. invoiceId trên URL:", searchParams.get('invoiceId'));
-      console.log("Target Invoice ID:", targetAppId); 
+      console.log("1. Mã giao dịch (txnRef):", currentTxnRef);
+      console.log("2. invoiceId trên URL:", searchParams.get('invoiceId'));
+      console.log("Target Invoice ID:", targetAppId);
 
 
       if (!targetAppId && currentTxnRef.toString().startsWith("ORDER_")) {
-        const parts = currentTxnRef.split("_"); 
-        targetAppId = parts[1]; 
+        const parts = currentTxnRef.split("_");
+        targetAppId = parts[1];
       } else if (!targetAppId) {
-        targetAppId = currentTxnRef; 
+        targetAppId = currentTxnRef;
       }
 
       if (targetAppId) {
-        isConfirmed.current = true; 
-        
-        // Gọi API để cập nhật trạng thái lịch hẹn 
-        // confirmAppointmentAPI(targetAppId)
-        //   .then(res => console.log(`Đã cập nhật Invoice ID [${targetAppId}] thành CONFIRMED`, res))
-        //   .catch(err => console.error("Lỗi khi confirm Invoice:", err));
+        isConfirmed.current = true;
 
-          // Sau khi confirm thành công, lấy chi tiết lịch hẹn để hiển thị lên UI
-          getInvoiceDetailAPI(targetAppId)
+        // Gọi API để cập nhật trạng thái lịch hẹn 
+        updateStatusInvoiceAPI(targetAppId)
           .then(res => {
-            console.log("Lấy dữ liệu chi tiết thành công:", res);
-            setAppointmentDetail(res.data); // Lưu vào state để hiển thị lên UI
+            console.log(`Đã cập nhật Invoice ID [${targetAppId}] thành PAID`, res);
+            return getInvoiceDetailAPI(targetAppId);
           })
-          .catch(err => console.error("Lỗi khi lấy chi tiết lịch hẹn:", err));
+          .then(detailRes => {
+            console.log("Lấy dữ liệu chi tiết mới nhất thành công:", detailRes);
+
+            // Lưu vào state để hiển thị lên UI
+            setAppointmentDetail(detailRes.data);
+          })
+          .catch(err => {
+            console.error("Lỗi trong quá trình thanh toán hoặc lấy chi tiết:", err);
+          });
       }
     }
 
   }, [searchParams]);
 
-  
+
   const { success, amount, orderInfo, txnRef, bankCode, payDate, message } = payment;
 
   // ===== FORMAT DATE =====
@@ -317,7 +320,7 @@ export default function PaymentSuccessPage() {
 
                 <div>
                   <span className="info-label">Họ tên:</span>
-                     <span className="info-value">{invoiceDetail?.patientName}</span>
+                  <span className="info-value">{invoiceDetail?.patientName}</span>
                 </div>
 
                 <div>
@@ -325,14 +328,14 @@ export default function PaymentSuccessPage() {
                   <span className="info-value">{invoiceDetail?.identityNumber}</span>
                 </div>
 
-                 <div>
+                <div>
                   <span className="info-label">BHYT:</span>
                   <span className="info-value">
-                  {invoiceDetail?.bhyt || "Không"}
-                </span>
+                    {invoiceDetail?.bhyt || "Không"}
+                  </span>
                 </div>
 
-                 <div>
+                <div>
                   <span className="info-label">SĐT:</span>
                   <span className="info-value">{invoiceDetail?.phone}</span>
                 </div>
@@ -354,7 +357,7 @@ export default function PaymentSuccessPage() {
 
                 <div>
                   <span className="info-label">Bác sĩ:</span>
-                   <span className="info-value">{invoiceDetail?.doctor}</span>
+                  <span className="info-value">{invoiceDetail?.doctor}</span>
                 </div>
 
                 <div>
@@ -371,10 +374,10 @@ export default function PaymentSuccessPage() {
 
                 <div>
                   <span className="info-label">Địa chỉ:</span>
-                   <span className="info-value">{invoiceDetail?.address}</span>
+                  <span className="info-value">{invoiceDetail?.address}</span>
                 </div>
               </div>
-            </div> 
+            </div>
 
             {/* HƯỚNG DẪN */}
             <div className="card">
@@ -429,21 +432,21 @@ export default function PaymentSuccessPage() {
 
               <div className="payment-row">
                 <span className="payment-label">Trạng thái thanh toán:</span>
-                  <span className="payment-value">{isCash 
-                    ? "Chờ thanh toán (Tại quầy)" 
-                    : (success ? "Thành công" : "Thất bại")
-                  }</span>
+                <span className="payment-value">{isCash
+                  ? "Chờ thanh toán (Tại quầy)"
+                  : (success ? "Thành công" : "Thất bại")
+                }</span>
               </div>
             </div>
 
             {/* BUTTON */}
             <div className="card">
-              <button className="button btn-primary"
+              <button className="btn btn-primary"
                 onClick={() => nav("/bookings")}>
                 Đặt lịch mới
               </button>
 
-              <button className="button btn-outline" style={{ marginTop: "10px" }}
+              <button className="btn btn-outline" style={{ marginTop: "10px" }}
                 onClick={() => nav("/")}>
                 Về trang chủ
               </button>

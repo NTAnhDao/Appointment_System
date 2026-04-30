@@ -46,7 +46,7 @@ export const getInvoiceDetail = async (invoice_id) => {
     specialty: data.DEPARTMENT_NAME,
     doctor: `${data.TITLE} ${data.DOCTOR_NAME}`,
 
-    amount: data.TOTAL_AMOUNT, // ✅ FIX
+    amount: data.TOTAL_AMOUNT, 
 
     invoiceStatus: data.INVOICE_STATUS.toLowerCase(),
     appointmentStatus: data.APPOINTMENT_STATUS.toLowerCase(),
