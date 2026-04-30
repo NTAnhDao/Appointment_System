@@ -59,3 +59,19 @@ export const getInvoiceDetail = async (invoice_id) => {
     phone: data.PHONE,
   };
 };
+
+
+export const createInvoiceForAppointment = async (conn, appointment) => {
+  return await repo.createInvoice(conn, {
+    appointment_id: appointment.appointment_id,
+    total_amount: appointment.fee
+  });
+};
+
+export const markPaid = async (conn, invoiceId) => {
+  await repo.updateStatus(conn, invoiceId, "PAID");
+};
+
+export const cancelInvoice = async (conn, invoiceId) => {
+  await repo.updateStatus(conn, invoiceId, "CANCELLED");
+};

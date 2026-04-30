@@ -7,9 +7,13 @@ export const create = async (req, res) => {
 
     const data = mapAppointmentDTO(req.body);
 
-    const id = await service.createAppointment(data, userId);
+    const result = await service.createAppointment(data, userId);
 
-    res.json({ success: true, id });
+    res.json({
+      success: true,
+      appointmentId: result.appointmentId,
+      invoiceId: result.invoiceId
+    });
   } catch (err) {
     res.status(400).json({
       success: false,

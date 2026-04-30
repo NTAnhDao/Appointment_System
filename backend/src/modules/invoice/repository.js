@@ -1,6 +1,40 @@
 import oracledb from "oracledb";
 import { execute } from "../../config/db.oracle.js";
 
+export const createInvoice = async (conn, data) => {
+  const result = await conn.execute(
+    `INSERT INTO app.invoices (appointment_id, total_amount, status)
+     VALUES (:appointment_id, :total_amount, 'UNPAID')
+     RETURNING invoice_id INTO :id`,
+    {
+      appointment_id: data.appointment_id,
+      total_amount: data.total_amount,
+      id: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER }
+    }
+  );
+
+  return result.outBinds.id[0];
+};
+
+export const findByAppointmentId = async (appointmentId) => {
+  const result = await execute(
+    `SELECT * FROM app.invoices WHERE appointment_id = :id`,
+    { id: appointmentId }
+  );
+
+  return result.rows[0];
+};
+
+export const updateStatus = async (conn, invoiceId, status) => {
+  await conn.execute(
+    `UPDATE app.invoices
+     SET status = :status,
+         paid_at = CASE WHEN :status = 'PAID' THEN SYSDATE ELSE paid_at END
+     WHERE invoice_id = :id`,
+    { status, id: invoiceId }
+  );
+};
+
 export const findFullDetailByInvoiceId = async (invoice_id) => {
   const sql = `
     SELECT 
@@ -52,3 +86,4 @@ export const findFullDetailByInvoiceId = async (invoice_id) => {
   const result = await execute(sql, { invoice_id });
   return result.rows[0];
 };
+

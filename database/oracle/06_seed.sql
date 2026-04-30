@@ -196,6 +196,7 @@ INSERT INTO app.appointments (
     user_id,
     status,
     fee,
+    queue_number,
     note,
     expired_at
 ) VALUES (
@@ -204,6 +205,7 @@ INSERT INTO app.appointments (
     1,
     'confirmed',
     300000,
+    1,
     'Khám chuyên khoa tim mạch',
     NULL -- không cần expired vì đã hoàn thành
 );

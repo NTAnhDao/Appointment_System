@@ -1,5 +1,7 @@
 import * as repo from "./repository.js";
 import { withTransaction } from "../../config/db.oracle.js";
+import * as invoiceService from "../invoice/service.js";
+import * as invoiceRepo from "../invoice/repository.js";
 
 // 🔥 CREATE APPOINTMENT
 export const createAppointment = async (data, userId) => {
@@ -15,12 +17,22 @@ export const createAppointment = async (data, userId) => {
     }
 
     // insert
-    const id = await repo.insertAppointment(conn, {
+    const appointmentId = await repo.insertAppointment(conn, {
         ...data,
         user_id: userId   
         });
 
-    return id;
+    const appointment = await repo.findById(appointmentId);
+
+    // 🔥 tạo invoice
+    const invoiceId = await invoiceService.createInvoiceForAppointment(
+      conn,
+      appointment
+    );
+    return {
+      appointmentId,
+      invoiceId
+    };
   });
 };
 
@@ -64,6 +76,13 @@ export const expireAppointments = async () => {
 
     for (const row of result.rows) {
       await repo.updateStatus(conn, row.APPOINTMENT_ID, "expired");
+      const invoice = await invoiceRepo.findByAppointmentId(
+        row.APPOINTMENT_ID
+      );
+
+      if (invoice) {
+        await invoiceRepo.updateStatus(conn, invoice.INVOICE_ID, "CANCELLED");
+      }
       await repo.decreaseSlot(conn, row.SCHEDULE_ID);
     }
   });
@@ -110,6 +129,7 @@ export const getMyAppointments = async (userId) => {
     note: item.NOTE || null,
     patient_name: item.PATIENT_NAME || null,
     fee: item.FEE || null,
+    queue_number: item.QUEUE_NUMBER || null,
     doctor_image: item.IMAGE_URL || null,
 
     payment_status: item.PAYMENT_STATUS || null,
@@ -143,3 +163,24 @@ const formatTime = (start, end) => {
   return `${s} - ${e}`;
 };
 
+export const assignQueueNumber = async (appointmentId) => {
+  return await withTransaction(async (conn) => {
+    const app = await repo.findById(appointmentId);
+
+    if (!app) throw new Error("Appointment not found");
+
+    if (app.STATUS.toLowerCase() !== "confirmed") {
+      throw new Error("Must be confirmed first");
+    }
+
+    if (app.QUEUE_NUMBER) {
+      return app.QUEUE_NUMBER; // tránh cấp 2 lần
+    }
+
+    const queueNumber = await repo.getNextQueueNumber(app.SCHEDULE_ID);
+
+    await repo.updateQueueNumber(conn, appointmentId, queueNumber);
+
+    return queueNumber;
+  });
+};

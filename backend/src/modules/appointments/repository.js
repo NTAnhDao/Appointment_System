@@ -152,3 +152,24 @@ export const getAppointmentsByUser = async (userId) => {
 
   return result.rows;
 };
+
+export const getNextQueueNumber = async (scheduleId) => {
+  const result = await execute(
+    `SELECT NVL(MAX(queue_number), 0) + 1 AS NEXT_Q
+     FROM app.appointments
+     WHERE schedule_id = :scheduleId
+       AND status = 'confirmed'`,
+    { scheduleId }
+  );
+
+  return result.rows[0].NEXT_Q;
+};
+
+export const updateQueueNumber = async (conn, id, queueNumber) => {
+  await conn.execute(
+    `UPDATE app.appointments
+     SET queue_number = :q
+     WHERE appointment_id = :id`,
+    { q: queueNumber, id }
+  );
+};

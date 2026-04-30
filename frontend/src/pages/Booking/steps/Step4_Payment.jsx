@@ -94,10 +94,10 @@ export default function Step4_Payment() {
       });
 
 
-      appointmentId = res.id;
-      invoiceId = res.id;
-      setCurrentAppointmentId(res.id);
-      setCurrentInvoiceId(res.id);
+      appointmentId = res.appointmentId;
+      invoiceId = res.invoiceId;
+      setCurrentAppointmentId(res.appointmentId);
+      setCurrentInvoiceId(res.invoiceId);
       console.log("amount", amount);
       console.log("Appointment created:", res);
 
