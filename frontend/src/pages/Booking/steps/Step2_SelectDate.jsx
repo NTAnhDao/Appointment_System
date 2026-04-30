@@ -26,18 +26,36 @@ export default function Step2_SelectDate() {
     }, 0);
   };
 
+  const formatLocalDate = (date) => {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
   const getCurrentMonthRange = () => {
     const now = new Date();
 
     const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    const format = (d) => d.toISOString().split("T")[0];
-
     return {
-      from: format(firstDay),
-      to: format(lastDay),
+      from: formatLocalDate(firstDay),
+      to: formatLocalDate(lastDay),
     };
+  };
+
+  const getNext7DaysRange = () => {
+    const today = new Date();
+
+    const from = formatLocalDate(today);
+
+    const toDate = new Date();
+    toDate.setDate(today.getDate() + 6);
+
+    const to = formatLocalDate(toDate);
+
+    return { from, to };
   };
 
   const formatTimeRange = (start, end) => {
@@ -48,7 +66,7 @@ export default function Step2_SelectDate() {
     const fetchSchedules = async () => {
       if (doctor.id) {
         try {
-          const { from, to } = getCurrentMonthRange();
+          const { from, to } = getNext7DaysRange();
 
           const data = await getDoctorSchedulesAPI(
             doctor.id,
@@ -66,7 +84,7 @@ export default function Step2_SelectDate() {
   }, [doctor.id]);
 
   const selectedDay = schedule.find(
-    (d) => d.day === selectedDate?.split("-")[2]
+    s => s.date.split("T")[0] === selectedDate
   );
 
   const slots = selectedDay?.slots || [];
@@ -86,6 +104,7 @@ export default function Step2_SelectDate() {
     (s) => getHour(s.time) >= 12
   );
 
+
   const getNext7Days = () => {
     const today = new Date();
 
@@ -94,7 +113,7 @@ export default function Step2_SelectDate() {
       d.setDate(today.getDate() + i);
 
       return {
-        fullDate: d.toISOString().split("T")[0], // YYYY-MM-DD
+        fullDate: formatLocalDate(d), // YYYY-MM-DD
         day: String(d.getDate()).padStart(2, "0"),
         weekday: d.toLocaleDateString("vi-VN", { weekday: "short" }),
       };
@@ -103,9 +122,12 @@ export default function Step2_SelectDate() {
 
   const weekDays = getNext7Days();
   const getCurrentMonthYear = () => {
-    const now = new Date();
-    const month = now.getMonth() + 1; // 0-11 → +1
-    const year = now.getFullYear();
+    if (!selectedDate) return "";
+
+    const date = new Date(selectedDate);
+
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
 
     return `Tháng ${month} ${year}`;
   };
@@ -206,7 +228,9 @@ export default function Step2_SelectDate() {
               {/* Dates + Day */}
               <div className="d-flex mb-4 days-picker">
                 {weekDays.map((d) => {
-                  const hasSchedule = schedule.find(s => s.day === d.day);
+                  const hasSchedule = schedule.find(s =>
+                    s.date.split("T")[0] === d.fullDate
+                  );
 
                   return (
                     <div
@@ -295,8 +319,8 @@ export default function Step2_SelectDate() {
           Quay lại
         </button>
 
-        <button 
-          className="btn btn-next" 
+        <button
+          className="btn btn-next"
           onClick={handleContinue}
           disabled={!selectedDate || !selectedTime}
         >
