@@ -1,5 +1,4 @@
 import * as service from "./service.js";
-import { mapAppointmentDTO } from "./dto.js";
 
 export const getDetail = async (req, res) => {
   try {

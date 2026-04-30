@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import MainLayout from "../components/layout/MainLayout";
 import { confirmAppointmentAPI } from "../services/BookingService";
-import { getAppointmentDetailAPI } from '../services/BookingService';
+import { getInvoiceDetailAPI } from '../services/InvoiceService';
 import '../styles/payments.css';
 
 export default function PaymentSuccessPage() {

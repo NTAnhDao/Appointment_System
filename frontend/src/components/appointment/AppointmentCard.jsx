@@ -44,7 +44,7 @@ export default function AppointmentCard({ data }) {
     return () => clearInterval(interval);
   }, [data.expired_at]);
 
-  const displayStatus =
+  let displayStatus =
     data.status === "pending" && isExpired
       ? "cancelled"
       : data.status;

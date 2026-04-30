@@ -9,6 +9,7 @@ import patientRoutes from "../modules/patients/routes.js";
 import locationRoutes from "../modules/location/routes.js";
 import departmentRoutes from "../modules/departments/routes.js";
 import doctorRoutes from "../modules/doctor/routes.js";
+import invoiceRoutes from "../modules/invoice/routes.js";
 
 const router = express.Router();
 
@@ -26,5 +27,6 @@ router.use("/patients", patientRoutes);
 router.use("/locations", locationRoutes);
 router.use("/departments", departmentRoutes);
 router.use("/doctors", doctorRoutes);
+router.use("/invoices", invoiceRoutes);
 
 export default router;
