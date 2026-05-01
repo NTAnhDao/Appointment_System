@@ -23,7 +23,7 @@ class AuthRepository {
             id: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }
         };
 
-        const result = await execute(sql, binds);
+        const result = await execute(sql, binds, { autoCommit: true });
         return result.outBinds.id[0];
     }
 }

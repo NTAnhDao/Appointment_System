@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useBooking } from "../../../context/BookingContext";
 import { createAppointmentAPI } from "../../../services/BookingService";
-import { createInvoiceAPI } from "../../../services/InvoiceService";
 import { QRCodeSVG } from "qrcode.react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,7 +15,7 @@ export default function Step4_Payment() {
   const [qrValue, setQrValue] = useState("");
   const [showQR, setShowQR] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300);
-  const myIP = "192.168.1.131";
+  const myIP = "192.168.1.192";
   const frontendPort = "5173";
   const backendPort = "5000";
   const amount = doctor.price || 150000;
@@ -86,31 +85,27 @@ export default function Step4_Payment() {
   const handlePayment = async () => {
     console.log("PAY:", bookingData, method);
     let appointmentId;
-    let invoiceId;;
+    let invoiceId;
+
     try {
-      // tạo Appointment
+      // 1. Chỉ gọi duy nhất API tạo Appointment (vì Backend đã tự tạo Invoice)
       const res = await createAppointmentAPI({
         schedule_id: bookingData.schedule_id,
         patient_id: bookingData.patientId,
         fee: amount,
       });
 
+      console.log("Backend Response:", res);
+
+      // 2. Lấy ID trực tiếp từ kết quả (Backend trả về { appointmentId, invoiceId })
+      // (Bọc thêm res.data dự phòng trường hợp dùng axios)
       appointmentId = res.appointmentId || res.data?.appointmentId;
-      setCurrentAppointmentId(appointmentId);
-      console.log("amount", amount);
-      console.log("Appointment created:", res);
-      // Tạo Invoice
-
-      const invoiceRes = await createInvoiceAPI({
-        appointment_id: appointmentId,
-        fee: amount, // Truyền đúng số tiền
-      });
-
       invoiceId = res.invoiceId || res.data?.invoiceId;
-      setCurrentInvoiceId(invoiceId);
-      console.log("amount", amount);
-      console.log("Invoice created:", invoiceRes);
 
+      setCurrentAppointmentId(appointmentId);
+      setCurrentInvoiceId(invoiceId);
+
+      // KHÔNG GỌI createInvoiceAPI NỮA!!!
 
     } catch (err) {
       console.error("Create appointment error:", err);
@@ -120,6 +115,7 @@ export default function Step4_Payment() {
         err.message ||
         "Tạo lịch thất bại"
       );
+      return;
     }
 
     if (method === "vnpay") {       // VNPAY

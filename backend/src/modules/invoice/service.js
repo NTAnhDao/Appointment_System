@@ -63,8 +63,8 @@ export const getInvoiceDetail = async (invoice_id) => {
 
 export const createInvoiceForAppointment = async (conn, appointment) => {
   return await repo.createInvoice(conn, {
-    appointment_id: appointment.appointment_id,
-    total_amount: appointment.fee
+    appointment_id: appointment.APPOINTMENT_ID || appointment.appointment_id,
+    total_amount: appointment.FEE || appointment.fee
   });
 };
 

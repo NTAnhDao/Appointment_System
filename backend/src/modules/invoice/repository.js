@@ -36,7 +36,6 @@ export const updateStatus = async (conn, invoiceId, status) => {
 };
 
 export const findFullDetailByInvoiceId = async (invoiceId) => {
-  // Câu lệnh JOIN các bảng để lấy đầy đủ thông tin theo yêu cầu của format data bên Service
   const result = await execute(
     `SELECT 
         i.invoice_id AS INVOICE_ID,
@@ -44,26 +43,32 @@ export const findFullDetailByInvoiceId = async (invoiceId) => {
         i.total_amount AS TOTAL_AMOUNT,
         i.status AS INVOICE_STATUS,
         a.status AS APPOINTMENT_STATUS,
-        a.start_time AS START_TIME,
-        a.end_time AS END_TIME,
-        a.work_date AS WORK_DATE,
+        
+        s.start_time AS START_TIME,
+        s.end_time AS END_TIME,
+        s.work_date AS WORK_DATE,
+        
         p.full_name AS PATIENT_NAME,
         p.gender AS GENDER,
-        p.birthday AS BIRTHDAY,
+        p.dob AS BIRTHDAY, 
         p.identity_number AS IDENTITY_NUMBER,
         p.bhyt AS BHYT,
         p.phone AS PHONE,
         p.address_detail AS ADDRESS_DETAIL,
         p.ward AS WARD,
         p.province AS PROVINCE,
-        d.full_name AS DOCTOR_NAME,
+        
+        d.name AS DOCTOR_NAME, 
         d.title AS TITLE,
-        dep.department_name AS DEPARTMENT_NAME
+        dep.name AS DEPARTMENT_NAME
+        
      FROM app.invoices i
-     JOIN app.appointments a ON i.appointment_id = a.id
-     JOIN app.patients p ON a.patient_id = p.id
-     JOIN app.doctors d ON a.doctor_id = d.id
-     JOIN app.departments dep ON d.department_id = dep.id
+     LEFT JOIN app.appointments a ON i.appointment_id = a.appointment_id 
+     LEFT JOIN app.schedule s ON a.schedule_id = s.schedule_id
+     LEFT JOIN app.patient p ON a.patient_id = p.id 
+     LEFT JOIN app.doctor d ON s.doctor_id = d.doctor_id 
+     LEFT JOIN app.department dep ON d.department_id = dep.department_id
+     
      WHERE i.invoice_id = :id`,
     { id: invoiceId }
   );

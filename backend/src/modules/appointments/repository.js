@@ -71,10 +71,11 @@ export const decreaseSlot = async (conn, scheduleId) => {
 };
 
 // 🔥 find appointment
-export const findById = async (id) => {
-  const result = await execute(
+export const findById = async (conn, id) => {
+  // Dùng conn.execute thay vì execute chung chung
+  const result = await conn.execute(
     `SELECT * FROM app.appointments WHERE appointment_id = :id`,
-    { id }
+    { id } // Lúc này id đã là một con số đàng hoàng
   );
   return result.rows[0];
 };

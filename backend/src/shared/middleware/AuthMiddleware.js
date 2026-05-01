@@ -14,6 +14,8 @@ export const authMiddleware = (req, res, next) => {
         const token = authHeader.split(' ')[1];
 
         const decoded = verifyToken(token);
+        console.log("DECODED:", decoded);
+
 
         // QUAN TRỌNG
         req.user = {

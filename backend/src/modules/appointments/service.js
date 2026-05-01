@@ -22,7 +22,8 @@ export const createAppointment = async (data, userId) => {
         user_id: userId   
         });
 
-    const appointment = await repo.findById(appointmentId);
+   
+    const appointment = await repo.findById(conn, appointmentId);
 
     // 🔥 tạo invoice
     const invoiceId = await invoiceService.createInvoiceForAppointment(

@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import MainLayout from "../components/layout/MainLayout";
 import { confirmAppointmentAPI } from "../services/BookingService";
 import { getInvoiceDetailAPI } from '../services/InvoiceService';
+import { updateStatusInvoiceAPI } from '../services/InvoiceService';
 import '../styles/payments.css';
 
 export default function PaymentSuccessPage() {
@@ -170,21 +171,18 @@ export default function PaymentSuccessPage() {
       if (targetAppId) {
         isConfirmed.current = true;
 
-        // Gọi API để cập nhật trạng thái lịch hẹn 
-        updateStatusInvoiceAPI(targetAppId)
-          .then(res => {
-            console.log(`Đã cập nhật Invoice ID [${targetAppId}] thành PAID`, res);
-            return getInvoiceDetailAPI(targetAppId);
-          })
-          .then(detailRes => {
-            console.log("Lấy dữ liệu chi tiết mới nhất thành công:", detailRes);
+        // 1. Gọi API để cập nhật trạng thái hóa đơn thành PAID
+        updateStatusInvoiceAPI(targetAppId, 'PAID')
+          .then(res => console.log(`[UPDATE] Đã cập nhật Invoice ID [${targetAppId}] thành PAID`, res))
+          .catch(err => console.error("[UPDATE ERROR] Lỗi khi cập nhật trạng thái hóa đơn:", err));
 
-            // Lưu vào state để hiển thị lên UI
-            setAppointmentDetail(detailRes.data);
+        // 2. Lấy chi tiết hóa đơn/lịch hẹn để hiển thị lên UI
+        getInvoiceDetailAPI(targetAppId)
+          .then(res => {
+            console.log("[GET] Lấy dữ liệu chi tiết thành công:", res);
+            setInvoiceDetail(res.data);
           })
-          .catch(err => {
-            console.error("Lỗi trong quá trình thanh toán hoặc lấy chi tiết:", err);
-          });
+          .catch(err => console.error("[GET ERROR] Lỗi khi lấy chi tiết hóa đơn:", err));
       }
     }
 
