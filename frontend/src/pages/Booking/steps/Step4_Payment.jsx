@@ -221,6 +221,7 @@ export default function Step4_Payment() {
         const data = await res.json();
         console.log("CASH RESPONSE:", data);
         if (data.success) {
+          
           nav(`/success?method=cash&orderId=${data.order_id}&invoiceId=${invoiceId}&amount=${amount}&status=success`);
         } else {
           alert("Không thể tạo đơn hàng thanh toán tại viện: " + (data.message || "Lỗi không xác định"));

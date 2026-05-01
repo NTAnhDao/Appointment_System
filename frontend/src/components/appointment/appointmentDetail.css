@@ -210,25 +210,25 @@
 }
 
 /* FIELD */
-.field {
+.field-detail {
   display: flex;
   padding-left: 20px;
   flex-direction: row;
 }
 
 /* LABEL */
-.field .label {
+.field-detail .label {
   font-size: 13px;
   color: #6b7280;
 }
 
 /* VALUE */
-.field .value {
+.field-detail .value {
   font-size: 14px;
   font-weight: 600;
   color: #111827;
 }
-.field .label::after {
+.field-detail .label::after {
   content: ":";
 }
 .payment-card{

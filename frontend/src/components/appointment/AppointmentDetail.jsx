@@ -114,22 +114,22 @@ export default function AppointmentDetail() {
             </div>
 
             <div className="patient-grid">
-              <div className="field">
+              <div className="field-detail">
                 <span className="label">Họ và tên</span>
                 <span className="value"> {data.patientName}</span>
               </div>
 
-              <div className="field">
+              <div className="field-detail">
                 <span className="label">Giới tính</span>
                 <span className="value"> {data.gender}</span>
               </div>
 
-              <div className="field">
+              <div className="field-detail">
                 <span className="label">Ngày sinh</span>
                 <span className="value"> {data.birthday}</span>
               </div>
 
-              <div className="field">
+              <div className="field-detail">
                 <span className="label">Mã định danh/CCCD</span>
                 <span className="value"> {data.identityNumber}</span>
               </div>
