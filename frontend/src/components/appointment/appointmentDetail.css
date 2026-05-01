@@ -303,17 +303,6 @@
   background: #0b3c66;
 }
 
-/* BUTTON BACK */
-.btn-back {
-  margin-top: 10px;
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  background: #e5e7eb;
-  border: none;
-  cursor: pointer;
-}
-
 /* WARNING */
 .payment-warning {
   margin-top: 12px;

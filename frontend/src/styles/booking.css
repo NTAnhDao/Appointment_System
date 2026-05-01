@@ -360,7 +360,7 @@
 }
 
 /* Button */
-.btn-pay {
+.btn-pay-book {
   border-radius: 12px;
   padding: 10px 22px;
   display: flex;
@@ -371,7 +371,7 @@
   color: white;
 }
 
-.btn-pay:hover {align-items: center;
+.btn-pay-book:hover {
   font-weight: 500;
   background: var(--blue-800);
     box-shadow: 0 6px 18px rgba(13, 110, 253, 0.4);
