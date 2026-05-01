@@ -5,6 +5,9 @@ import "./appointmentDetail.css";
 export default function AppointmentDetail() {
   const { state } = useLocation();
   const { id } = useParams();
+  const [method, setMethod] = useState("vnpay");
+  const [isPayment, setIsPayment] = useState();
+
   const navigate = useNavigate();
 
   const [data, setData] = useState(() => {
@@ -13,6 +16,12 @@ export default function AppointmentDetail() {
     const cached = sessionStorage.getItem(`appointment_${id}`);
     return cached ? JSON.parse(cached) : null;
   });
+    const methods = [
+    { id: "vnpay", title: "Ví VNPay", desc: "Thanh toán qua VNPay" },
+    { id: "momo", title: "Ví MoMo", desc: "Thanh toán qua MoMo" },
+    { id: "qr", title: "QR Code", desc: "Quét mã ngân hàng" },
+    { id: "cash", title: "Thanh toán tại viện", desc: "Trả tiền khi đến khám" },
+  ];
   useEffect(() => {
     if (state) {
         setData(state);
@@ -79,7 +88,9 @@ export default function AppointmentDetail() {
             ← Quay lại danh sách
             </div>
 
-            <h3 className="title-detail">Chi tiết lịch hẹn</h3>
+            <h3 className="title-detail">
+              {isPayment ? "Xác nhận & Thanh toán lịch hẹn" : "Chi tiết lịch hẹn"}
+            </h3>
 
             <div className="text-muted">
             Mã đặt chỗ: <span className="code">UMC-{data.id}</span>
@@ -90,13 +101,41 @@ export default function AppointmentDetail() {
         <div className="badge-hospital">
             ● {paymentText}
         </div>
-        </div>
+      </div>
 
-      <div className="row g-3">
-        
+      <div className="row g-3"> 
         {/* LEFT */}
         <div className="col-md-8">
-          
+          {/* PATIENT INFO */}
+          <div className="card info-card mb-3 patient-card">
+            <div className="section-title">
+              <span className="material-symbols-outlined">person</span>
+              Thông tin bệnh nhân
+            </div>
+
+            <div className="patient-grid">
+              <div className="field">
+                <span className="label">Họ và tên</span>
+                <span className="value"> {data.patientName}</span>
+              </div>
+
+              <div className="field">
+                <span className="label">Giới tính</span>
+                <span className="value"> {data.gender}</span>
+              </div>
+
+              <div className="field">
+                <span className="label">Ngày sinh</span>
+                <span className="value"> {data.birthday}</span>
+              </div>
+
+              <div className="field">
+                <span className="label">Mã định danh/CCCD</span>
+                <span className="value"> {data.identityNumber}</span>
+              </div>
+            </div>
+          </div>
+          {/* DOCTOR & LOCATION */}
           <div className="card info-card">
             <div className="row">
               
@@ -130,34 +169,83 @@ export default function AppointmentDetail() {
             </div>
 
             <div className="row">
-
-            {/* TIME */}
-            <div className="mt-3 col-md-6">
-              <div className="label">THỜI GIAN KHÁM</div>
-              <div className="date-time-box">
-                <span className="material-symbols-outlined icon-detail">
-                    calendar_month
-                </span>
-                <span>{formatDateVN(data.date)}</span>
-                </div>
-
+              {/* TIME */}
+              <div className="mt-3 col-md-6">
+                <div className="label">THỜI GIAN KHÁM</div>
                 <div className="date-time-box">
-                <span className="material-symbols-outlined icon-detail">
-                    access_time
-                </span>
-                <span>{data.time}</span>
-                </div>
-            </div>
-            <div className="mt-3 fee-box ">
-                <div className="label">SỐ TIỀN CẦN THANH TOÁN</div>
-                <div className="fee-amount">
-                    {Number(data.fee || 0).toLocaleString("vi-VN")} vnđ
-                </div>
-            </div>
+                  <span className="material-symbols-outlined icon-detail">
+                      calendar_month
+                  </span>
+                  <span>{formatDateVN(data.date)}</span>
+                  </div>
+
+                  <div className="date-time-box">
+                  <span className="material-symbols-outlined icon-detail">
+                      access_time
+                  </span>
+                  <span>{data.time}</span>
+                  </div>
+              </div>
+
+              {!isPayment && (
+              <div className="mt-3 fee-box ">
+                  <div className="label">SỐ TIỀN CẦN THANH TOÁN</div>
+                  <div className="fee-amount">
+                      {Number(data.fee || 0).toLocaleString("vi-VN")} vnđ
+                  </div>
+              </div>
+              )}
           </div>
         </div>
 
-          {/* PAYMENT GUIDE */}
+          {/* PAYMENT METHODS */}
+        {isPayment && (
+          <div className="card info-card mt-3 payment-card">
+            <h4 className="payment-title mb-1">Phương thức thanh toán</h4>
+            <p className="text-muted mb-2">
+              Chọn cách thanh toán phù hợp cho lịch khám
+            </p>
+
+            <div className="row">
+              {methods.map((m) => (
+                <div key={m.id} className="col-md-6 mb-2">
+                  <div
+                    className={`payment-item-pro ${method === m.id ? "active" : ""
+                      }`}
+                    onClick={() => setMethod(m.id)}
+                  >
+                    {/* LEFT ICON */}
+                    <div className="payment-icon">
+                      <span className="material-symbols-outlined">
+                        {m.id === "vnpay" && "account_balance_wallet"}
+                        {m.id === "momo" && "account_balance"}
+                        {m.id === "qr" && "qr_code"}
+                        {m.id === "cash" && "payments"}
+                      </span>
+                    </div>
+
+                    {/* TEXT */}
+                    <div className="flex-grow-1">
+                      <div className="payment-text">{m.title}</div>
+                      <div className="text-muted small">{m.desc}</div>
+                    </div>
+
+                    {/* RADIO CUSTOM */}
+                    <div className={`radio-custom ${method === m.id ? "checked" : ""}`} />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Security */}
+            <div className="secure-box-pro mt-2">
+              <span className="material-symbols-outlined">verified_user</span>
+              Thông tin thanh toán được mã hóa và bảo mật
+            </div>
+          </div>
+        )}
+        {/* PAYMENT GUIDE */}
+        {!isPayment && (
           <div className="card p-3 mt-3 payment-guide">
             <div className="d-flex gap-3">
               <span className="material-symbols-outlined payment-icon">payment</span>
@@ -170,55 +258,91 @@ export default function AppointmentDetail() {
               </div>
             </div>
           </div>
-        </div>
+        )}
+      </div>
 
-        {/* RIGHT */}
-        <div className="col-md-4">
-          <div className="qr-card">
-  
-            <div className="qr-title">
-                Mã Check-in tại quầy
+
+      {/* RIGHT */}
+      <div className="col-md-4">
+        {!isPayment && (
+          <>
+            <div className="qr-card">
+    
+              <div className="qr-title">
+                  Mã Check-in tại quầy
+              </div>
+
+              {/* QR */}
+              <div className="qr-wrapper">
+                  <div className="qr-inner">
+                  <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${data.appointment_id}`}
+                      alt="qr"
+                  />
+                  </div>
+              </div>
+
+              <div className="qr-note">
+                  Vui lòng xuất trình mã này tại quầy tiếp đón để làm thủ tục nhanh chóng
+              </div>
+            </div>
+              {/* BUTTONS */}
+              <button className="btn-primary-custom">
+              <span className="material-symbols-outlined btn-icon">
+                  download
+              </span>
+              Tải phiếu xác nhận
+              </button>
+
+              <button className="btn-secondary-custom">
+              <span className="material-symbols-outlined btn-icon">
+                  share
+              </span>
+              Chia sẻ lịch hẹn
+              </button>
+          </>
+        )}
+
+        {isPayment && (
+          <>
+            <div className="payment-summary-card">
+            <div className="summary-title">Tóm tắt chi phí</div>
+
+            <div className="summary-row">
+              <span>Giá khám</span>
+              <span>{Number(data.fee || 0).toLocaleString("vi-VN")}đ</span>
             </div>
 
-            {/* QR */}
-            <div className="qr-wrapper">
-                <div className="qr-inner">
-                <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${data.appointment_id}`}
-                    alt="qr"
-                />
-                </div>
+            <div className="summary-row">
+              <span>Phí dịch vụ</span>
+              <span>0.000đ</span>
             </div>
 
-            <div className="qr-note">
-                Vui lòng xuất trình mã này tại quầy tiếp đón để làm thủ tục nhanh chóng
+            <div className="divider"></div>
+
+            <div className="summary-total">
+              <span>Tổng cộng</span>
+              <span className="total-amount">
+                {(Number(data.fee || 0)).toLocaleString("vi-VN")}đ
+              </span>
             </div>
 
-           
-         </div>
-          {/* BUTTONS */}
-           <button className="btn-primary-custom">
-            <span className="material-symbols-outlined btn-icon">
-                download
-            </span>
-            Tải phiếu xác nhận
-            </button>
+            <div className="vat-note">* Đã bao gồm thuế GTGT</div>
+          </div>
 
-            <button className="btn-secondary-custom">
-            <span className="material-symbols-outlined btn-icon">
-                share
-            </span>
-            Chia sẻ lịch hẹn
-            </button>
+          <button className="btn-pay">
+            <span className="material-symbols-outlined">shield</span>
+            Thanh toán ngay
+          </button>
 
-            <div className="cancel-link">
-            <span className="material-symbols-outlined btn-icon">
-                cancel
-            </span>
-            Hủy lịch hẹn
-            </div>
+          <div className="payment-warning">
+            <span className="material-symbols-outlined">error</span>
+            Lưu ý: Lịch hẹn chỉ được xác nhận chính thức sau khi thanh toán thành công.
+          </div>
+          </>
 
-        </div>
+        )}
+      </div>
       </div>
     </div>
   );

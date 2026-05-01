@@ -189,7 +189,11 @@
 /* confirmed (đã xác nhận) */
 .card-confirmed {
   border-left: 4px solid #34a853;
-  background-color: #e6f4ea;
+  background-color: #f6faf7;
+}
+.card-cash {
+  border-left: 4px solid #34a853;
+  background-color: #f6faf7;
 }
 
 .filter-tabs {

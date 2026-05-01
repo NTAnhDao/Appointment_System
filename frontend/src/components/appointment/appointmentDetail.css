@@ -184,3 +184,142 @@
   color: var(--primary);
   flex-shrink: 0;       
 }
+/* CARD */
+.patient-card {
+  border-radius: 16px;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* TITLE */
+.section-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* GRID */
+.patient-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 40px;
+}
+
+/* FIELD */
+.field {
+  display: flex;
+  padding-left: 20px;
+  flex-direction: row;
+}
+
+/* LABEL */
+.field .label {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* VALUE */
+.field .value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+.field .label::after {
+  content: ":";
+}
+.payment-card{
+  text-align: start;
+}
+/* CARD */
+.payment-summary-card {
+  background: #f9fafb;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+/* TITLE */
+.summary-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+/* ROW */
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+/* DIVIDER */
+.divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 12px 0;
+}
+
+/* TOTAL */
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.total-amount {
+  color: #0f4c81;
+  font-size: 18px;
+}
+
+/* VAT */
+.vat-note {
+  font-size: 12px;
+  color: #6b7280;
+  text-align: right;
+}
+
+/* BUTTON PAY */
+.btn-pay {
+  margin-top: 16px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: #0f4c81;
+  color: white;
+  font-weight: 600;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.btn-pay:hover {
+  background: #0b3c66;
+}
+
+/* BUTTON BACK */
+.btn-back {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  background: #e5e7eb;
+  border: none;
+  cursor: pointer;
+}
+
+/* WARNING */
+.payment-warning {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #dc2626;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}

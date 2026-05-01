@@ -111,6 +111,15 @@ export const getMyAppointments = async (userId) => {
   return data.map((item) => ({
     id: item.APPOINTMENT_ID,
 
+    //patient info
+    patientName: item.PATIENT_NAME,
+    gender: item.GENDER === "male" ? "Nam" : "Nữ",
+    birthday: formatDate(item.BIRTHDAY),
+    address: `${item.ADDRESS_DETAIL}, ${item.WARD}, ${item.PROVINCE}`,
+    identityNumber: item.IDENTITY_NUMBER,
+    bhyt: item.BHYT,
+    phone: item.PHONE,
+
     // doctor
     doctor: item.TITLE + " " + item.DOCTOR_NAME,
     specialty: item.DEPARTMENT_NAME, 
@@ -128,13 +137,11 @@ export const getMyAppointments = async (userId) => {
       : null,
 
     note: item.NOTE || null,
-    patient_name: item.PATIENT_NAME || null,
     fee: item.FEE || null,
     queue_number: item.QUEUE_NUMBER || null,
     doctor_image: item.IMAGE_URL || null,
+    invoice_status: item.INVOICE_STATUS || null
 
-    payment_status: item.PAYMENT_STATUS || null,
-    payment_method: item.PAYMENT_METHOD || null
   }));
 };
 

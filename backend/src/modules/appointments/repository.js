@@ -97,6 +97,7 @@ export const getAppointmentsByUser = async (userId) => {
         a.status,
         a.note,
         a.fee,
+        a.queue_number,
         a.created_at,
         a.expired_at,
 
@@ -118,9 +119,17 @@ export const getAppointmentsByUser = async (userId) => {
 
         -- patient
         p.full_name AS patient_name,
+        p.gender,
+        p.dob AS birthday,
+        p.identity_number,
+        p.bhyt,
+        p.province,
+        p.ward,
+        p.address_detail,
+        p.phone,
 
-        --payment
-        inv.status AS payment_status
+        --invoice
+        inv.status AS INVOICE_STATUS
 
      FROM app.appointments a
 

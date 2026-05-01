@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function AppointmentCard({ data }) {
   const [remaining, setRemaining] = useState("");
   const [isExpired, setIsExpired] = useState(false);
+  const [isPayment, setIsPayment] = useState(false);
   const navigate = useNavigate();
 
   const parseExpired = (str) => {
@@ -51,14 +52,11 @@ export default function AppointmentCard({ data }) {
 
     //  map payment hiển thị
     const setPayment = (() => {
-      if (data.payment_status === "SUCCESS") {
-        displayStatus = "success";
+      if (data.invoice_status === "UNPAID") {
+        displayStatus = "cash";
+      }else if (data.invoice_status === "PAID") {
+        displayStatus = "paid";
       }
-
-      if (data.payment_method === "cash") {
-        displayStatus = "cash"; 
-      }
-
     })();
 
   return (
@@ -69,8 +67,10 @@ export default function AppointmentCard({ data }) {
           ? "card-disabled"
           : displayStatus === "pending"
           ? "card-pending"
-          : displayStatus === "confirmed"
+          : displayStatus === "paid"
           ? "card-confirmed"
+          : displayStatus === "cash"
+          ? "card-cash"
           : ""
       }`}
     >
@@ -78,7 +78,7 @@ export default function AppointmentCard({ data }) {
       <div className="d-flex align-items-center gap-3">
 
         <div className="date-circle-pro">
-          {data.date.split("/")[0]}
+          {data.queue_number  ? `#${data.queue_number}` : "?"}
         </div>
 
         <div>
@@ -115,21 +115,32 @@ export default function AppointmentCard({ data }) {
 
           {/* PENDING */}
           {displayStatus === "pending" && (
-            <>
+            <div>
               <div className="expire-box">
                 <span className="material-symbols-outlined">timer</span>
                 <span>Hết hạn sau</span>
                 <span className="time">{remaining}</span>
               </div>
 
-              <button className="btn-pay">
+              <button className="btn-pay"
+              onClick={() => {
+                sessionStorage.setItem(
+                  `appointment_${data.id}`,
+                  JSON.stringify(data)
+                );
+                setIsPayment(true);
+
+                navigate(`/appointments/${data.id}`, {
+                  state: data,
+                });
+              }}>
                 Thanh toán ngay
               </button>
-            </>
+            </div>
           )}
 
-          {/* DONE */}
-          {displayStatus === "confirmed" && (
+          {/* CASH */}
+          {displayStatus === "cash" && (
             <div
               className="action-link text-secondary"
               onClick={() => {

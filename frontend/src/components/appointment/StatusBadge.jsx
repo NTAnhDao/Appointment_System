@@ -1,6 +1,6 @@
 export default function StatusBadge({ status }) {
   const map = {
-  success: { text: "Đã thanh toán", class: "badge-paid", icon: "check_circle" },
+  paid: { text: "Đã thanh toán", class: "badge-paid", icon: "check_circle" },
   pending: { text: "Chưa thanh toán", class: "badge-pending", icon: "schedule" },
   cancelled: {
     text: "Đã huỷ",
