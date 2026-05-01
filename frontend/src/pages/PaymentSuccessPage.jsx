@@ -169,11 +169,19 @@ export default function PaymentSuccessPage() {
 
       if (targetAppId) {
         isConfirmed.current = true;
+        
+        if(isCash){
+          updateStatusInvoiceAPI(targetAppId, 'UNPAID')
+          .then(res => console.log(`[UPDATE] Đã cập nhật Invoice ID [${targetAppId}] thành PAID`, res))
+          .catch(err => console.error("[UPDATE ERROR] Lỗi khi cập nhật trạng thái hóa đơn:", err));
 
+        
+      } else {
         // 1. Gọi API để cập nhật trạng thái hóa đơn thành PAID
         updateStatusInvoiceAPI(targetAppId, 'PAID')
           .then(res => console.log(`[UPDATE] Đã cập nhật Invoice ID [${targetAppId}] thành PAID`, res))
           .catch(err => console.error("[UPDATE ERROR] Lỗi khi cập nhật trạng thái hóa đơn:", err));
+      }
 
         // 2. Lấy chi tiết hóa đơn/lịch hẹn để hiển thị lên UI
         getInvoiceDetailAPI(targetAppId)
