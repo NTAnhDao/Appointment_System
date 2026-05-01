@@ -15,7 +15,7 @@ export default function Step4_Payment() {
   const [qrValue, setQrValue] = useState("");
   const [showQR, setShowQR] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300);
-  const myIP = "192.168.1.192";
+  const myIP = "192.168.1.197";
   const frontendPort = "5173";
   const backendPort = "5000";
   const amount = doctor.price || 150000;

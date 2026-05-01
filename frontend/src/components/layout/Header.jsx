@@ -5,12 +5,12 @@ export default function Header() {
     const nav = useNavigate();
     const location = useLocation();
     
-    // Tạo state để lưu trạng thái đăng nhập
+   
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    // Kiểm tra trạng thái đăng nhập mỗi khi Component render hoặc chuyển trang
+
     useEffect(() => {
-        // Giả sử khi login thành công, bạn lưu token với tên là 'token' hoặc 'user'
+    
         const token = localStorage.getItem("token"); 
         
         if (token) {
@@ -18,9 +18,9 @@ export default function Header() {
         } else {
             setIsLoggedIn(false);
         }
-    }, [location.pathname]); // Chạy lại hàm này nếu URL thay đổi
+    }, [location.pathname]); 
 
-    // Hàm xử lý khi bấm nút "Đăng xuất" (Nên có nếu đã ẩn nút Đăng nhập)
+  
     const handleLogout = () => {
         localStorage.removeItem("token"); // Xóa token
         setIsLoggedIn(false);
