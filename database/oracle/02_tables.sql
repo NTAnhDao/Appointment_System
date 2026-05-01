@@ -117,7 +117,6 @@ CREATE TABLE app.appointments (
     status VARCHAR2(20) DEFAULT 'pending',
     fee NUMBER(10,0),
     queue_number NUMBER NULL,
-    note VARCHAR2(1000),
 
     created_at DATE DEFAULT SYSDATE,
     expired_at DATE,

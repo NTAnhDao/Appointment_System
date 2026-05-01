@@ -42,6 +42,7 @@ BEGIN
     END IF;
 END;
 /
+
 CREATE OR REPLACE TRIGGER trg_reduce_slot_on_expire
 AFTER UPDATE OF status ON app.appointments
 FOR EACH ROW

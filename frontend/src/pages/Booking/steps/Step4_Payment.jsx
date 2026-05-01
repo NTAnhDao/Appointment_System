@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useBooking } from "../../../context/BookingContext";
-import { createAppointmentAPI } from "../../../services/BookingService";
+import { createAppointmentAPI, confirmAppointmentAPI } from "../../../services/BookingService";
 import { QRCodeSVG } from "qrcode.react";
 import { useNavigate } from "react-router-dom";
 
@@ -221,6 +221,7 @@ export default function Step4_Payment() {
         const data = await res.json();
         console.log("CASH RESPONSE:", data);
         if (data.success) {
+          confirmAppointmentAPI(appointmentId); // Xác nhận lịch hẹn ngay khi chọn thanh toán tại viện
           nav(`/success?method=cash&orderId=${data.order_id}&invoiceId=${invoiceId}&amount=${amount}&status=success`);
         } else {
           alert("Không thể tạo đơn hàng thanh toán tại viện: " + (data.message || "Lỗi không xác định"));

@@ -227,9 +227,10 @@
   font-size: 14px;
   font-weight: 600;
   color: #111827;
+  margin-left: 6px;
 }
 .field-detail .label::after {
-  content: ":";
+  content: ": ";
 }
 .payment-card{
   text-align: start;

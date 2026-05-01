@@ -1,5 +1,6 @@
 import * as repo from "./repository.js";
 import { withTransaction } from "../../config/db.oracle.js";
+import {confirmAppointment} from "../appointments/service.js";
 
 
 // format helpers
@@ -69,7 +70,13 @@ export const createInvoiceForAppointment = async (conn, appointment) => {
 };
 
 export const markPaid = async (conn, invoiceId) => {
-  await repo.updateStatus(conn, invoiceId, "PAID");
+  const appointmentId = await repo.updateStatus(conn, invoiceId, "PAID");
+
+  if (appointmentId) {
+    await confirmAppointment(appointmentId);
+  }
+
+  return appointmentId;
 };
 
 export const cancelInvoice = async (conn, invoiceId) => {

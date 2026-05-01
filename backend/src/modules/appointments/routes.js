@@ -13,6 +13,7 @@ router.post(
   validateCreateAppointment,
   controller.create
 );
+
 router.post("/:id/confirm", authMiddleware, controller.confirm);
 router.post("/:id/cancel", authMiddleware, controller.cancel);
 

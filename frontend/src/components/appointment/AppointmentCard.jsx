@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function AppointmentCard({ data }) {
   const [remaining, setRemaining] = useState("");
   const [isExpired, setIsExpired] = useState(false);
-  const [isPayment, setIsPayment] = useState(false);
+  const [isPayment, setIsPayment] = useState();
   const navigate = useNavigate();
 
   const parseExpired = (str) => {
@@ -52,7 +52,7 @@ export default function AppointmentCard({ data }) {
 
     //  map payment hiển thị
     const setPayment = (() => {
-      if (data.invoice_status === "UNPAID") {
+      if (data.invoice_status === "UNPAID" && data.status === "confirmed") {
         displayStatus = "cash";
       }else if (data.invoice_status === "PAID") {
         displayStatus = "paid";
@@ -122,18 +122,24 @@ export default function AppointmentCard({ data }) {
                 <span className="time">{remaining}</span>
               </div>
 
-              <button className="btn-pay"
-              onClick={() => {
-                sessionStorage.setItem(
-                  `appointment_${data.id}`,
-                  JSON.stringify(data)
-                );
-                setIsPayment(true);
+              <button
+                className="btn-pay"
+                onClick={() => {
+                  const payload = {
+                    ...data,
+                    isPayment: true
+                  };
 
-                navigate(`/appointments/${data.id}`, {
-                  state: data,
-                });
-              }}>
+                  sessionStorage.setItem(
+                    `appointment_${data.id}`,
+                    JSON.stringify(payload)
+                  );
+
+                  navigate(`/appointments/${data.id}`, {
+                    state: payload
+                  });
+                }}
+              >
                 Thanh toán ngay
               </button>
             </div>

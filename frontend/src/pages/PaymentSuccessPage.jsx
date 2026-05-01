@@ -72,9 +72,8 @@ export default function PaymentSuccessPage() {
         txnRef: orderId || '',
         bankCode: 'VNPAY',
         payDate: searchParams.get('vnp_PayDate') || '',
-        message: success
-          ? 'Đặt lịch khám thành công!'
-          : 'Đặt lịch khám thất bại!'
+        message: success ? 'Thanh toán thành công!' : 'Thanh toán thất bại!'
+
       };
     }
 
@@ -106,9 +105,8 @@ export default function PaymentSuccessPage() {
         txnRef: orderId || '',
         bankCode: 'MOMO',
         payDate: searchParams.get('responseTime') || '',
-        message: success
-          ? 'Đặt lịch khám thành công!'
-          : 'Đặt lịch khám thất bại!'
+        message: success ? 'Thanh toán thành công!' : 'Thanh toán thất bại!'
+
       };
     }
     // ===== QR CODE =====
@@ -126,7 +124,7 @@ export default function PaymentSuccessPage() {
         txnRef: orderId || '',
         bankCode: 'QR_BANK',
         payDate: new Date().getTime(),
-        message: success ? 'Đặt lịch thành công!' : 'Đặt lịch thất bại!'
+        message: success ? 'Thanh toán thành công!' : 'Thanh toán thất bại!'
       };
     }
 
@@ -172,9 +170,8 @@ export default function PaymentSuccessPage() {
         
         if(isCash){
           updateStatusInvoiceAPI(targetAppId, 'UNPAID')
-          .then(res => console.log(`[UPDATE] Đã cập nhật Invoice ID [${targetAppId}] thành PAID`, res))
+          .then(res => console.log(`[UPDATE] Đã cập nhật Invoice ID [${targetAppId}] thành UNPAID`, res))
           .catch(err => console.error("[UPDATE ERROR] Lỗi khi cập nhật trạng thái hóa đơn:", err));
-
         
       } else {
         // 1. Gọi API để cập nhật trạng thái hóa đơn thành PAID
@@ -296,7 +293,7 @@ export default function PaymentSuccessPage() {
               <>
                 Rất tiếc, giao dịch không thành công.
                 <br />
-                Vui lòng đặt lịch lại nhé!
+                Bạn có thể thanh toán lại trong khoảng 15 phút.
               </>
             )}
           </p>

@@ -1,27 +1,95 @@
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Download, Share2 } from "lucide-react";
+import { toast } from "react-toastify"
+import html2pdf from "html2pdf.js";
+
 import "./appointmentDetail.css";
 
 export default function AppointmentDetail() {
   const { state } = useLocation();
   const { id } = useParams();
   const [method, setMethod] = useState("vnpay");
-  const [isPayment, setIsPayment] = useState();
-
   const navigate = useNavigate();
-
+  
   const [data, setData] = useState(() => {
     if (state) return state;
 
     const cached = sessionStorage.getItem(`appointment_${id}`);
     return cached ? JSON.parse(cached) : null;
   });
-    const methods = [
+  const isPayment = data?.isPayment;
+
+  const methods = [
     { id: "vnpay", title: "Ví VNPay", desc: "Thanh toán qua VNPay" },
     { id: "momo", title: "Ví MoMo", desc: "Thanh toán qua MoMo" },
     { id: "qr", title: "QR Code", desc: "Quét mã ngân hàng" },
     { id: "cash", title: "Thanh toán tại viện", desc: "Trả tiền khi đến khám" },
   ];
+  
+  const handleDownload = async () => {
+    if (!data) return;
+
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = getPdfHtml();
+
+    document.body.appendChild(wrapper);
+
+    await html2pdf()
+      .from(wrapper)
+      .set({
+        margin: 10,
+        filename: `appointment-${data.code}.pdf`,
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+        },
+        jsPDF: { format: "a4" },
+      })
+      .save();
+
+    document.body.removeChild(wrapper);
+  };
+
+  const getPdfHtml = () => {
+    const checkinUrl = window.location.origin;
+
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(checkinUrl)}`;
+
+    return `
+      <div style="font-family: Arial; padding: 20px;">
+        <h2 style="text-align:center">PHIẾU XÁC NHẬN LỊCH KHÁM</h2>
+        <p><b>Mã đặt chỗ:</b> UMC-${data.id}</p>
+
+        <hr />
+
+        <h5>Thông tin bệnh nhân</h5>
+        <p>Họ tên: ${data.patientName}</p>
+        <p>Giới tính: ${data.gender}</p>
+        <p>Ngày sinh: ${data.birthday}</p>
+
+        <hr />
+
+        <h5>Thông tin lịch khám</h5>
+        <p>Bác sĩ: ${data.doctor}</p>
+        <p>Chuyên khoa: ${data.specialty}</p>
+        <p>Ngày: ${data.date}</p>
+        <p>Giờ: ${data.time}</p>
+
+        <hr />
+
+        <h5>Thanh toán</h5>
+        <p>Số tiền: ${Number(data.fee || 0).toLocaleString("vi-VN")} VND</p>
+        <p>Trạng thái: Thanh toán tại bệnh viện</p>
+      
+        <div style="text-align:center; margin-top:20px">
+          <img src="${qrUrl}" width="120"/>
+          <p>Quét mã khi đến bệnh viện</p>
+        </div>
+      </div>
+    `;
+  };
+    
   useEffect(() => {
     if (state) {
         setData(state);
@@ -71,12 +139,7 @@ export default function AppointmentDetail() {
     return `${weekday}, ${day} tháng ${month}, ${year}`;
     };
   // payment text
-  const paymentText =
-    data.payment_method === "cash"
-      ? "Chờ thanh toán tại quầy"
-      : data.payment_status === "success"
-      ? "Đã thanh toán"
-      : "Chưa thanh toán";
+  const paymentText = "Chờ thanh toán tại quầy";
 
   return (
     <div className="container py-4 appointment-detail">
@@ -103,7 +166,7 @@ export default function AppointmentDetail() {
         </div>
       </div>
 
-      <div className="row g-3"> 
+      <div className="row g-3" > 
         {/* LEFT */}
         <div className="col-md-8">
           {/* PATIENT INFO */}
@@ -115,7 +178,7 @@ export default function AppointmentDetail() {
 
             <div className="patient-grid">
               <div className="field-detail">
-                <span className="label">Họ và tên</span>
+                <span className="label">Họ và tên </span>
                 <span className="value"> {data.patientName}</span>
               </div>
 
@@ -287,19 +350,16 @@ export default function AppointmentDetail() {
               </div>
             </div>
               {/* BUTTONS */}
-              <button className="btn-primary-custom">
-              <span className="material-symbols-outlined btn-icon">
-                  download
-              </span>
+              <button className="btn-primary-custom" onClick={handleDownload}>
+              <Download size={18} className="btn-icon" />
               Tải phiếu xác nhận
               </button>
+            
 
-              <button className="btn-secondary-custom">
-              <span className="material-symbols-outlined btn-icon">
-                  share
-              </span>
+              {/* <button className="btn-secondary-custom" onClick={handleShare}>
+              <Share2 size={18} className="btn-icon" />
               Chia sẻ lịch hẹn
-              </button>
+              </button> */}
           </>
         )}
 
@@ -343,6 +403,7 @@ export default function AppointmentDetail() {
 
         )}
       </div>
+
       </div>
     </div>
   );

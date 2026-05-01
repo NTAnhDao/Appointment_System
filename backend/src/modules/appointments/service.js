@@ -8,6 +8,7 @@ export const createAppointment = async (data, userId) => {
   return await withTransaction(async (conn) => {
     // check duplicate (UX tốt hơn)
     const isDup = await repo.checkDuplicate(
+      conn,
       data.patient_id,
       data.schedule_id
     );
@@ -41,7 +42,7 @@ export const createAppointment = async (data, userId) => {
 // 🔥 CONFIRM PAYMENT
 export const confirmAppointment = async (appointmentId) => {
   return await withTransaction(async (conn) => {
-    const app = await repo.findById(appointmentId);
+    const app = await repo.findById(conn, appointmentId);
 
     if (!app) throw new Error("Appointment not found");
 
@@ -92,7 +93,7 @@ export const expireAppointments = async () => {
 // 🔥 CANCEL
 export const cancelAppointment = async (id) => {
   return await withTransaction(async (conn) => {
-    const app = await repo.findById(id);
+    const app = await repo.findById(conn, id);
 
     if (!app) throw new Error("Not found");
 
@@ -136,11 +137,12 @@ export const getMyAppointments = async (userId) => {
       ? formatDateTime(item.EXPIRED_AT)
       : null,
 
-    note: item.NOTE || null,
     fee: item.FEE || null,
     queue_number: item.QUEUE_NUMBER || null,
     doctor_image: item.IMAGE_URL || null,
-    invoice_status: item.INVOICE_STATUS || null
+    invoice_status: item.INVOICE_STATUS || null,
+    payment_method: item.PAYMENT_METHOD || null,
+    invoice_id: item.INVOICE_ID
 
   }));
 };
@@ -173,7 +175,7 @@ const formatTime = (start, end) => {
 
 export const assignQueueNumber = async (appointmentId) => {
   return await withTransaction(async (conn) => {
-    const app = await repo.findById(appointmentId);
+    const app = await repo.findById(conn, appointmentId);
 
     if (!app) throw new Error("Appointment not found");
 

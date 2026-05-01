@@ -11,12 +11,12 @@ export const getScheduleById = async (id) => {
 };
 
 // 🔥 check duplicate
-export const checkDuplicate = async (patientId, scheduleId) => {
-  const result = await execute(
+export const checkDuplicate = async (conn, patientId, scheduleId) => {
+  const result = await conn.execute(
     `SELECT 1 FROM app.appointments
      WHERE patient_id = :p
        AND schedule_id = :s
-       AND status IN ('PENDING','CONFIRMED')`,
+       AND status IN ('pending','confirmed')`,
     { p: patientId, s: scheduleId }
   );
   return result.rows.length > 0;
@@ -29,7 +29,6 @@ export const insertAppointment = async (conn, data) => {
       patient_id,
       user_id,
       fee,
-      note,
       expired_at
     )
     VALUES (
@@ -37,7 +36,6 @@ export const insertAppointment = async (conn, data) => {
       :patient_id,
       :user_id,
       :fee,
-      :note,
       CURRENT_TIMESTAMP + INTERVAL '15' MINUTE
     )
     RETURNING appointment_id INTO :id`,
@@ -95,7 +93,6 @@ export const getAppointmentsByUser = async (userId) => {
     `SELECT 
         a.appointment_id,
         a.status,
-        a.note,
         a.fee,
         a.queue_number,
         a.created_at,
@@ -129,7 +126,11 @@ export const getAppointmentsByUser = async (userId) => {
         p.phone,
 
         --invoice
-        inv.status AS INVOICE_STATUS
+        inv.invoice_id,
+        inv.status AS INVOICE_STATUS,
+
+        --payment
+        payment.payment_method
 
      FROM app.appointments a
 
@@ -147,6 +148,9 @@ export const getAppointmentsByUser = async (userId) => {
     
      LEFT JOIN app.INVOICES inv
        ON a.appointment_id = inv.appointment_id
+
+    LEFT JOIN app.PAYMENTS payment
+      ON payment.invoice_id = inv.invoice_id
 
      WHERE a.user_id = :userId
 

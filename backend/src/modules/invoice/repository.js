@@ -26,13 +26,20 @@ export const findByAppointmentId = async (appointmentId) => {
 };
 
 export const updateStatus = async (conn, invoiceId, status) => {
-  await conn.execute(
+  const result = await conn.execute(
     `UPDATE app.invoices
      SET status = :status,
          paid_at = CASE WHEN :status = 'PAID' THEN SYSDATE ELSE paid_at END
-     WHERE invoice_id = :id`,
-    { status, id: invoiceId }
+     WHERE invoice_id = :id
+     RETURNING appointment_id INTO :appointment_id`,
+    {
+      status,
+      id: invoiceId,
+      appointment_id: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER }
+    }
   );
+
+  return result.outBinds.appointment_id[0];
 };
 
 export const findFullDetailByInvoiceId = async (invoiceId) => {
