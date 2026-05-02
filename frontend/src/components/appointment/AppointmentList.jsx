@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import AppointmentCard from "./AppointmentCard";
 import { getMyAppointmentsAPI } from "../../services/BookingService";
+import { useSearchParams } from "react-router-dom";
 import "./appointment.css";
 
 export default function AppointmentList() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("all");
+  const [searchParams] = useSearchParams();
+
+  const [filter, setFilter] = useState(
+    searchParams.get("filter") || "all"
+  );
 
   useEffect(() => {
     const fetchData = async () => {

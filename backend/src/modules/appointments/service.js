@@ -141,7 +141,6 @@ export const getMyAppointments = async (userId) => {
     queue_number: item.QUEUE_NUMBER || null,
     doctor_image: item.IMAGE_URL || null,
     invoice_status: item.INVOICE_STATUS || null,
-    payment_method: item.PAYMENT_METHOD || null,
     invoice_id: item.INVOICE_ID
 
   }));

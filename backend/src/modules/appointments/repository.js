@@ -127,10 +127,7 @@ export const getAppointmentsByUser = async (userId) => {
 
         --invoice
         inv.invoice_id,
-        inv.status AS INVOICE_STATUS,
-
-        --payment
-        payment.payment_method
+        inv.status AS INVOICE_STATUS
 
      FROM app.appointments a
 
@@ -148,9 +145,6 @@ export const getAppointmentsByUser = async (userId) => {
     
      LEFT JOIN app.INVOICES inv
        ON a.appointment_id = inv.appointment_id
-
-    LEFT JOIN app.PAYMENTS payment
-      ON payment.invoice_id = inv.invoice_id
 
      WHERE a.user_id = :userId
 

@@ -13,6 +13,7 @@ export default function Doctor() {
     const handleSelectDoctor = (doctor) => {
         setBookingData(prev => ({ ...prev, doctor }));
         setStep(2);
+        
         navigate("/booking");
     };
     const [doctors, setDoctors] = useState([]);

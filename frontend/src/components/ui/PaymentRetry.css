@@ -1,0 +1,38 @@
+.payment-retry-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+/* Nút chính */
+.btn-retry {
+  background-color: #0b4a7a;
+  color: white;
+  padding: 12px 28px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  transition: all 0.25s ease;
+}
+
+.btn-retry:hover {
+  background-color: #0a3f69;
+  transform: translateY(-1px);
+}
+
+/* Link */
+.link-home {
+  color: #0b4a7a;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.link-home:hover {
+  text-decoration: underline;
+}

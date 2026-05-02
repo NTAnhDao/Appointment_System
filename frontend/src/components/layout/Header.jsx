@@ -36,6 +36,21 @@ export default function Header() {
         }
     };
 
+    const handlePatientsClick = () => {
+        if (isLoggedIn) {
+            nav("/profiles"); 
+        } else {
+            nav("/login"); 
+        }
+    };
+    const handleAppoinmentsClick = () => {
+        if (isLoggedIn) {
+            nav("/appointments"); 
+        } else {
+            nav("/login"); 
+        }
+    };
+
     return (
         <nav className="navbar navbar-expand-lg bg-white border-bottom py-2 custom-navbar fixed-top">
             <div className="container-fluid px-4">
@@ -55,8 +70,8 @@ export default function Header() {
                     <ul className="navbar-nav mx-auto text-center">
                         <li className="nav-item"><a className="nav-link" onClick={() => nav("/")} style={{ cursor: "pointer" }}>Trang chủ</a></li>
                         <li className="nav-item"><a className="nav-link" onClick={() => nav("/doctors")} style={{ cursor: "pointer" }}>Bác sĩ</a></li>
-                        <li className="nav-item"><a className="nav-link" onClick={() => nav("/appointments")} style={{ cursor: "pointer" }}>Lịch đặt</a></li>
-                        <li className="nav-item"><a className="nav-link" onClick={() => nav("/profiles")} style={{ cursor: "pointer" }}>Hồ sơ</a></li>
+                        <li className="nav-item"><a className="nav-link" onClick={handleAppoinmentsClick} style={{ cursor: "pointer" }}>Lịch đặt</a></li>
+                        <li className="nav-item"><a className="nav-link" onClick={handlePatientsClick} style={{ cursor: "pointer" }}>Hồ sơ</a></li>
                     </ul>
 
                     <div className="d-flex gap-2 mt-3 mt-lg-0">

@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import MainLayout from "../components/layout/MainLayout";
 import { getInvoiceDetailAPI } from '../services/InvoiceService';
 import { updateStatusInvoiceAPI } from '../services/InvoiceService';
+import PaymentRetry from "../components/ui/PaymentRetry"
 import '../styles/payments.css';
 
 export default function PaymentSuccessPage() {
@@ -14,6 +15,7 @@ export default function PaymentSuccessPage() {
   const isMomo = searchParams.get('resultCode') !== null;
   const isQR = searchParams.get('method') === 'qr';
   const isCash = searchParams.get('method') === 'cash';
+
 
 
   const [payment, setPayment] = useState({
@@ -38,6 +40,8 @@ export default function PaymentSuccessPage() {
       payDate: '',
       message: 'Đang xử lý...'
     };
+    let targetAppId = searchParams.get('invoiceId');
+
 
     // ===== VNPAY =====
     if (isVnpay) {
@@ -151,7 +155,6 @@ export default function PaymentSuccessPage() {
     const currentTxnRef = data.txnRef;
     if (data.success && currentTxnRef && !isConfirmed.current) {
 
-      let targetAppId = searchParams.get('invoiceId');
       console.log("=== KIỂM TRA DỮ LIỆU ĐẦU VÀO ===");
       console.log("1. Mã giao dịch (txnRef):", currentTxnRef);
       console.log("2. invoiceId trên URL:", searchParams.get('invoiceId'));
@@ -180,14 +183,14 @@ export default function PaymentSuccessPage() {
           .catch(err => console.error("[UPDATE ERROR] Lỗi khi cập nhật trạng thái hóa đơn:", err));
       }
 
-        // 2. Lấy chi tiết hóa đơn/lịch hẹn để hiển thị lên UI
-        getInvoiceDetailAPI(targetAppId)
-          .then(res => {
-            console.log("[GET] Lấy dữ liệu chi tiết thành công:", res);
-            setInvoiceDetail(res.data);
-          })
-          .catch(err => console.error("[GET ERROR] Lỗi khi lấy chi tiết hóa đơn:", err));
-      }
+     }
+     // 2. Lấy chi tiết hóa đơn/lịch hẹn để hiển thị lên UI
+      getInvoiceDetailAPI(targetAppId)
+        .then(res => {
+          console.log("[GET] Lấy dữ liệu chi tiết thành công:", res);
+          setInvoiceDetail(res.data);
+        })
+        .catch(err => console.error("[GET ERROR] Lỗi khi lấy chi tiết hóa đơn:", err));
     }
 
   }, [searchParams]);
@@ -293,27 +296,24 @@ export default function PaymentSuccessPage() {
               <>
                 Rất tiếc, giao dịch không thành công.
                 <br />
-                Bạn có thể thanh toán lại trong khoảng 15 phút.
+                Bạn có thể thanh toán bằng phương thức khác trong khoảng 15 phút.
               </>
             )}
           </p>
         </div>
 
         {/* ===== GRID 2 CỘT ===== */}
+        {success && (
         <div className="payment-grid">
 
           {/* ===== LEFT ===== */}
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 
-            {/* CHI TIẾT */}
+          {/* CHI TIẾT */}
             <div className="card">
               <h4>
-                {success ? "Chi tiết lịch hẹn"
-
-                  : "Thông tin đăng ký không thành công"}
+                Chi tiết lịch hẹn
               </h4>
-
-
               <div className="info-grid">
                 <div>
                   <span className="info-label">STT:</span>
@@ -396,7 +396,9 @@ export default function PaymentSuccessPage() {
                 </div>
               ))}
             </div>
+
           </div>
+
 
           {/* ===== RIGHT ===== */}
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
@@ -455,8 +457,16 @@ export default function PaymentSuccessPage() {
             </div>
 
           </div>
-
         </div>
+      )}
+
+        {!success && (
+          <PaymentRetry
+            onRetry={() => nav("/appointments?filter=pending")}
+            onHome={() => nav("/")}
+          />
+        )}
+
       </main>
     </MainLayout>
   );

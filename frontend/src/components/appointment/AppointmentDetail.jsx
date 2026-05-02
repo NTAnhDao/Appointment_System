@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { Download, Share2 } from "lucide-react";
 import { toast } from "react-toastify"
 import html2pdf from "html2pdf.js";
+import { QRCodeSVG } from "qrcode.react";
+import { confirmAppointmentAPI } from "../../services/BookingService.js";
+import { createVNPayPayment, createMoMoPayment, createQRPayment, checkQRPaymentStatus } from "../../services/PaymentService.js";
 
 import "./appointmentDetail.css";
 
@@ -10,15 +13,27 @@ export default function AppointmentDetail() {
   const { state } = useLocation();
   const { id } = useParams();
   const [method, setMethod] = useState("vnpay");
+  const [currentOrderId, setCurrentOrderId] = useState(null);
+  const [currentAppointmentId, setCurrentAppointmentId] = useState(null);
+  const [currentInvoiceId, setCurrentInvoiceId] = useState(null);
+  const [qrValue, setQrValue] = useState("");
+  const [showQR, setShowQR] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(300);
+  const myIP = "192.168.1.197";
+  const frontendPort = "5173";
+  const backendPort = "5000";
   const navigate = useNavigate();
   
   const [data, setData] = useState(() => {
-    if (state) return state;
-
+    if (state) {
+console.log("DATA:", JSON.stringify(state, null, 2));
+      return state;
+    }
     const cached = sessionStorage.getItem(`appointment_${id}`);
     return cached ? JSON.parse(cached) : null;
   });
   const isPayment = data?.isPayment;
+  const amount = data?.fee || 150000;
 
   const methods = [
     { id: "vnpay", title: "Ví VNPay", desc: "Thanh toán qua VNPay" },
@@ -96,7 +111,7 @@ export default function AppointmentDetail() {
 
         // cache lại luôn
         sessionStorage.setItem(
-        `appointment_${state.appointment_id}`,
+        `appointment_${state.id}`,
         JSON.stringify(state)
         );
 
@@ -112,6 +127,96 @@ export default function AppointmentDetail() {
 
     setLoading(false);
     }, [state, id]);
+
+  // 2. Logic chạy bộ đếm
+  useEffect(() => {
+    let timer;
+    if (showQR && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      alert("Mã QR đã hết hạn!");
+      setShowQR(false);
+      setTimeLeft(300);
+    }
+    if (!showQR) setTimeLeft(300);
+    return () => clearInterval(timer);
+  }, [showQR, timeLeft]);
+
+  // ===== LOGIC POLLING =====
+  useEffect(() => {
+    let timer;
+    if (showQR && currentOrderId) {
+      timer = setInterval(async () => {
+        try {
+          const data = await checkQRPaymentStatus(currentOrderId);
+          console.log("POLLING:", data);
+          if (data.status === "SUCCESS") {
+            clearInterval(timer);
+            setTimeout(() => {
+              navigate(`/success?method=qr&orderId=${currentOrderId}&invoiceId=${currentInvoiceId}&amount=${amount}&status=success&isLaptop=true`);
+            }, 1500);
+          }
+        } catch (error) {
+          console.error("Lỗi polling:", error);
+        }
+      }, 2000);
+    }
+    return () => clearInterval(timer);
+  }, [showQR, currentOrderId, myIP, backendPort, navigate, currentInvoiceId, amount]);
+
+  const handlePayment = async () => {
+    try {
+      const invoiceId = data.invoice_id || data.id; // Giả sử invoice_id là data.id nếu không có
+      const paymentAmount = amount;
+      if (data.invoice_status === "PAID") {
+        toast.error("Hóa đơn đã được thanh toán!");
+        return;
+      }
+
+      if (data.status === "confirmed") {
+        toast.error("Lịch khám đã được xác nhận!");
+        return;
+      }
+
+      if (method === "vnpay") {
+        const result = await createVNPayPayment(paymentAmount, invoiceId);
+        if (result.code === "00") {
+          window.location.href = result.paymentUrl; // Redirect to VNPay
+        } else {
+          toast.error("Lỗi tạo thanh toán VNPay");
+        }
+      } else if (method === "momo") {
+        const result = await createMoMoPayment(paymentAmount, invoiceId);
+        if (result.success && result.payUrl ) {
+          window.location.href = result.payUrl; // Redirect to MoMo
+        } else {
+          toast.error("Lỗi tạo thanh toán MoMo");
+        }
+      } else if (method === "qr") {
+        const result = await createQRPayment(paymentAmount, invoiceId);
+        if (result.success) {
+          const newOrderId = result.order_id; 
+          setCurrentOrderId(newOrderId);   
+          setCurrentInvoiceId(invoiceId);
+          const newQrValue = `http://${myIP}:${frontendPort}/confirm?orderId=${newOrderId}&invoiceId=${invoiceId}&amount=${paymentAmount}`;
+          setQrValue(newQrValue); 
+          setShowQR(true);
+        } else {
+          toast.error("Lỗi tạo mã QR");
+        }
+      } else if (method === "cash") {
+        // Xác nhận lịch hẹn mà không thanh toán
+        await confirmAppointmentAPI(data.id);
+        toast.success("Lịch hẹn đã được xác nhận. Vui lòng thanh toán tại quầy.");
+        navigate(-1);
+      }
+    } catch (error) {
+      console.error("Lỗi thanh toán:", error);
+      toast.error("Lỗi xử lý thanh toán");
+    }
+  };
 
   const [loading, setLoading] = useState(!state);
 
@@ -339,7 +444,7 @@ export default function AppointmentDetail() {
               <div className="qr-wrapper">
                   <div className="qr-inner">
                   <img
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${data.appointment_id}`}
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${data.id}`}
                       alt="qr"
                   />
                   </div>
@@ -390,10 +495,27 @@ export default function AppointmentDetail() {
             <div className="vat-note">* Đã bao gồm thuế GTGT</div>
           </div>
 
-          <button className="btn-pay">
+          {!showQR && (
+          <button className="btn-pay" onClick={handlePayment}>
             <span className="material-symbols-outlined">shield</span>
             Thanh toán ngay
           </button>
+          )}
+
+          {showQR && (
+            <div className="qr-payment-section">
+              <div className="qr-title">Quét mã QR để thanh toán</div>
+              <div className="qr-wrapper">
+                <QRCodeSVG value={qrValue} size={150} />
+              </div>
+              <div className="qr-note">
+                Thời gian còn lại: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+              </div>
+              <button className="btn-secondary-custom" onClick={() => setShowQR(false)}>
+                Hủy
+              </button>
+            </div>
+          )}
 
           <div className="payment-warning">
             <span className="material-symbols-outlined">error</span>
