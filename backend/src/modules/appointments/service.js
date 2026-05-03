@@ -186,7 +186,7 @@ export const assignQueueNumber = async (appointmentId) => {
       return app.QUEUE_NUMBER; // tránh cấp 2 lần
     }
 
-    const queueNumber = await repo.getNextQueueNumber(app.SCHEDULE_ID);
+    const queueNumber = await repo.getNextQueueNumber(conn);
 
     await repo.updateQueueNumber(conn, appointmentId, queueNumber);
 

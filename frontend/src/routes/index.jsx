@@ -27,7 +27,7 @@ export default function AppRoutes() {
       <Route path="/success" element={<PaymentSuccessPage />} />
       <Route path="/confirm" element={<ConfirmPage />} />
       <Route path="/appointments/:id" element={<AppointmentDetail />} />
-      <Route path="/invoice" element={<Invoice />} />
+      <Route path="/invoice/:id" element={<Invoice />} />
 
     </Routes>
   );

@@ -155,15 +155,10 @@ export const getAppointmentsByUser = async (userId) => {
   return result.rows;
 };
 
-export const getNextQueueNumber = async (scheduleId) => {
-  const result = await execute(
-    `SELECT NVL(MAX(queue_number), 0) + 1 AS NEXT_Q
-     FROM app.appointments
-     WHERE schedule_id = :scheduleId
-       AND status = 'confirmed'`,
-    { scheduleId }
+export const getNextQueueNumber = async (conn) => {
+  const result = await conn.execute(
+    `SELECT app.queue_seq.NEXTVAL AS NEXT_Q FROM dual`
   );
-
   return result.rows[0].NEXT_Q;
 };
 

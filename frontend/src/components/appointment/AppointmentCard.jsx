@@ -108,7 +108,7 @@ export default function AppointmentCard({ data }) {
 
           {/* PAID */}
           {displayStatus === "paid" && (
-            <div className="action-link" onClick={() => navigate("/invoice")}>
+            <div className="action-link" onClick={() => navigate(`/invoice/${data.invoice_id}`)}>
               Xem hóa đơn →
             </div>
           )}

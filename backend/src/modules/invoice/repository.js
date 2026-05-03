@@ -39,6 +39,7 @@ export const updateStatus = async (conn, invoiceId, status) => {
     }
   );
 
+  
   return result.outBinds.appointment_id[0];
 };
 
@@ -50,17 +51,21 @@ export const findFullDetailByInvoiceId = async (invoiceId) => {
         i.total_amount AS TOTAL_AMOUNT,
         i.status AS INVOICE_STATUS,
         a.status AS APPOINTMENT_STATUS,
+        a.queue_number AS QUEUE_NUMBER,
+        a.user_id AS USER_ID,
         
         s.start_time AS START_TIME,
         s.end_time AS END_TIME,
         s.work_date AS WORK_DATE,
         
+        p.id AS PATIENT_ID,
         p.full_name AS PATIENT_NAME,
         p.gender AS GENDER,
         p.dob AS BIRTHDAY, 
         p.identity_number AS IDENTITY_NUMBER,
         p.bhyt AS BHYT,
         p.phone AS PHONE,
+        p.email AS EMAIL,
         p.address_detail AS ADDRESS_DETAIL,
         p.ward AS WARD,
         p.province AS PROVINCE,

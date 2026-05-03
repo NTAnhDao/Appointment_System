@@ -101,7 +101,7 @@ END;
 /
 
 DECLARE
-    v_start_date DATE := TO_DATE('2026-05-2', 'YYYY-MM-DD'); -- Thứ Hai tuần tới
+    v_start_date DATE := TO_DATE('2026-05-02', 'YYYY-MM-DD'); -- Thứ Hai tuần tới
     v_current_date DATE;
 BEGIN
     -- VÒNG LẶP QUA 6 NGÀY (Thứ 2 đến Thứ 7)

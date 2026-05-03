@@ -372,7 +372,7 @@ export default function Step4_Payment() {
                 </div>
                 <span>Bệnh nhân</span>
               </div>
-              <strong>{bookingData.patient.name || "Nguyễn Văn A"}</strong>
+              <strong>{bookingData.patient.FULL_NAME || "Nguyễn Văn A"}</strong>
             </div>
 
             <hr className="opacity-25" />

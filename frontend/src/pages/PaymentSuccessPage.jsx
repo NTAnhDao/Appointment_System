@@ -4,6 +4,7 @@ import MainLayout from "../components/layout/MainLayout";
 import { getInvoiceDetailAPI } from '../services/InvoiceService';
 import { updateStatusInvoiceAPI } from '../services/InvoiceService';
 import PaymentRetry from "../components/ui/PaymentRetry"
+import { sendNotificationsAPI } from '../services/NotificationService';
 import '../styles/payments.css';
 
 export default function PaymentSuccessPage() {
@@ -153,13 +154,9 @@ export default function PaymentSuccessPage() {
 
     setPayment(data);
     const currentTxnRef = data.txnRef;
-    if (data.success && currentTxnRef && !isConfirmed.current) {
 
-      console.log("=== KIỂM TRA DỮ LIỆU ĐẦU VÀO ===");
-      console.log("1. Mã giao dịch (txnRef):", currentTxnRef);
-      console.log("2. invoiceId trên URL:", searchParams.get('invoiceId'));
-      console.log("Target Invoice ID:", targetAppId);
-
+    if (currentTxnRef && !isConfirmed.current) {
+      let targetAppId = searchParams.get('invoiceId');
 
       if (!targetAppId && currentTxnRef.toString().startsWith("ORDER_")) {
         const parts = currentTxnRef.split("_");
@@ -171,30 +168,65 @@ export default function PaymentSuccessPage() {
       if (targetAppId) {
         isConfirmed.current = true;
         
-        if(isCash){
-          updateStatusInvoiceAPI(targetAppId, 'UNPAID')
-          .then(res => console.log(`[UPDATE] Đã cập nhật Invoice ID [${targetAppId}] thành UNPAID`, res))
-          .catch(err => console.error("[UPDATE ERROR] Lỗi khi cập nhật trạng thái hóa đơn:", err));
-        
-      } else {
-        // 1. Gọi API để cập nhật trạng thái hóa đơn thành PAID
-        updateStatusInvoiceAPI(targetAppId, 'PAID')
-          .then(res => console.log(`[UPDATE] Đã cập nhật Invoice ID [${targetAppId}] thành PAID`, res))
-          .catch(err => console.error("[UPDATE ERROR] Lỗi khi cập nhật trạng thái hóa đơn:", err));
+        // ✅ update status (tùy success)
+        const status = isCash
+          ? 'UNPAID'
+          : (data.success ? 'PAID' : 'CANCELLED');
+
+        updateStatusInvoiceAPI(targetAppId, status)
+          .then(res => console.log(`[UPDATE] Invoice ${targetAppId} -> ${status}`, res))
+          .catch(err => console.error(err));
+
+        fetchInvoice(targetAppId);
+
       }
-
-     }
-     // 2. Lấy chi tiết hóa đơn/lịch hẹn để hiển thị lên UI
-      getInvoiceDetailAPI(targetAppId)
-        .then(res => {
-          console.log("[GET] Lấy dữ liệu chi tiết thành công:", res);
-          setInvoiceDetail(res.data);
-        })
-        .catch(err => console.error("[GET ERROR] Lỗi khi lấy chi tiết hóa đơn:", err));
     }
-
   }, [searchParams]);
 
+  const fetchInvoice = async (id) => {
+    const res = await getInvoiceDetailAPI(id);
+    setInvoiceDetail(res.data);
+
+    // nếu online mà chưa có queue → gọi lại
+    if ((isVnpay || isMomo || isQR) && !res.data.queueNumber) {
+      setTimeout(() => fetchInvoice(id), 2000);
+    }
+  };
+
+  useEffect(() => {
+    if (!invoiceDetail || !payment.txnRef) return;
+
+
+    // ❌ tránh gọi nhiều lần
+    if (isConfirmed.current !== true) return;
+
+    const isOnline = isVnpay || isMomo || isQR;
+
+    // ===== CASE 1: THANH TOÁN ONLINE =====
+    if (isOnline && payment.success) {
+      if (!invoiceDetail.queueNumber) return;
+
+      sendNotificationsAPI({
+        type: "PAYMENT_SUCCESS",
+        attachPdf: true,
+        patientMail: invoiceDetail?.email,
+        data: invoiceDetail
+      });
+    }
+
+    // ===== CASE 2: THANH TOÁN TẠI QUẦY =====
+    if (isCash && payment.success) {
+      sendNotificationsAPI({
+        type: "BOOKING_CREATED",
+        attachPdf: false,
+        patientMail: invoiceDetail?.email,
+        data: invoiceDetail
+      });
+    }
+
+    console.log("EMAIL FE:", invoiceDetail?.email);
+
+  }, [invoiceDetail]);
 
   const { success, amount, orderInfo, txnRef, bankCode, payDate, message } = payment;
 
@@ -317,7 +349,10 @@ export default function PaymentSuccessPage() {
               <div className="info-grid">
                 <div>
                   <span className="info-label">STT:</span>
-                  <span className="info-value">01</span>
+                  <span className="info-value">
+                    {isCash
+                      ? "Chưa có số thứ tự"
+                      : (invoiceDetail?.queueNumber || "Đang xử lý...")}</span>
                 </div>
 
                 <div>

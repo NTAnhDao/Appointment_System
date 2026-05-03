@@ -1,26 +1,8 @@
 import React from "react";
+import '../../styles/invoice.css'
+import { downloadPDFAPI } from "../../services/InvoiceService.js";
 
 export default function InvoiceDetail({ invoice }) {
-  if (!invoice) return <div>Loading...</div>;
-
-  const {
-    invoiceId,
-    appointmentId,
-    patientName,
-    gender,
-    birthday,
-    specialty,
-    doctor,
-    amount,
-    invoiceStatus,
-    appointmentStatus,
-    displayTime,
-    address,
-    identityNumber,
-    bhyt,
-    phone
-  } = invoice;
-
   const formatCurrency = (num) =>
     num?.toLocaleString("vi-VN") + "đ";
 
@@ -28,137 +10,207 @@ export default function InvoiceDetail({ invoice }) {
     date ? new Date(date).toLocaleDateString("vi-VN") : "";
 
   return (
-    <main className="max-w-4xl mx-auto px-6 py-12">
-      
-      {/* Header actions */}
-      <div className="hidden md:flex justify-end gap-3 mb-8">
-        <button className="px-5 py-2.5 border rounded-xl">
-          Tải PDF
-        </button>
-        <button className="px-5 py-2.5 border rounded-xl">
-          Gửi Email
-        </button>
-        <button className="px-6 py-2.5 bg-blue-600 text-white rounded-xl">
-          In hóa đơn
-        </button>
+    <div className="mx-auto border-0 rounded-4 overflow-hidden" style={{ width: "800px" }}>
+      {/* Actions */}
+      <div className=" mx-auto my-4 d-flex justify-content-end">
+      <button className="btn btn-booking px-5 py-2.5" onClick={() => {
+        if (!invoice?.invoiceId) return;
+        downloadPDFAPI(invoice?.invoiceId);
+      }}>
+        <span className="material-symbols-outlined">download</span>
+        <span className="text-sm font-semibold">Tải PDF</span>
+      </button>
       </div>
+      <div className="shadow-xl border rounded-4 bg-white">
 
-      <div className="bg-white rounded-3xl shadow-xl border overflow-hidden">
-        
-        {/* Header */}
-        <div className="p-8 md:p-12 flex justify-between items-start">
+        {/* HEADER */}
+        <div className="bg-soft p-4 p-md-5 d-flex flex-column flex-md-row justify-content-between gap-4">
+
           <div>
-            <h1 className="text-3xl font-bold">
-              HÓA ĐƠN KHÁM BỆNH
-            </h1>
-            <p>Mã hóa đơn: #{invoiceId}</p>
-            <p>Mã lịch hẹn: #{appointmentId}</p>
-            <p>Thời gian khám: {displayTime}</p>
-          </div>
+            <h2 className="fw-bold mb-3">
+              HÓA ĐƠN DỊCH VỤ Y TẾ
+            </h2>
 
-          {invoiceStatus === "paid" && (
-            <div className="border-4 rounded-full px-6 py-6 text-green-600 font-bold rotate-[-12deg]">
-              ĐÃ THANH TOÁN
-            </div>
-          )}
-
-          {invoiceStatus === "unpaid" && (
-            <div className="border-4 rounded-full px-6 py-6 text-orange-500 font-bold rotate-[-12deg]">
-              CHƯA THANH TOÁN
-            </div>
-          )}
-        </div>
-
-        {/* Patient info */}
-        <div className="px-8 md:px-12 py-10 grid md:grid-cols-2 gap-12">
-          <div>
-            <h3 className="text-sm font-bold mb-4">
-              Thông tin bệnh nhân
-            </h3>
-            <p className="text-lg font-bold text-blue-600">
-              {patientName}
+            <p className="mb-1">
+              <strong>Mã hóa đơn:</strong> #{invoice?.invoiceId}
             </p>
-            <p>Giới tính: {gender}</p>
-            <p>Ngày sinh: {formatDate(birthday)}</p>
-            <p>CCCD: {identityNumber}</p>
-            <p>BHYT: {bhyt || "Không có"}</p>
-            <p>Điện thoại: {phone}</p>
+
+            <p className="mb-0">
+              <strong>Ngày phát hành:</strong> {formatDate(new Date())}
+            </p>
           </div>
 
-          <div>
-            <h3 className="text-sm font-bold mb-4">
-              Địa chỉ
-            </h3>
-            <p>{address}</p>
+          {/* STATUS */}
+          <div className="text-center">
+            <div
+              className="border border-3 rounded-circle d-flex align-items-center justify-content-center"
+              style={{ width: "120px", height: "120px", transform: "rotate(-12deg)" }}
+            >
+              <span
+                className={`fw-bold ${invoice?.invoiceStatus === "paid"
+                  ? "text-success"
+                  : "text-warning"
+                  }`}
+              >
+                {invoice?.invoiceStatus === "paid"
+                  ? "ĐÃ THANH TOÁN"
+                  : "CHƯA THANH TOÁN"}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Service */}
-        <div className="px-8 md:px-12 pb-12">
-          <table className="w-full">
-            <thead>
-              <tr className="text-sm border-b">
-                <th className="text-left pb-4">Dịch vụ</th>
-                <th className="text-right pb-4">Chi phí</th>
-              </tr>
-            </thead>
+        {/* 🔥 QUICK INFO (RẤT QUAN TRỌNG) */}
+        <div className="bg-white border-top border-bottom p-3 d-flex flex-wrap justify-content-between text-center">
 
-            <tbody>
-              <tr className="border-b">
-                <td className="py-4">
-                  <p className="font-semibold">
-                    Khám {specialty}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Bác sĩ: {doctor}
-                  </p>
-                </td>
+          <div className="px-3">
+            <div className="text-muted small">Số thứ tự</div>
+            <div className="fw-bold fs-4 text-primary-customer">
+              #{invoice?.queueNumber || "--"}
+            </div>
+          </div>
 
-                <td className="text-right font-semibold">
-                  {formatCurrency(amount)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="px-3">
+            <div className="text-muted small">Thời gian</div>
+            <div className="fw-semibold">{invoice?.time}</div>
+          </div>
 
-          {/* Total */}
-          <div className="mt-8 flex justify-end">
-            <div className="w-full md:w-72 bg-gray-50 rounded-xl p-6 space-y-3">
-              <div className="flex justify-between font-bold text-lg">
+          <div className="px-3">
+            <div className="text-muted small">Ngày khám</div>
+            <div className="fw-semibold">{invoice?.date}</div>
+          </div>
+
+
+          <div className="px-3">
+            <div className="text-muted small">Địa chỉ</div>
+            <div className="fw-semibold">19 Nguyễn Hữu Thọ, Tân Phong, Q7, TP. HCM</div>
+          </div>
+
+        </div>
+
+        {/* PATIENT INFO */}
+        {/* PATIENT INFO */}
+        <div className="p-4 p-md-5">
+          <h6 className="text-uppercase text-muted fw-bold mb-3">
+            Thông tin bệnh nhân
+          </h6>
+          {/* Tên */}
+          <p className="fw-bold fs-5 text-primary-customer mb-3">
+            {invoice?.patientName}
+          </p>
+
+          <div className="row g-3">
+
+            {/* Giới tính */}
+            <div className="col-6">
+              <p className="text-muted small mb-1">Giới tính</p>
+              <p className="fw-semibold">{invoice?.gender}</p>
+            </div>
+
+            {/* Ngày sinh */}
+            <div className="col-6">
+              <p className="text-muted small mb-1">Ngày sinh</p>
+              <p className="fw-semibold">
+                {formatDate(invoice?.birthday)}
+              </p>
+            </div>
+
+            {/* CCCD */}
+            <div className="col-6">
+              <p className="text-muted small mb-1">CCCD</p>
+              <p className="fw-semibold">{invoice?.identityNumber}</p>
+            </div>
+
+            {/* BHYT */}
+            <div className="col-6">
+              <p className="text-muted small mb-1">BHYT</p>
+              <p className="fw-semibold">
+                {invoice?.bhyt || "Không có"}
+              </p>
+            </div>
+
+            {/* Điện thoại */}
+            <div className="col-6">
+              <p className="text-muted small mb-1">Điện thoại</p>
+              <p className="fw-semibold">{invoice?.phone}</p>
+            </div>
+
+            {/* Địa chỉ (full width) */}
+            <div className="col-6">
+              <p className="text-muted small mb-1">Địa chỉ</p>
+              <p className="fw-semibold">{invoice?.address}</p>
+            </div>
+
+          </div>
+        </div>
+
+        {/* SERVICES */}
+        <div className="px-4 px-md-5 pb-5">
+          <div className="table-responsive">
+            <table className="table align-middle">
+              <thead>
+                <tr className="text-muted text-uppercase small">
+                  <th>Dịch vụ</th>
+                  <th className="text-end">Chi phí</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td>
+                    <div className="fw-bold">
+                      Khám {invoice?.specialty}
+                    </div>
+                    <div className="text-muted small">
+                      Bác sĩ: {invoice?.doctor}
+                    </div>
+                  </td>
+
+                  <td className="text-end fw-semibold">
+                    {formatCurrency(invoice?.amount)}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* SUMMARY */}
+          <div className="d-flex justify-content-end mt-4">
+            <div className="bg-light p-4 rounded-3" style={{ minWidth: "260px" }}>
+              <div className="d-flex justify-content-between  align-items-center fw-bold fs-5">
                 <span>Tổng cộng</span>
-                <span className="text-blue-600">
-                  {formatCurrency(amount)}
+                <span className="text-primary-customer fs-4">
+                  {formatCurrency(invoice?.amount)}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Appointment status */}
-          <div className="mt-6 text-sm text-gray-600">
-            Trạng thái lịch hẹn:{" "}
-            <span className="font-semibold">
-              {appointmentStatus}
-            </span>
-          </div>
-
-          {/* Footer */}
-          <div className="mt-16 grid grid-cols-2 text-center border-t pt-10">
-            <div>
-              <p className="text-xs">Hệ thống</p>
-              <p className="italic text-gray-500">
-                Tự động tạo
-              </p>
+          {/* FOOTER */}
+          <div className="row text-center border-top mt-5 pt-4">
+            {/* LEFT */}
+            <div className="col d-flex flex-column align-items-center">
+              <p className="text-muted small mb-2 fw-semibold"> NGƯỜI LẬP HÓA ĐƠN </p>
+              <p className="fst-italic text-primary-customer mb-2 mt-4"> System Generated </p>
+              <p className="text-muted" style={{ fontSize: "12px" }}> Ký điện tử bởi Superior Health Clinic </p>
+            </div> {/* RIGHT */}
+            <div className="col d-flex flex-column align-items-center">
+              <p className="text-muted small mb-2 fw-semibold"> XÁC NHẬN THANH TOÁN </p>
+              <div className="d-flex justify-content-center mb-2 mt-4">
+                <span className="material-symbols-outlined fs-2 text-primary"> verified_user </span>
+              </div> <p className="text-muted" style={{ fontSize: "12px" }}> Đã đối soát qua cổng thanh toán </p>
             </div>
+          </div> </div>
 
-            <div>
-              <p className="text-xs">Xác nhận</p>
-              <span className="text-3xl text-blue-400">
-                ✔
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+        {/* BOTTOM BAR */}
+        <div
+          style={{
+            height: "6px",
+            background: "linear-gradient(90deg, var(--opacity-1), var(--blue-500))",
+          }}
+        />
+      </div >
+    </div>
+
   );
 }

@@ -1,7 +1,7 @@
 import * as repo from "./repository.js";
 import { withTransaction } from "../../config/db.oracle.js";
 import {confirmAppointment} from "../appointments/service.js";
-
+import * as appointmentService from "../appointments/service.js";
 
 // format helpers
 const formatDateTime = (date) => {
@@ -39,6 +39,8 @@ export const getInvoiceDetail = async (invoice_id) => {
   return {
     invoiceId: data.INVOICE_ID,
     appointmentId: data.APPOINTMENT_ID,
+    userId: data.USER_ID,
+    patientId: data.PATIENT_ID,
 
     patientName: data.PATIENT_NAME,
     gender: data.GENDER === "male" ? "Nam" : "Nữ",
@@ -51,13 +53,17 @@ export const getInvoiceDetail = async (invoice_id) => {
 
     invoiceStatus: data.INVOICE_STATUS.toLowerCase(),
     appointmentStatus: data.APPOINTMENT_STATUS.toLowerCase(),
+    queueNumber: data.QUEUE_NUMBER,
 
-    displayTime: `${formatTime(data.START_TIME, data.END_TIME)}, ${formatDate(data.WORK_DATE)}`,
+    time: `${formatTime(data.START_TIME, data.END_TIME)}`,
+    date: `${formatDate(data.WORK_DATE)}`,
+    displayTime: `${formatTime(data.START_TIME, data.END_TIME)} - ${formatDate(data.WORK_DATE)}`,
 
     address: `${data.ADDRESS_DETAIL}, ${data.WARD}, ${data.PROVINCE}`,
     identityNumber: data.IDENTITY_NUMBER,
     bhyt: data.BHYT,
     phone: data.PHONE,
+    email: data.EMAIL,
   };
 };
 
@@ -74,6 +80,7 @@ export const markPaid = async (conn, invoiceId) => {
 
   if (appointmentId) {
     await confirmAppointment(appointmentId);
+    await appointmentService.assignQueueNumber(appointmentId);
   }
 
   return appointmentId;
