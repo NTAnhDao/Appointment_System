@@ -3,7 +3,7 @@ import { execute } from "../../config/db.oracle.js";
 
 export const createInvoice = async (conn, data) => {
   const result = await conn.execute(
-    `INSERT INTO app.invoices (appointment_id, total_amount, status)
+    `INSERT INTO invoices (appointment_id, total_amount, status)
      VALUES (:appointment_id, :total_amount, 'UNPAID')
      RETURNING invoice_id INTO :id`,
     {
@@ -18,7 +18,7 @@ export const createInvoice = async (conn, data) => {
 
 export const findByAppointmentId = async (appointmentId) => {
   const result = await execute(
-    `SELECT * FROM app.invoices WHERE appointment_id = :id`,
+    `SELECT * FROM invoices WHERE appointment_id = :id`,
     { id: appointmentId }
   );
 
@@ -27,9 +27,9 @@ export const findByAppointmentId = async (appointmentId) => {
 
 export const updateStatus = async (conn, invoiceId, status) => {
   const result = await conn.execute(
-    `UPDATE app.invoices
+    `UPDATE invoices
      SET status = :status,
-         paid_at = CASE WHEN :status = 'PAID' THEN SYSDATE ELSE paid_at END
+         paid_at = CASE WHEN :status = 'PAID' THEN SYSTIMESTAMP ELSE paid_at END
      WHERE invoice_id = :id
      RETURNING appointment_id INTO :appointment_id`,
     {
@@ -74,12 +74,12 @@ export const findFullDetailByInvoiceId = async (invoiceId) => {
         d.title AS TITLE,
         dep.name AS DEPARTMENT_NAME
         
-     FROM app.invoices i
-     LEFT JOIN app.appointments a ON i.appointment_id = a.appointment_id 
-     LEFT JOIN app.schedule s ON a.schedule_id = s.schedule_id
-     LEFT JOIN app.patient p ON a.patient_id = p.id 
-     LEFT JOIN app.doctor d ON s.doctor_id = d.doctor_id 
-     LEFT JOIN app.department dep ON d.department_id = dep.department_id
+     FROM invoices i
+     LEFT JOIN appointments a ON i.appointment_id = a.appointment_id 
+     LEFT JOIN schedule s ON a.schedule_id = s.schedule_id
+     LEFT JOIN patient p ON a.patient_id = p.id 
+     LEFT JOIN doctor d ON s.doctor_id = d.doctor_id 
+     LEFT JOIN department dep ON d.department_id = dep.department_id
      
      WHERE i.invoice_id = :id`,
     { id: invoiceId }

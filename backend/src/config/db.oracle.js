@@ -53,7 +53,7 @@ export async function execute(sql, binds = {}, opts = {}) {
   try {
     connection = await getConnection();
      await connection.execute(
-      `ALTER SESSION SET TIME_ZONE = 'Asia/Ho_Chi_Minh'`
+      `ALTER SESSION SET TIME_ZONE = 'UTC'`
     );
 
 
@@ -87,7 +87,7 @@ export async function withTransaction(callback) {
   const connection = await getConnection();
 
   await connection.execute(
-      `ALTER SESSION SET TIME_ZONE = 'Asia/Ho_Chi_Minh'`
+      `ALTER SESSION SET TIME_ZONE = 'UTC'`
     );
     
   try {

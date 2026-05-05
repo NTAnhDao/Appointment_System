@@ -6,6 +6,7 @@ import * as appointmentService from "../appointments/service.js";
 // format helpers
 const formatDateTime = (date) => {
   return new Date(date).toLocaleString("vi-VN", {
+    timeZone: "Asia/Ho_Chi_Minh",
     hour: "2-digit",
     minute: "2-digit",
     day: "2-digit",
@@ -14,18 +15,24 @@ const formatDateTime = (date) => {
 };
 
 const formatDate = (date) => {
-  return new Date(date).toLocaleDateString("vi-VN");
+  return new Date(date).toLocaleDateString("vi-VN", {
+    timeZone: "Asia/Ho_Chi_Minh"
+  });
 };
 
 const formatTime = (start, end) => {
   const s = new Date(start).toLocaleTimeString("vi-VN", {
+    timeZone: "Asia/Ho_Chi_Minh",
     hour: "2-digit",
     minute: "2-digit"
   });
+
   const e = new Date(end).toLocaleTimeString("vi-VN", {
+    timeZone: "Asia/Ho_Chi_Minh",
     hour: "2-digit",
     minute: "2-digit"
   });
+
   return `${s} - ${e}`;
 };
 

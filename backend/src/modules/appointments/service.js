@@ -3,7 +3,7 @@ import { withTransaction } from "../../config/db.oracle.js";
 import * as invoiceService from "../invoice/service.js";
 import * as invoiceRepo from "../invoice/repository.js";
 
-// 🔥 CREATE APPOINTMENT
+// CREATE APPOINTMENT
 export const createAppointment = async (data, userId) => {
   return await withTransaction(async (conn) => {
     // check duplicate (UX tốt hơn)
@@ -26,7 +26,7 @@ export const createAppointment = async (data, userId) => {
    
     const appointment = await repo.findById(conn, appointmentId);
 
-    // 🔥 tạo invoice
+    // tạo invoice
     const invoiceId = await invoiceService.createInvoiceForAppointment(
       conn,
       appointment
@@ -39,7 +39,7 @@ export const createAppointment = async (data, userId) => {
 };
 
 
-// 🔥 CONFIRM PAYMENT
+// CONFIRM PAYMENT
 export const confirmAppointment = async (appointmentId) => {
   return await withTransaction(async (conn) => {
     const app = await repo.findById(conn, appointmentId);
@@ -58,7 +58,7 @@ export const confirmAppointment = async (appointmentId) => {
       throw new Error("Invalid state");
     }
 
-     if (new Date() > new Date(app.EXPIRED_AT)) {
+    if (new Date() > new Date(app.EXPIRED_AT)) {
       throw new Error("Appointment expired");
     }
     // Vì trong DB bạn đang lưu chữ thường "confirmed", nên update cũng truyền chữ thường
@@ -66,14 +66,14 @@ export const confirmAppointment = async (appointmentId) => {
   });
 };
 
-// 🔥 EXPIRE (JOB sẽ gọi)
+// EXPIRE (JOB sẽ gọi)
 export const expireAppointments = async () => {
   return await withTransaction(async (conn) => {
     const result = await conn.execute(
       `SELECT appointment_id, schedule_id
        FROM app.appointments
        WHERE status = 'pending'
-         AND expired_at < SYSDATE`
+         AND expired_at < SYSTIMESTAMP`
     );
 
     for (const row of result.rows) {
@@ -90,7 +90,7 @@ export const expireAppointments = async () => {
   });
 };
 
-// 🔥 CANCEL
+// CANCEL
 export const cancelAppointment = async (id) => {
   return await withTransaction(async (conn) => {
     const app = await repo.findById(conn, id);
@@ -134,8 +134,8 @@ export const getMyAppointments = async (userId) => {
 
     // extra
     expired_at: item.EXPIRED_AT
-      ? formatDateTime(item.EXPIRED_AT)
-      : null,
+    ? new Date(item.EXPIRED_AT).toISOString()
+    : null,
 
     fee: item.FEE || null,
     queue_number: item.QUEUE_NUMBER || null,
@@ -147,8 +147,10 @@ export const getMyAppointments = async (userId) => {
 };
 
 // format helpers
+
 const formatDateTime = (date) => {
   return new Date(date).toLocaleString("vi-VN", {
+    timeZone: "Asia/Ho_Chi_Minh",
     hour: "2-digit",
     minute: "2-digit",
     day: "2-digit",
@@ -157,18 +159,23 @@ const formatDateTime = (date) => {
 };
 
 const formatDate = (date) => {
-  return new Date(date).toLocaleDateString("vi-VN");
+  return new Date(date).toLocaleDateString("vi-VN", {
+    timeZone: "Asia/Ho_Chi_Minh"
+  });
 };
-
 const formatTime = (start, end) => {
   const s = new Date(start).toLocaleTimeString("vi-VN", {
+    timeZone: "Asia/Ho_Chi_Minh",
     hour: "2-digit",
     minute: "2-digit"
   });
+
   const e = new Date(end).toLocaleTimeString("vi-VN", {
+    timeZone: "Asia/Ho_Chi_Minh",
     hour: "2-digit",
     minute: "2-digit"
   });
+
   return `${s} - ${e}`;
 };
 

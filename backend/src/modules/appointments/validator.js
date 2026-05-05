@@ -1,19 +1,19 @@
 import { execute } from "../../config/db.oracle.js";
 
-// 🔥 validate create appointment
+// validate create appointment
 export const validateCreateAppointment = async (req, res, next) => {
   try {
     const { schedule_id, patient_id } = req.body;
     const userId = req.user.id;
 
-    // ❌ thiếu field
+    // thiếu field
     if (!schedule_id || !patient_id) {
       return res.status(400).json({
         message: "schedule_id and patient_id are required"
       });
     }
 
-    // 🔥 check patient tồn tại + thuộc user
+    // check patient tồn tại + thuộc user
     const patient = await execute(
       `SELECT * FROM app.patient
        WHERE id = :id AND user_id = :userId`,
@@ -26,7 +26,7 @@ export const validateCreateAppointment = async (req, res, next) => {
       });
     }
 
-    // 🔥 check schedule tồn tại
+    // check schedule tồn tại
     const schedule = await execute(
       `SELECT *
        FROM app.schedule
@@ -42,16 +42,16 @@ export const validateCreateAppointment = async (req, res, next) => {
 
     const s = schedule.rows[0];
 
-    // 🔥 check lịch quá khứ
-    const now = new Date();
+    // check lịch quá khứ
+    const now = Date.now();
 
-    if (new Date(s.START_TIME) < now) {
+    if (new Date(s.START_TIME).getTime() < now) {
       return res.status(400).json({
         message: "Cannot book past schedule"
       });
     }
 
-    // 🔥 check status
+    // check status
     if (s.STATUS && s.STATUS !== "AVAILABLE") {
       return res.status(400).json({
         message: "Schedule not available"

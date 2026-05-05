@@ -261,7 +261,7 @@ console.log("DATA:", JSON.stringify(state, null, 2));
             </h3>
 
             <div className="text-muted">
-            Mã đặt chỗ: <span className="code">UMC-{data.id}</span>
+            Mã đặt chỗ: <span className="code">SHC-{data.id}</span>
             </div>
         </div>
 

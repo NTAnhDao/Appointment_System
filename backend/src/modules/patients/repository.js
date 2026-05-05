@@ -122,7 +122,7 @@ export const softDeletePatient = async (id) => {
 };
 export const deletePatient = async (id) => {
   await execute(
-     `DELETE FROM APP.PATIENT WHERE ID = :id`,
+     `DELETE FROM PATIENT WHERE ID = :id`,
     { id },
     { autoCommit: true }
   );
@@ -161,7 +161,7 @@ export const createGuardian = async (conn, data) => {
       :identity_number,
       :phone,
       :email,
-      SYSDATE
+      SYSTIMESTAMP
     )
     RETURNING id INTO :id`,
     {

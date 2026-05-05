@@ -15,6 +15,7 @@ services:
       DB_CONNECT_STRING: oracle:1521/XEPDB1
       JWT_SECRET: abc123
       MONGO_URI: mongodb://mongo:27017/hospital_db
+      TZ: UTC
 
   frontend:
     build:
@@ -29,6 +30,7 @@ services:
       - /app/node_modules      # tránh ghi đè node_modules
     environment:
       - CHOKIDAR_USEPOLLING=true
+      - TZ=UTC
 
   mongo:
     image: mongo
@@ -36,6 +38,8 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    environment:
+      - TZ=UTC
       
   oracle:
     image: gvenzl/oracle-xe
@@ -43,6 +47,7 @@ services:
       - "1522:1521"
     environment:
       - ORACLE_PASSWORD=123456
+      - TZ=UTC
     volumes:
       - ./database/oracle:/docker-entrypoint-initdb.d  
       - oracle-data:/opt/oracle/oradata 

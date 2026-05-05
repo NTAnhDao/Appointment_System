@@ -8,24 +8,14 @@ export default function AppointmentCard({ data }) {
   const [isPayment, setIsPayment] = useState();
   const navigate = useNavigate();
 
-  const parseExpired = (str) => {
-    if (!str) return null;
-
-    const [time, date] = str.split(" ");
-    const [hour, minute] = time.split(":");
-    const [day, month] = date.split("-");
-
-    const year = new Date().getFullYear();
-    return new Date(year, month - 1, day, hour, minute);
-  };
 
   useEffect(() => {
     if (!data.expired_at) return;
 
-    const expiredTime = parseExpired(data.expired_at);
+    const expiredTime = new Date(data.expired_at); 
 
     const interval = setInterval(() => {
-      const diff = expiredTime - new Date();
+      const diff = expiredTime.getTime() - Date.now();
 
       if (diff <= 0) {
         setRemaining("00:00");
@@ -45,19 +35,17 @@ export default function AppointmentCard({ data }) {
     return () => clearInterval(interval);
   }, [data.expired_at]);
 
-  let displayStatus =
-    data.status === "pending" && isExpired
-      ? "cancelled"
-      : data.status;
+  let displayStatus = data.status;
 
-    //  map payment hiển thị
-    const setPayment = (() => {
-      if (data.invoice_status === "UNPAID" && data.status === "confirmed") {
-        displayStatus = "cash";
-      }else if (data.invoice_status === "PAID") {
-        displayStatus = "paid";
-      }
-    })();
+  if (data.status === "pending" && isExpired) {
+    displayStatus = "cancelled";
+  }
+
+  if (data.invoice_status === "UNPAID" && data.status === "confirmed") {
+    displayStatus = "cash";
+  } else if (data.invoice_status === "PAID") {
+    displayStatus = "paid";
+  }
 
   return (
     <div

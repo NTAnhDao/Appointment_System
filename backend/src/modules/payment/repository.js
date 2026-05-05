@@ -4,7 +4,7 @@ class PaymentRepository {
 
   async createPayment(data) {
     const sql = `
-      INSERT INTO app.PAYMENTS
+      INSERT INTO PAYMENTS
       (INVOICE_ID, AMOUNT, PAYMENT_METHOD, STATUS, ORDER_ID)
       VALUES (:invoice_id, :amount, :payment_method, :status, :order_id)
     `;
@@ -14,7 +14,7 @@ class PaymentRepository {
 
   async findByOrderId(order_id) {
     const sql = `
-      SELECT * FROM app.PAYMENTS
+      SELECT * FROM PAYMENTS
       WHERE ORDER_ID = :order_id
     `;
 
@@ -23,7 +23,7 @@ class PaymentRepository {
 
   async updateStatus(order_id, status) {
     const sql = `
-      UPDATE app.PAYMENTS
+      UPDATE PAYMENTS
       SET STATUS = :status
       WHERE ORDER_ID = :order_id
     `;

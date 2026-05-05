@@ -13,8 +13,8 @@ export async function findDoctorById(id) {
             dp.name AS department_name,
             dp.department_id,
             dp.consultation_fee
-        FROM app.doctor d
-        JOIN app.department dp 
+        FROM doctor d
+        JOIN department dp 
             ON d.department_id = dp.department_id
         WHERE d.doctor_id = :id
         `,
@@ -50,8 +50,8 @@ export async function findDoctors() {
             dp.name AS department_name,
             dp.consultation_fee,
             d.department_id
-        FROM app.doctor d
-        JOIN app.department dp 
+        FROM doctor d
+        JOIN department dp 
             ON d.department_id = dp.department_id
         WHERE d.status = 'ACTIVE'
         ORDER BY d.doctor_id DESC`;
@@ -89,7 +89,7 @@ export async function findSchedule(doctorId, fromDate, toDate) {
                 max_patients,
                 booked_count,
                 status
-            FROM app.schedule
+            FROM schedule
             WHERE doctor_id = :doctorId
             AND work_date BETWEEN TO_DATE(:fromDate, 'YYYY-MM-DD') 
                                 AND TO_DATE(:toDate, 'YYYY-MM-DD')

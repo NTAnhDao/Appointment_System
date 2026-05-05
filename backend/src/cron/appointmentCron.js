@@ -11,7 +11,7 @@ export const startAppointmentCron = () => {
         `UPDATE app.appointments
         SET status = 'cancelled'
         WHERE status = 'pending'
-        AND expired_at < CURRENT_TIMESTAMP`,
+        AND expired_at < SYSTIMESTAMP`,
         {},
         { autoCommit: true } 
         );

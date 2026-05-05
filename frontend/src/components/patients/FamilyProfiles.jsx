@@ -14,7 +14,7 @@ export default function FamilyProfiles({ refreshKey, onSelect, selectedId }) {
         const mapped = res.map((p) => ({
           id: p.ID,
           name: p.FULL_NAME,
-          code: `UMC-${p.ID}`,
+          code: `SHC-${p.ID}`,
           role: relationLabel[p.RELATION] || p.RELATION,
           avatar: `https://i.pravatar.cc/80?u=${p.ID}`,
           raw: p

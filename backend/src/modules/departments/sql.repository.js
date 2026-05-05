@@ -6,7 +6,7 @@ export async function findAllDepartments() {
             department_id,
             name,
             consultation_fee
-        FROM app.department
+        FROM department
         ORDER BY department_id
     `);
 
