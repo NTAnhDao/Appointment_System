@@ -9,7 +9,7 @@ import '../styles/payments.css';
 
 export default function PaymentSuccessPage() {
   const nav = useNavigate();
-  const isConfirmed = useRef(false);
+  const [isConfirmed, setIsConfirmed] = useState(false);
   const [searchParams] = useSearchParams();
   const [invoiceDetail, setInvoiceDetail] = useState(null);
   const isVnpay = searchParams.get('vnp_ResponseCode') !== null;
@@ -155,32 +155,35 @@ export default function PaymentSuccessPage() {
     setPayment(data);
     const currentTxnRef = data.txnRef;
 
-    if (currentTxnRef && !isConfirmed.current) {
-      let targetAppId = searchParams.get('invoiceId');
+    const runUpdate = async () => {
 
-      if (!targetAppId && currentTxnRef.toString().startsWith("ORDER_")) {
-        const parts = currentTxnRef.split("_");
-        targetAppId = parts[1];
-      } else if (!targetAppId) {
-        targetAppId = currentTxnRef;
-      }
+      if (currentTxnRef && !isConfirmed) {
+        setIsConfirmed(true);
+        let targetAppId = searchParams.get('invoiceId');
 
-      if (targetAppId) {
-        isConfirmed.current = true;
-        
-        // ✅ update status (tùy success)
-        const status = isCash
-          ? 'UNPAID'
-          : (data.success ? 'PAID' : 'CANCELLED');
+        if (!targetAppId && currentTxnRef.toString().startsWith("ORDER_")) {
+          const parts = currentTxnRef.split("_");
+          targetAppId = parts[1];
+        } else if (!targetAppId) {
+          targetAppId = currentTxnRef;
+        }
 
-        updateStatusInvoiceAPI(targetAppId, status)
-          .then(res => console.log(`[UPDATE] Invoice ${targetAppId} -> ${status}`, res))
-          .catch(err => console.error(err));
+        if (targetAppId) {
+          isConfirmed.current = true;
 
-        fetchInvoice(targetAppId);
+          // ✅ update status (tùy success)
+          const status = isCash
+            ? 'UNPAID'
+            : (data.success ? 'PAID' : 'CANCELLED');
 
+          await updateStatusInvoiceAPI(targetAppId, status);
+
+          fetchInvoice(targetAppId);
+
+        }
       }
     }
+    runUpdate();
   }, [searchParams]);
 
   const fetchInvoice = async (id) => {
@@ -336,164 +339,164 @@ export default function PaymentSuccessPage() {
 
         {/* ===== GRID 2 CỘT ===== */}
         {success && (
-        <div className="payment-grid">
+          <div className="payment-grid">
 
-          {/* ===== LEFT ===== */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            {/* ===== LEFT ===== */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 
-          {/* CHI TIẾT */}
-            <div className="card">
-              <h4>
-                Chi tiết lịch hẹn
-              </h4>
-              <div className="info-grid">
-                <div>
-                  <span className="info-label">STT:</span>
-                  <span className="info-value">
-                    {isCash
-                      ? "Chưa có số thứ tự"
-                      : (invoiceDetail?.queueNumber || "Đang xử lý...")}</span>
+              {/* CHI TIẾT */}
+              <div className="card">
+                <h4>
+                  Chi tiết lịch hẹn
+                </h4>
+                <div className="info-grid">
+                  <div>
+                    <span className="info-label">STT:</span>
+                    <span className="info-value">
+                      {isCash
+                        ? "Chưa có số thứ tự"
+                        : (invoiceDetail?.queueNumber || "Đang xử lý...")}</span>
+                  </div>
+
+                  <div>
+                    <span className="info-label">Họ tên:</span>
+                    <span className="info-value">{invoiceDetail?.patientName}</span>
+                  </div>
+
+                  <div>
+                    <span className="info-label">CCCD:</span>
+                    <span className="info-value">{invoiceDetail?.identityNumber}</span>
+                  </div>
+
+                  <div>
+                    <span className="info-label">BHYT:</span>
+                    <span className="info-value">
+                      {invoiceDetail?.bhyt || "Không"}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="info-label">SĐT:</span>
+                    <span className="info-value">{invoiceDetail?.phone}</span>
+                  </div>
+
+                  <div>
+                    <span className="info-label">Giới tính:</span>
+                    <span className="info-value">{invoiceDetail?.gender}</span>
+                  </div>
+
+                  <div>
+                    <span className="info-label">Ngày sinh:</span>
+                    <span className="info-value">{formatPayDate(invoiceDetail?.birthday)}</span>
+                  </div>
+
+                  <div>
+                    <span className="info-label">Chuyên khoa:</span>
+                    <span className="info-value">{invoiceDetail?.specialty}</span>
+                  </div>
+
+                  <div>
+                    <span className="info-label">Bác sĩ:</span>
+                    <span className="info-value">{invoiceDetail?.doctor}</span>
+                  </div>
+
+                  <div>
+                    <span className="info-label">Giá tiền:</span>
+                    <span className="info-value">
+                      {amount.toLocaleString("vi-VN")} VNĐ
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="info-label">Thời gian:</span>
+                    <span className="info-value">{invoiceDetail?.displayTime}</span>
+                  </div>
+
+                  <div>
+                    <span className="info-label">Địa chỉ:</span>
+                    <span className="info-value">{invoiceDetail?.address}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* HƯỚNG DẪN */}
+              <div className="card">
+                <h4>Hướng dẫn quan trọng</h4>
+
+                {[
+                  "Có mặt trước 15 phút tại sảnh A",
+                  "Mang theo CMND/CCCD hoặc BHYT",
+                  "Quét QR tại máy Check-in"
+                ].map((item, i) => (
+                  <div className="step" key={i}>
+                    <div className="step-number">{i + 1}</div>
+                    <p>{item}</p>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+
+
+            {/* ===== RIGHT ===== */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+
+              {/* THANH TOÁN */}
+              <div className="card">
+                <h4>Thông tin thanh toán</h4>
+
+                <div className="payment-row">
+                  <span className="payment-label">Mã giao dịch:</span>
+                  <span className="payment-value">{txnRef ? txnRef.split('_').pop() : ""}</span>
                 </div>
 
-                <div>
-                  <span className="info-label">Họ tên:</span>
-                  <span className="info-value">{invoiceDetail?.patientName}</span>
-                </div>
-
-                <div>
-                  <span className="info-label">CCCD:</span>
-                  <span className="info-value">{invoiceDetail?.identityNumber}</span>
-                </div>
-
-                <div>
-                  <span className="info-label">BHYT:</span>
-                  <span className="info-value">
-                    {invoiceDetail?.bhyt || "Không"}
-                  </span>
-                </div>
-
-                <div>
-                  <span className="info-label">SĐT:</span>
-                  <span className="info-value">{invoiceDetail?.phone}</span>
-                </div>
-
-                <div>
-                  <span className="info-label">Giới tính:</span>
-                  <span className="info-value">{invoiceDetail?.gender}</span>
-                </div>
-
-                <div>
-                  <span className="info-label">Ngày sinh:</span>
-                  <span className="info-value">{formatPayDate(invoiceDetail?.birthday)}</span>
-                </div>
-
-                <div>
-                  <span className="info-label">Chuyên khoa:</span>
-                  <span className="info-value">{invoiceDetail?.specialty}</span>
-                </div>
-
-                <div>
-                  <span className="info-label">Bác sĩ:</span>
-                  <span className="info-value">{invoiceDetail?.doctor}</span>
-                </div>
-
-                <div>
-                  <span className="info-label">Giá tiền:</span>
-                  <span className="info-value">
+                <div className="payment-row">
+                  <span className="payment-label">Số tiền:</span>
+                  <span className="payment-value">
                     {amount.toLocaleString("vi-VN")} VNĐ
                   </span>
                 </div>
 
-                <div>
-                  <span className="info-label">Thời gian:</span>
-                  <span className="info-value">{invoiceDetail?.displayTime}</span>
+                <div className="payment-row">
+                  <span className="payment-label">Nội dung:</span>
+                  <span className="payment-value">{orderInfo}</span>
                 </div>
 
-                <div>
-                  <span className="info-label">Địa chỉ:</span>
-                  <span className="info-value">{invoiceDetail?.address}</span>
+                <div className="payment-row">
+                  <span className="payment-label">Ngân hàng:</span>
+                  <span className="payment-value">{bankCode}</span>
+                </div>
+
+                <div className="payment-row">
+                  <span className="payment-label">Thời gian:</span>
+                  <span className="payment-value">{formatPayDate(payDate)}</span>
+                </div>
+
+                <div className="payment-row">
+                  <span className="payment-label">Trạng thái thanh toán:</span>
+                  <span className="payment-value">{isCash
+                    ? "Chờ thanh toán (Tại quầy)"
+                    : (success ? "Thành công" : "Thất bại")
+                  }</span>
                 </div>
               </div>
+
+              {/* BUTTON */}
+              <div className="card">
+                <button className="btn btn-primary"
+                  onClick={() => nav("/booking")}>
+                  Đặt lịch mới
+                </button>
+
+                <button className="btn btn-outline" style={{ marginTop: "10px" }}
+                  onClick={() => nav("/")}>
+                  Về trang chủ
+                </button>
+              </div>
+
             </div>
-
-            {/* HƯỚNG DẪN */}
-            <div className="card">
-              <h4>Hướng dẫn quan trọng</h4>
-
-              {[
-                "Có mặt trước 15 phút tại sảnh A",
-                "Mang theo CMND/CCCD hoặc BHYT",
-                "Quét QR tại máy Check-in"
-              ].map((item, i) => (
-                <div className="step" key={i}>
-                  <div className="step-number">{i + 1}</div>
-                  <p>{item}</p>
-                </div>
-              ))}
-            </div>
-
           </div>
-
-
-          {/* ===== RIGHT ===== */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-
-            {/* THANH TOÁN */}
-            <div className="card">
-              <h4>Thông tin thanh toán</h4>
-
-              <div className="payment-row">
-                <span className="payment-label">Mã giao dịch:</span>
-                <span className="payment-value">{txnRef ? txnRef.split('_').pop() : ""}</span>
-              </div>
-
-              <div className="payment-row">
-                <span className="payment-label">Số tiền:</span>
-                <span className="payment-value">
-                  {amount.toLocaleString("vi-VN")} VNĐ
-                </span>
-              </div>
-
-              <div className="payment-row">
-                <span className="payment-label">Nội dung:</span>
-                <span className="payment-value">{orderInfo}</span>
-              </div>
-
-              <div className="payment-row">
-                <span className="payment-label">Ngân hàng:</span>
-                <span className="payment-value">{bankCode}</span>
-              </div>
-
-              <div className="payment-row">
-                <span className="payment-label">Thời gian:</span>
-                <span className="payment-value">{formatPayDate(payDate)}</span>
-              </div>
-
-              <div className="payment-row">
-                <span className="payment-label">Trạng thái thanh toán:</span>
-                <span className="payment-value">{isCash
-                  ? "Chờ thanh toán (Tại quầy)"
-                  : (success ? "Thành công" : "Thất bại")
-                }</span>
-              </div>
-            </div>
-
-            {/* BUTTON */}
-            <div className="card">
-              <button className="btn btn-primary"
-                onClick={() => nav("/booking")}>
-                Đặt lịch mới
-              </button>
-
-              <button className="btn btn-outline" style={{ marginTop: "10px" }}
-                onClick={() => nav("/")}>
-                Về trang chủ
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
+        )}
 
         {!success && (
           <PaymentRetry
