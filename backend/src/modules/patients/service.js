@@ -9,13 +9,13 @@ const getAge = (dob) =>
   new Date().getFullYear() - new Date(dob).getFullYear();
 
 
-// 🔥 GET ALL (theo user)
+// GET ALL (theo user)
 export const getPatients = async (userId) => {
   return await repo.getPatientsByUser(userId);
 };
 
 
-// 🔥 GET BY ID + CACHE + ownership
+// GET BY ID + CACHE + ownership
 export const getPatientById = async (id, userId) => {
   const key = `patient:${userId}:${id}`;
 
@@ -32,7 +32,7 @@ export const getPatientById = async (id, userId) => {
 };
 
 
-// 🔥 CREATE (transaction + DTO + userId)
+// CREATE (transaction + DTO + userId)
 export const createPatient = async (rawData, userId) => {
   const data = mapPatientDTO(rawData);
 
@@ -67,7 +67,7 @@ export const createPatient = async (rawData, userId) => {
 };
 
 
-// 🔥 UPDATE (check ownership + invalidate cache)
+// UPDATE (check ownership + invalidate cache)
 export const updatePatient = async (id, rawData, userId) => {
   const patient = await repo.findPatientById(id, userId);
 
@@ -78,7 +78,7 @@ export const updatePatient = async (id, rawData, userId) => {
   let guardianId = null;
   const age = getAge(data.dob);
 
-  // 🔥 xử lý guardian giống create
+  // xử lý guardian giống create
   if (age < 18) {
     if (!data.guardian) {
       throw new Error("Guardian required");
@@ -90,9 +90,14 @@ export const updatePatient = async (id, rawData, userId) => {
 
     if (guardian) {
       guardianId = guardian.ID;
+      await repo.updateGuardian(guardianId, data.guardian);
+
     } else {
-      guardianId = await repo.createGuardian(null, data.guardian);
+      guardianId = await repo.createGuardian(data.guardian);
     }
+  }
+  else {
+    guardianId = null;
   }
 
   await repo.updatePatient(id, {
@@ -100,12 +105,12 @@ export const updatePatient = async (id, rawData, userId) => {
     guardian_id: guardianId,
   });
 
-  // 🔥 invalidate cache
+  // invalidate cache
   await redis.del(`patient:${userId}:${id}`);
 };
 
 
-// 🔥 DELETE (check ownership + business rule)
+// DELETE (check ownership + business rule)
 export const deletePatient = async (id, userId) => {
   const patient = await repo.findPatientById(id, userId);
 

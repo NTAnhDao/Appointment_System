@@ -5,6 +5,7 @@ import { getInvoiceDetailAPI } from '../services/InvoiceService';
 import { updateStatusInvoiceAPI } from '../services/InvoiceService';
 import PaymentRetry from "../components/ui/PaymentRetry"
 import { sendNotificationsAPI } from '../services/NotificationService';
+import { useBooking } from "../context/BookingContext";
 import '../styles/payments.css';
 
 export default function PaymentSuccessPage() {
@@ -16,6 +17,7 @@ export default function PaymentSuccessPage() {
   const isMomo = searchParams.get('resultCode') !== null;
   const isQR = searchParams.get('method') === 'qr';
   const isCash = searchParams.get('method') === 'cash';
+  const { resetBookingData } = useBooking();
 
 
 
@@ -484,7 +486,10 @@ export default function PaymentSuccessPage() {
               {/* BUTTON */}
               <div className="card">
                 <button className="btn btn-primary"
-                  onClick={() => nav("/booking")}>
+                   onClick={() => {
+                    resetBookingData();
+                    nav("/booking");
+                  }}>
                   Đặt lịch mới
                 </button>
 

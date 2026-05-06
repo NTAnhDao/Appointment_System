@@ -2,22 +2,22 @@ import api from "./axiosClient";
 
 export const getPatientsAPI = async () => {
   const res = await api.get("/patients");
-  return res.data.data; // 👈 chỉ trả array
+  return res.data.data; 
 };
 
-// 🔥 GET by id
+// GET by id
 export const getPatientByIdAPI = async (id) => {
   const res = await api.get(`/patients/${id}`);
   return res.data.data;
 };
 
-// 🔥 CREATE
+// CREATE
 export const createPatientAPI = (data) => api.post("/patients", data);
 
-// 🔥 UPDATE
+// UPDATE
 export const updatePatientAPI = (id, data) =>
   api.put(`/patients/${id}`, data);
 
-// 🔥 DELETE
+// DELETE
 export const deletePatientAPI = (id) =>
   api.delete(`/patients/${id}`);

@@ -3,11 +3,24 @@ import oracledb from "oracledb";
 
 export const getPatientsByUser = async (userId) => {
   const result = await execute(
-    `SELECT * 
-     FROM patient 
-     WHERE is_deleted = 0 
-       AND user_id = :userId
-     ORDER BY created_at DESC`,
+    `SELECT 
+        p.*,
+
+        g.id AS guardian_id,
+        g.full_name AS guardian_full_name,
+        g.identity_number AS guardian_identity_number,
+        g.phone AS guardian_phone,
+        g.email AS guardian_email
+
+     FROM patient p
+
+     LEFT JOIN guardian g
+       ON p.guardian_id = g.id
+
+     WHERE p.is_deleted = 0 
+       AND p.user_id = :userId
+
+     ORDER BY p.created_at DESC`,
     { userId }
   );
 
@@ -145,10 +158,10 @@ export const findGuardianByCCCD = async (cccd) => {
 };
 
 
-export const createGuardian = async (conn, data) => {
+export const createGuardian = async (data) => {
   console.log("GUARDIAN INSERT:", data);
 
-  const result = await conn.execute(
+  const result = await execute(
     `INSERT INTO guardian (
       full_name,
       identity_number,
@@ -168,10 +181,33 @@ export const createGuardian = async (conn, data) => {
       full_name: data.full_name,
       identity_number: data.identity_number,
       phone: data.phone,
-      email: data.email || null,   // 🔥 fix undefined
-      id: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER }
-    }
+      email: data.email || null,
+      id: {
+        dir: oracledb.BIND_OUT,
+        type: oracledb.NUMBER
+      }
+    },
+    { autoCommit: true }
   );
 
   return result.outBinds.id[0];
+};
+
+export const updateGuardian = async (id, data) => {
+  await execute(
+    `UPDATE guardian SET
+        full_name = :full_name,
+        identity_number = :identity_number,
+        phone = :phone,
+        email = :email
+     WHERE id = :id`,
+    {
+      full_name: data.full_name,
+      identity_number: data.identity_number,
+      phone: data.phone,
+      email: data.email || null,
+      id
+    },
+    { autoCommit: true }
+  );
 };

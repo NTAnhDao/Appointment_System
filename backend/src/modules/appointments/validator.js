@@ -43,13 +43,18 @@ export const validateCreateAppointment = async (req, res, next) => {
     const s = schedule.rows[0];
 
     // check lịch quá khứ
-    const now = Date.now();
+    const now = new Date();
 
-    if (new Date(s.START_TIME).getTime() < now) {
+    const startTime = new Date(s.START_TIME);
+
+    if (startTime <= now) {
       return res.status(400).json({
         message: "Cannot book past schedule"
       });
     }
+
+    console.log("DB:", startTime);
+    console.log("NOW:", now);
 
     // check status
     if (s.STATUS && s.STATUS !== "AVAILABLE") {

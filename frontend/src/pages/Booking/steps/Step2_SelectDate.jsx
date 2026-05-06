@@ -10,6 +10,11 @@ export default function Step2_SelectDate() {
   const [selectedScheduleId, setSelectedScheduleId] = useState(bookingData.schedule_id || null);
   const [schedule, setSchedule] = useState([]);
   const doctor = bookingData.doctor || {};
+  useEffect(() => {
+    setSelectedDate("");
+    setSelectedTime("");
+    setSelectedScheduleId(null);
+  }, [doctor.id]);
 
   const handleContinue = () => {
     const newData = {
@@ -130,6 +135,16 @@ export default function Step2_SelectDate() {
     const year = date.getFullYear();
 
     return `Tháng ${month} ${year}`;
+  };
+  const isPastTimeSlot = (date, time) => {
+    // date: YYYY-MM-DD
+    // time: HH:mm:ss
+
+    const now = new Date();
+
+    const slotDateTime = new Date(`${date}T${time}`);
+
+    return slotDateTime <= now;
   };
 
   return (
@@ -259,20 +274,29 @@ export default function Step2_SelectDate() {
                   </h6>
 
                   <div className="d-flex gap-2 mb-3">
-                    {morningSlots.map((t) => (
-                      <button
-                        key={t.schedule_id}
-                        disabled={!t.available}
-                        className={`time-btn ${selectedTime === t.timeRange ? "active" : ""
-                          } ${!t.available ? "disabled" : ""}`}
-                        onClick={() => {
-                          setSelectedTime(t.timeRange);
-                          setSelectedScheduleId(t.schedule_id);
-                        }}
-                      >
-                        {t.timeRange}
-                      </button>
-                    ))}
+                    {morningSlots.map((t) => {
+                      const isPast = isPastTimeSlot(selectedDate, t.time);
+                      const isDisabled = !t.available || isPast;
+
+                      return (
+                        <button
+                          key={t.schedule_id}
+                          disabled={isDisabled}
+                          className={`time-btn 
+                            ${selectedTime === t.timeRange ? "active" : ""}
+                            ${isDisabled ? "disabled" : ""}
+                          `}
+                          onClick={() => {
+                            if (isDisabled) return;
+
+                            setSelectedTime(t.timeRange);
+                            setSelectedScheduleId(t.schedule_id);
+                          }}
+                        >
+                          {t.timeRange}
+                        </button>
+                      );
+                    })}
                   </div>
                 </>
               )}
@@ -286,20 +310,29 @@ export default function Step2_SelectDate() {
                     BUỔI CHIỀU
                   </h6>
                   <div className="d-flex gap-2">
-                    {afternoonSlots.map((t) => (
-                      <button
-                        key={t.schedule_id}
-                        disabled={!t.available}
-                        className={`time-btn ${selectedTime === t.timeRange ? "active" : ""
-                          } ${!t.available ? "disabled" : ""}`}
-                        onClick={() => {
-                          setSelectedTime(t.timeRange);
-                          setSelectedScheduleId(t.schedule_id);
-                        }}
-                      >
-                        {t.timeRange}
-                      </button>
-                    ))}
+                    {afternoonSlots.map((t) => {
+                      const isPast = isPastTimeSlot(selectedDate, t.time);
+                      const isDisabled = !t.available || isPast;
+
+                      return (
+                        <button
+                          key={t.schedule_id}
+                          disabled={isDisabled}
+                          className={`time-btn 
+                            ${selectedTime === t.timeRange ? "active" : ""}
+                            ${isDisabled ? "disabled" : ""}
+                          `}
+                          onClick={() => {
+                            if (isDisabled) return;
+
+                            setSelectedTime(t.timeRange);
+                            setSelectedScheduleId(t.schedule_id);
+                          }}
+                        >
+                          {isPast ? `${t.timeRange} - Đã qua` : t.timeRange}
+                        </button>
+                      );
+                    })}
                   </div>
                 </>
               )}

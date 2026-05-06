@@ -21,15 +21,15 @@ BEGIN
   );
 END;
 /
-SELECT job_name, status, actual_start_date, run_duration
-FROM user_scheduler_job_run_details
-ORDER BY log_date DESC;
+-- SELECT job_name, status, actual_start_date, run_duration
+-- FROM user_scheduler_job_run_details
+-- ORDER BY log_date DESC;
 
-SELECT COUNT(*) 
-FROM appointments
-WHERE status = 'pending'
-  AND expired_at < SYSTIMESTAMP AT TIME ZONE 'UTC';
+-- SELECT COUNT(*) 
+-- FROM appointments
+-- WHERE status = 'pending'
+--   AND expired_at < SYSTIMESTAMP AT TIME ZONE 'UTC';
 
-SELECT expired_at, SYSTIMESTAMP AT TIME ZONE 'UTC'
-FROM appointments
-ORDER BY expired_at DESC;
+-- SELECT expired_at, SYSTIMESTAMP AT TIME ZONE 'UTC'
+-- FROM appointments
+-- ORDER BY expired_at DESC;

@@ -103,7 +103,7 @@ END;
 /
 
 DECLARE
-    v_start_date DATE := TO_DATE('2026-05-02', 'YYYY-MM-DD'); -- Thứ Hai tuần tới
+    v_start_date DATE := TO_DATE('2026-05-03', 'YYYY-MM-DD'); -- Thứ Hai tuần tới
     v_current_date DATE;
 BEGIN
     -- VÒNG LẶP QUA 6 NGÀY (Thứ 2 đến Thứ 7)
@@ -120,35 +120,35 @@ BEGIN
                 -- CA SÁNG (3 khung giờ)
                 INSERT INTO schedule (doctor_id, work_date, start_time, end_time, max_patients)
                 VALUES (r_dr.doctor_id, v_current_date, 
-                        CAST(v_current_date AS TIMESTAMP) + INTERVAL '07:30' HOUR TO MINUTE, 
-                        CAST(v_current_date AS TIMESTAMP) + INTERVAL '09:00' HOUR TO MINUTE, 6);
+                        FROM_TZ(CAST(v_current_date AS TIMESTAMP),'Asia/Ho_Chi_Minh') + INTERVAL '07:30' HOUR TO MINUTE, 
+                        FROM_TZ(CAST(v_current_date AS TIMESTAMP),'Asia/Ho_Chi_Minh') + INTERVAL '09:00' HOUR TO MINUTE, 6);
                 
                 INSERT INTO schedule (doctor_id, work_date, start_time, end_time, max_patients)
                 VALUES (r_dr.doctor_id, v_current_date, 
-                        CAST(v_current_date AS TIMESTAMP) + INTERVAL '09:00' HOUR TO MINUTE, 
-                        CAST(v_current_date AS TIMESTAMP) + INTERVAL '10:30' HOUR TO MINUTE, 6);
+                        FROM_TZ(CAST(v_current_date AS TIMESTAMP),'Asia/Ho_Chi_Minh') + INTERVAL '09:00' HOUR TO MINUTE, 
+                        FROM_TZ(CAST(v_current_date AS TIMESTAMP),'Asia/Ho_Chi_Minh') + INTERVAL '10:30' HOUR TO MINUTE, 6);
 
                 INSERT INTO schedule (doctor_id, work_date, start_time, end_time, max_patients)
                 VALUES (r_dr.doctor_id, v_current_date, 
-                        CAST(v_current_date AS TIMESTAMP) + INTERVAL '10:30' HOUR TO MINUTE, 
-                        CAST(v_current_date AS TIMESTAMP) + INTERVAL '12:00' HOUR TO MINUTE, 6);
+                        FROM_TZ(CAST(v_current_date AS TIMESTAMP),'Asia/Ho_Chi_Minh') + INTERVAL '10:30' HOUR TO MINUTE, 
+                        FROM_TZ(CAST(v_current_date AS TIMESTAMP),'Asia/Ho_Chi_Minh') + INTERVAL '12:00' HOUR TO MINUTE, 6);
 
             ELSE
                 -- CA CHIỀU (3 khung giờ)
                 INSERT INTO schedule (doctor_id, work_date, start_time, end_time, max_patients)
                 VALUES (r_dr.doctor_id, v_current_date, 
-                        CAST(v_current_date AS TIMESTAMP) + INTERVAL '13:30' HOUR TO MINUTE, 
-                        CAST(v_current_date AS TIMESTAMP) + INTERVAL '15:00' HOUR TO MINUTE, 6);
+                        FROM_TZ(CAST(v_current_date AS TIMESTAMP),'Asia/Ho_Chi_Minh') + INTERVAL '13:30' HOUR TO MINUTE, 
+                        FROM_TZ(CAST(v_current_date AS TIMESTAMP),'Asia/Ho_Chi_Minh') + INTERVAL '15:00' HOUR TO MINUTE, 6);
 
                 INSERT INTO schedule (doctor_id, work_date, start_time, end_time, max_patients)
                 VALUES (r_dr.doctor_id, v_current_date, 
-                        CAST(v_current_date AS TIMESTAMP) + INTERVAL '15:00' HOUR TO MINUTE, 
-                        CAST(v_current_date AS TIMESTAMP) + INTERVAL '16:30' HOUR TO MINUTE, 6);
+                        FROM_TZ(CAST(v_current_date AS TIMESTAMP),'Asia/Ho_Chi_Minh') + INTERVAL '15:00' HOUR TO MINUTE, 
+                        FROM_TZ(CAST(v_current_date AS TIMESTAMP),'Asia/Ho_Chi_Minh') + INTERVAL '16:30' HOUR TO MINUTE, 6);
 
                 INSERT INTO schedule (doctor_id, work_date, start_time, end_time, max_patients)
                 VALUES (r_dr.doctor_id, v_current_date, 
-                        CAST(v_current_date AS TIMESTAMP) + INTERVAL '16:30' HOUR TO MINUTE, 
-                        CAST(v_current_date AS TIMESTAMP) + INTERVAL '18:00' HOUR TO MINUTE, 6);
+                        FROM_TZ(CAST(v_current_date AS TIMESTAMP),'Asia/Ho_Chi_Minh') + INTERVAL '16:30' HOUR TO MINUTE, 
+                        FROM_TZ(CAST(v_current_date AS TIMESTAMP),'Asia/Ho_Chi_Minh') + INTERVAL '18:00' HOUR TO MINUTE, 6);
             END IF;
         END LOOP;
     END LOOP;

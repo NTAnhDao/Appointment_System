@@ -44,10 +44,10 @@ export default function PatientForm({ selectedPatient, onSuccess, onCancel }) {
         ward: selectedPatient.WARD || "",
         address_detail: selectedPatient.ADDRESS_DETAIL || "",
         guardian: {
-          full_name: "",
-          identity_number: "",
-          phone: "",
-          email: "",
+          full_name: selectedPatient.GUARDIAN_FULL_NAME || "",
+          identity_number: selectedPatient.GUARDIAN_IDENTITY_NUMBER || "",
+          phone: selectedPatient.GUARDIAN_PHONE || "",
+          email: selectedPatient.GUARDIAN_EMAIL || "",
         }
       })
 
@@ -208,6 +208,49 @@ export default function PatientForm({ selectedPatient, onSuccess, onCancel }) {
       toast.error("CCCD/CMND phải là 12 số")
       return
     }
+    // Check email
+    if (!form.email) {
+      toast.error("Vui lòng nhập email")
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    if (!emailRegex.test(form.email)) {
+      toast.error("Email không hợp lệ")
+      return
+    }
+
+    // Check nghề nghiệp
+    if (!form.job) {
+      toast.error("Vui lòng nhập nghề nghiệp")
+      return
+    }
+
+    // Check dân tộc
+    if (!form.ethnicity) {
+      toast.error("Vui lòng chọn dân tộc")
+      return
+    }
+
+    // Check tỉnh/thành
+    if (!form.province) {
+      toast.error("Vui lòng chọn tỉnh/thành")
+      return
+    }
+
+    // Check phường/xã
+    if (!form.ward) {
+      toast.error("Vui lòng chọn phường/xã")
+      return
+    }
+
+    // Check địa chỉ chi tiết
+    if (!form.address_detail) {
+      toast.error("Vui lòng nhập địa chỉ chi tiết")
+      return
+    }
+
 
     // Check if minor and guardian info
     const age = new Date().getFullYear() - new Date(form.dob).getFullYear()

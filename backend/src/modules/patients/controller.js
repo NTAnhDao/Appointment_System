@@ -6,7 +6,7 @@ import {
   deletePatient,
 } from "./service.js";
 
-// 🔥 CREATE
+// CREATE
 export const create = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -24,7 +24,7 @@ export const create = async (req, res) => {
   }
 };
 
-// 🔥 GET ALL
+// GET ALL
 export const getAll = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -41,7 +41,7 @@ export const getAll = async (req, res) => {
   }
 };
 
-// 🔥 GET BY ID
+// GET BY ID
 export const getById = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -59,7 +59,7 @@ export const getById = async (req, res) => {
   }
 };
 
-// 🔥 UPDATE
+// UPDATE
 export const update = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -77,7 +77,7 @@ export const update = async (req, res) => {
   }
 };
 
-// 🔥 DELETE
+// DELETE
 export const remove = async (req, res) => {
   try {
     const userId = req.user.id;
