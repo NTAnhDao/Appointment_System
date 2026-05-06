@@ -199,7 +199,7 @@ export default function PaymentSuccessPage() {
 
 
     // ❌ tránh gọi nhiều lần
-    if (!isConfirmed) return;
+    if (!isConfirmed.current) return;
 
     const isOnline = isVnpay || isMomo || isQR;
 
