@@ -111,7 +111,7 @@ NODE_ENV=development
 
 ---
 
-## 5: Tài khoản test thanh toán
+## 5. Tài khoản test thanh toán
 
 ### VNPAY
 * Ngân hàng:	NCB
