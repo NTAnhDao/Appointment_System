@@ -172,14 +172,9 @@ export default function PaymentSuccessPage() {
         }
 
         if (targetAppId) {
-          isConfirmed.current = true;
-
-          // ✅ update status (tùy success)
-          const status = isCash
-            ? 'UNPAID'
-            : (data.success ? 'PAID' : 'CANCELLED');
-
-          await updateStatusInvoiceAPI(targetAppId, status);
+          if (!isCash) {
+            await updateStatusInvoiceAPI(targetAppId, data.success ? 'PAID' : 'CANCELLED');
+          }
 
           fetchInvoice(targetAppId);
 
@@ -204,7 +199,7 @@ export default function PaymentSuccessPage() {
 
 
     // ❌ tránh gọi nhiều lần
-    if (isConfirmed.current !== true) return;
+    if (!isConfirmed) return;
 
     const isOnline = isVnpay || isMomo || isQR;
 
