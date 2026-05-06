@@ -10,7 +10,7 @@ import '../styles/payments.css';
 
 export default function PaymentSuccessPage() {
   const nav = useNavigate();
-  const [isConfirmed, setIsConfirmed] = useState(false);
+  const isConfirmed = useRef(false);
   const [searchParams] = useSearchParams();
   const [invoiceDetail, setInvoiceDetail] = useState(null);
   const isVnpay = searchParams.get('vnp_ResponseCode') !== null;
@@ -159,8 +159,9 @@ export default function PaymentSuccessPage() {
 
     const runUpdate = async () => {
 
-      if (currentTxnRef && !isConfirmed) {
-        setIsConfirmed(true);
+      if (currentTxnRef && !isConfirmed.current) {
+
+        isConfirmed.current = true;
         let targetAppId = searchParams.get('invoiceId');
 
         if (!targetAppId && currentTxnRef.toString().startsWith("ORDER_")) {

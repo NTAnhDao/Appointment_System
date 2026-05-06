@@ -54,7 +54,6 @@ CREATE TABLE patient (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT SYSTIMESTAMP,
 
     -- constraints
-    CONSTRAINT uq_patient_identity UNIQUE (identity_number),
     CONSTRAINT fk_patient_guardian 
         FOREIGN KEY (guardian_id) 
         REFERENCES guardian(id),

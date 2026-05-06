@@ -15,9 +15,19 @@ export const create = async (req, res) => {
       invoiceId: result.invoiceId
     });
   } catch (err) {
-    res.status(400).json({
+     if (err.errorNum === 20001) {
+
+      if (err.message.includes("Schedule is full")) {
+        return res.status(400).json({
+          success: false,
+          message: "Khung giờ khám đã đủ số lượng bệnh nhân"
+        });
+      }
+    }
+
+    return res.status(500).json({
       success: false,
-      message: err.message
+      message: "Có lỗi xảy ra"
     });
   }
 };

@@ -52,7 +52,7 @@ export const createPatient = async (rawData, userId) => {
       if (guardian) {
         guardianId = guardian.ID;
       } else {
-        guardianId = await repo.createGuardian(conn, data.guardian);
+        guardianId = await repo.createGuardian(data.guardian);
       }
     }
 

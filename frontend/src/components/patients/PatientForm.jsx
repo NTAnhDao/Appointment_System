@@ -282,6 +282,7 @@ export default function PatientForm({ selectedPatient, onSuccess, onCancel }) {
         await updatePatientAPI(selectedPatient.ID, form)
         toast.success("Cập nhật thành công!")
       } else {
+        console.log(JSON.stringify(form, null, 2));
         await createPatientAPI(form)
         toast.success("Tạo hồ sơ thành công!")
       }

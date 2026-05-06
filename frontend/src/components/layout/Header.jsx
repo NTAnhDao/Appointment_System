@@ -1,9 +1,11 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useBooking } from "../../context/BookingContext";
 
 export default function Header() {
     const nav = useNavigate();
     const location = useLocation();
+    const { resetBookingData } = useBooking();
     
    
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -30,7 +32,8 @@ export default function Header() {
     // Hàm xử lý riêng cho nút "Đặt lịch ngay"
     const handleBookingClick = () => {
         if (isLoggedIn) {
-            nav("/booking"); // Nếu đã đăng nhập -> Tới trang đặt lịch
+            resetBookingData();
+            nav("/booking"); 
         } else {
             nav("/login"); // Nếu chưa đăng nhập -> Ép sang trang đăng nhập
         }
