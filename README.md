@@ -125,6 +125,12 @@ NODE_ENV=development
 * Tên chủ thẻ:	NGUYEN VAN A
 * Ngày phát hành: 03/07
 
+## 6. Link video demo
+
+* https://drive.google.com/file/d/1TW5VyxtsN2CPinb2B2z3oOmIETvD3HvY/view?usp=drive_link
+
+
+
 
 
 
