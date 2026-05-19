@@ -3,6 +3,23 @@ import { withTransaction } from "../../config/db.oracle.js";
 import {confirmAppointment} from "../appointments/service.js";
 import * as appointmentService from "../appointments/service.js";
 
+const getProvinceName = (code) => {
+  const provinces = {
+    79: "Hồ Chí Minh",
+    48: "Đà Nẵng"
+  };
+
+  return provinces[code] || code;
+};
+
+const getWardName = (code) => {
+  const wards = {
+    25760: "Phường Nguyễn Cư Trinh"
+  };
+
+  return wards[code] || code;
+};
+
 // format helpers
 const formatDateTime = (date) => {
   return new Date(date).toLocaleString("vi-VN", {
@@ -66,7 +83,7 @@ export const getInvoiceDetail = async (invoice_id) => {
     date: `${formatDate(data.WORK_DATE)}`,
     displayTime: `${formatTime(data.START_TIME, data.END_TIME)} - ${formatDate(data.WORK_DATE)}`,
 
-    address: `${data.ADDRESS_DETAIL}, ${data.WARD}, ${data.PROVINCE}`,
+    address: `${data.ADDRESS_DETAIL}, ${getWardName(data.WARD)}, ${getProvinceName(data.PROVINCE)}`,
     identityNumber: data.IDENTITY_NUMBER,
     bhyt: data.BHYT,
     phone: data.PHONE,
