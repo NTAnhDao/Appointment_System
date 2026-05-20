@@ -39,17 +39,13 @@ docker compose version
 
 ## 3. Hướng dẫn chạy project
 
-### Bước 1: Clone source code
-
-```bash
-git clone https://gitlab.duthu.net/lazylady/hcsdl_nc.git
-```
+### Bước 1: Download source code về và giải nén
 
 ### Bước 2: Mở project
 
 * Mở Visual Studio Code
 * Chọn **Open Project**
-* Chọn thư mục project vừa clone
+* Chọn thư mục project vừa download
 
 
 ### Bước 3: Chạy dự án bằng Docker
@@ -73,6 +69,9 @@ docker compose up --build
 cd backend
 npm run seed
 ```
+---
+
+* Lưu ý: Đợi một thời gian cho project build xong và sau đó mới chạy cd backend và chạy npm run seed
 
 ### Bước 4: Truy cập website
 
